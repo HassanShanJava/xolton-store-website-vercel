@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Homepage from "~/components/Homepage/Homepage";
-import Navbar from "~/components/Navbar/Navbar";
 
 import { api } from "~/utils/api";
 
@@ -24,7 +23,7 @@ const Home: NextPage = () => {
         />
       </Head>
       <main>
-        <Navbar/>
+
         <Homepage/>
       </main>
     </>

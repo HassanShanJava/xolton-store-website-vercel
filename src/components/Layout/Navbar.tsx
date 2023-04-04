@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
-
+import Link from "next/link";
 const Navbar = () => {
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
@@ -29,7 +29,7 @@ const Navbar = () => {
         }
       >
         <div
-          className="absolute right-4 top-4 text-xl cursor-pointer"
+          className="absolute right-4 top-4 cursor-pointer text-xl"
           onClick={handleNav}
         >
           X
@@ -37,9 +37,18 @@ const Navbar = () => {
 
         <nav className="mt-6">
           <ul className="flex flex-col p-4 text-gray-800 ">
-            <li className="flex items-center py-4 text-xl">Home</li>
-            <li className="flex items-center py-4 text-xl">Blog</li>
-            <li className="flex items-center py-4 text-xl">FAQ</li>
+            <Link href="/">
+              <li className="flex items-center py-4 text-xl">Home</li>
+            </Link>
+            <Link href="/">
+              <li className="flex items-center py-4 text-xl">Blog</li>
+            </Link>
+            <Link href="/about-us">
+              <li className="flex items-center py-4 text-xl">About Us</li>
+            </Link>
+            <Link href="/">
+              <li className="flex items-center py-4 text-xl">FAQ</li>
+            </Link>
           </ul>
         </nav>
       </div>
@@ -49,15 +58,24 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden items-center justify-between sm:flex ">
-        <li className="mx-4">Homepage</li>
-        <li className="mx-4">Blog</li>
-        <li className="mx-4">FAQ</li>
+        <Link href="/">
+          <li className="mx-4">Home</li>
+        </Link>
+        <Link href="/">
+          <li className="mx-4">Blog</li>
+        </Link>
+        <Link href="/about-us">
+          <li className="mx-4">About Us</li>
+        </Link>
+        <Link href="/">
+          <li className="mx-4">FAQ</li>
+        </Link>
       </ul>
 
       <div className="mr-4">
         <button
           type="button"
-          className=" rounded-3xl bg-accentLinear-1 hover:bg-ac-2 p-3 text-white"
+          className=" rounded-3xl bg-accentLinear-1 p-3 text-white hover:bg-ac-2"
         >
           Connect Wallet
         </button>
