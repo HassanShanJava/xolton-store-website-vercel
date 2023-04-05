@@ -1,8 +1,12 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import NFTImage from "../../public/images/character-1.png";
+import Popup from "./Popup";
 
 const NFTCard = ({ nft }) => {
+  const [buy ,setBuy]=useState(false);
+  const handleBuy=()=>setBuy(true)
+
   return (
     <>
       <div className="group mx-auto h-full max-h-[442px] w-full max-w-[295px] rounded-[20px] bg-bg-1 p-3 hover:bg-white">
@@ -22,10 +26,17 @@ const NFTCard = ({ nft }) => {
         <div className="px-2">
           <button
             type="button"
+            onClick={(e)=>{
+              e.preventDefault()
+              handleBuy()
+            }}
             className="text-white` w-full rounded-[6px] bg-black py-3 text-center text-white group-hover:bg-accentLinear-1 "
-          >
+            >
             Buy
           </button>
+            {buy&&<Popup open={buy} setBuy={setBuy}/> }
+            {/* {setBuy(false)} */}
+          
         </div>
       </div>
     </>
