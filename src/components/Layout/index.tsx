@@ -1,12 +1,13 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Navbar from "./Navbar";
+import  Head  from "next/head";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <head>
+      <Head>
         <title>Xoltan Marketplace Store</title>
-      </head>
+      </Head>
 
       <div>
         <Navbar />
