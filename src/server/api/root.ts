@@ -1,13 +1,15 @@
-import { createTRPCRouter } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
+import { router } from "~/server/api/trpc";
+import { storeNFTRouter } from "./routers/storeNFT";
+import { storeMakerRouter } from "./routers/storeMaker";
 
 /**
  * This is the primary router for your server.
  *
  * All routers added in /api/routers should be manually added here.
  */
-export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+export const appRouter = router({
+  storeNFT: storeNFTRouter,
+  storeMaker:storeMakerRouter,
 });
 
 // export type definition of API

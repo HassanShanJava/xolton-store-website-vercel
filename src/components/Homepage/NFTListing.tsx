@@ -58,7 +58,7 @@ const NFTListing = () => {
     <>
     <div className="grid grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full ">
       {nfts.map((nft, i) => (
-        <NFTCard nft={nft} />
+        <NFTCard nft={nft} key={i}/>
       ))}
     </div>
     </>

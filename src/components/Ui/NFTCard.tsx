@@ -3,18 +3,18 @@ import React, { useState } from "react";
 import NFTImage from "../../public/images/character-1.png";
 import Popup from "./Popup";
 
-const NFTCard = ({ nft }) => {
+const NFTCard = ({ nft, key }) => {
   const [buy ,setBuy]=useState(false);
   const handleBuy=()=>setBuy(true)
 
   return (
     <>
-      <div className="group mx-auto h-full max-h-[442px] w-full max-w-[295px] rounded-[20px] bg-bg-1 p-3 hover:bg-white">
+      <div className="group mx-auto h-full max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-bg-1 p-3 hover:bg-white">
         <div className=" object-contain ">
           <Image
             src={nft.img_path}
             alt="/nft"
-            className="h-full max-h-[333px] w-full max-w-[275px] "
+            className="h-full max-h-[290px] w-full max-w-[260px] mx-auto "
           />
         </div>
 

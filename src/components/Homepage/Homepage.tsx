@@ -6,7 +6,17 @@ import Image from "next/image";
 import BannerImage from "../../public/images/banner.png";
 import NFTListing from "./NFTListing";
 
+import { api } from "~/utils/api";
+
 const Homepage = () => {
+  const { data: storeMakerData } = api.storeMaker.getStoreMaker.useQuery(
+    {},
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  console.log(storeMakerData, "storeMakerData");
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-pm-11 px-8">

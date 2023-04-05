@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
-import { customTruncateHandler } from '~/utils/helper';
-import { web3Init } from '~/store/slices/web3Slice';
-import { initWeb3 } from '~/utils/web3/web3Init';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { RootState } from '~/store/store';
+import { customTruncateHandler } from "~/utils/helper";
+import { web3Init } from "~/store/slices/web3Slice";
+import { initWeb3 } from "~/utils/web3/web3Init";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "~/store/store";
+
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -20,21 +21,22 @@ const Navbar = () => {
 
   const connectMetamask = async () => {
     let data = await initWeb3();
-    console.log('Data : ', data);
+    console.log("Data : ", data);
     if (data?.success !== false) {
-      console.log('check');
+      console.log("check");
       // toast({
       //   title: 'Wallet connected',
       //   status: 'success',
       //   isClosable: true,
       //   position: 'top-right',
       // });
+      
       dispatch(
         web3Init({
           web3: data?.web3,
           account: data?.account,
           chainId: data?.chainId,
-        }),
+        })
       );
     } else {
       // toast({
@@ -43,6 +45,7 @@ const Navbar = () => {
       //   isClosable: true,
       //   position: 'top-right',
       // });
+      
     }
   };
 
@@ -112,26 +115,29 @@ const Navbar = () => {
         </ul>
 
         <div className="mr-4">
-        {account !== '' ? (
-          <button
-            type="button"
-            className=" rounded-3xl bg-accentLinear-1 p-3 text-white hover:bg-ac-2"
-            onClick={() => connectMetamask()}
-          >
-            {customTruncateHandler(account, 8)}
-          </button>
-        ) :(
-          <button
-            type="button"
-            className=" rounded-3xl bg-accentLinear-1 p-3 text-white hover:bg-ac-2"
-            onClick={() => connectMetamask()}
-          >
-            Connect Wallet
-          </button>
-        )
-      }
+          {account !== "" ? (
+            <>
+              <button
+                type="button"
+                className=" rounded-3xl bg-accentLinear-1 p-3 text-white hover:bg-ac-2"
+                onClick={() => connectMetamask()}
+              >
+                {customTruncateHandler(account, 8)}
+              </button>
 
-        
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
+                onClick={() => connectMetamask()}
+              >
+                Connect Wallet
+              </button>
+
+            </>
+          )}
         </div>
       </div>
     </>
