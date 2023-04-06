@@ -1,66 +1,39 @@
 import React from "react";
 import NFTCard from "../Ui/NFTCard";
 
-// images
-import Character1 from "../../public/images/character-1.png";
-import Character2 from "../../public/images/character-2.png";
-import Character3 from "../../public/images/character-3.png";
-import Character4 from "../../public/images/character-4.png";
-import Character5 from "../../public/images/character-5.png";
-import Character6 from "../../public/images/character-6.png";
-import Character7 from "../../public/images/character-7.png";
-import Character8 from "../../public/images/character-8.png";
-const nfts = [
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character1,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character2,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character3,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character4,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character5,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character6,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character7,
-  },
-  {
-    nft_name: "Stone Head",
-    eth: "0.0002 Eth",
-    img_path: Character8,
-  },
-];
+
+import { api } from "~/utils/api";
 
 const NFTListing = () => {
+  const { data: storeMakerData } = api.storeMaker.getStoreMaker.useQuery(
+    {},
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  console.log(storeMakerData, "storeMakerData");
   return (
     <>
-    <div className="grid grid-cols-1 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full ">
-      {nfts.map((nft, i) => (
-        <NFTCard nft={nft} key={i}/>
-      ))}
-    </div>
+      <div className="h-full w-full">
+        <div className="flex flex-row-reverse justify-between items-center w-full ">
+          <div className="mb-3  px-2">
+            <select data-te-select-init className="p-2 rounded-lg">
+              <option value="A to Z" selected disabled hidden>Sort By</option>
+              <option value="A to Z">A to Z</option>
+              <option value="Z to A">Z to A</option>
+              <option value="Highest to Lowest">Highest to Lowest</option>
+              <option value="Lowest to Highest">Lowest to Highest</option>
+            </select>
+          </div>
+        </div>
+        <div className="grid h-full  w-full grid-cols-1 gap-4 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {storeMakerData &&
+            storeMakerData.map((nft, i) => (
+              <NFTCard nft={nft.store_nft} key={i} />
+            ))}
+        </div>
+      </div>
     </>
   );
 };

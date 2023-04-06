@@ -1,51 +1,66 @@
 import React, { useState } from "react";
 
-const Popup = ({open, setBuy}) => {
-
+const Popup = ({ open, setBuy, price, tax }) => {
+  
   return (
     <>
       {open ? (
         <>
+          {/* overlay */}
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative mx-auto my-6 w-auto max-w-3xl">
+            <div className="relative mx-auto my-6  w-full max-w-[450px] ">
               {/*content*/}
-              <div className="relative flex w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none">
+              <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
-                <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl font-semibold">Are you Sure?</h3>
-                  
+                <div className="flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
+                  <h3 className="text-3xl ">Checkout</h3>
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setBuy(false);
+                    }}
+                    className="my-auto "
+                  >
+                    <i className="fa-regular fa-circle-xmark cursor-pointer text-2xl hover:text-gray-600"></i>
+                  </div>
                 </div>
                 {/*body*/}
-                <div className="relative flex-auto p-6">
-                  <p className="my-4 text-lg leading-relaxed text-slate-500">
-                    I always felt like I could do anything. That’s the main
-                    thing people are controlled by! Thoughts- their perception
-                    of themselves! They're slowed down by their perception of
-                    themselves. If you're taught you can’t do anything, you
-                    won’t do anything. I was taught I could do everything.
-                  </p>
+                
+                <div className="m-6 p-3  border border-slate-500 rounded-xl ">
+                  <div className="relative flex items-center justify-between ">
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      NFT Price
+                    </p>
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      {(+price).toFixed(5)} Eth
+                    </p>
+                  </div>
+
+                  <div className="relative flex items-center justify-between ">
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      Service fee 2%
+                    </p>
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      {(+tax).toFixed(5)} Eth
+                    </p>
+                  </div>
+                  
+                  <div className="relative flex items-center justify-between ">
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      You will pay
+                    </p>
+                    <p className=" text-md leading-relaxed text-slate-500">
+                      {(+price + +tax).toFixed(5)} Eth
+                    </p>
+                  </div>
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                   <button
-                    className="background-transparent mb-1 mr-1 px-6 py-2 text-sm font-bold uppercase text-red-500 outline-none transition-all duration-150 ease-linear focus:outline-none"
+                    className="mb-1 mr-1 w-full rounded bg-accentLinear-1 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setBuy(false);
-                      }}
                   >
-                    Close
-                  </button>
-                  <button
-                    className="mb-1 mr-1 rounded bg-accentLinear-1 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
-                    type="button"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setBuy(false);
-                      }}
-                  >
-                    Buy
+                    Purchase
                   </button>
                 </div>
               </div>

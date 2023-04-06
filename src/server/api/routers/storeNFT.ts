@@ -15,7 +15,8 @@ export const storeNFTRouter = router({
       try {
         const NFTS = await ctx.prisma.storeNft.findMany({
             where:{
-                store_id:"642271fe20c73df3d28f4a5e"
+                store_id:"642271fe20c73df3d28f4a5e",
+                is_listed:true,
             }
         })
             

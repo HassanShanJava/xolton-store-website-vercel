@@ -1,4 +1,4 @@
-import Character from '~/public/images/character.svg';
+
 
 export function generateOTP(otp_length = 0) {
   const digits = '0123456789';

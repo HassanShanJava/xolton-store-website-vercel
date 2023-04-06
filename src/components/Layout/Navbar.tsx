@@ -10,11 +10,12 @@ import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
-
+import { useToast } from "@chakra-ui/react";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
+  const toast = useToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
   const dispatch = useDispatch();
@@ -24,13 +25,13 @@ const Navbar = () => {
     console.log("Data : ", data);
     if (data?.success !== false) {
       console.log("check");
-      // toast({
-      //   title: 'Wallet connected',
-      //   status: 'success',
-      //   isClosable: true,
-      //   position: 'top-right',
-      // });
-      
+      toast({
+        title: "Wallet connected",
+        status: "success",
+        isClosable: true,
+        position: "top-right",
+      });
+
       dispatch(
         web3Init({
           web3: data?.web3,
@@ -39,13 +40,12 @@ const Navbar = () => {
         })
       );
     } else {
-      // toast({
-      //   title: data?.message,
-      //   status: 'error',
-      //   isClosable: true,
-      //   position: 'top-right',
-      // });
-      
+      toast({
+        title: data?.message as string,
+        status: "error",
+        isClosable: true,
+        position: "top-right",
+      });
     }
   };
 
@@ -119,12 +119,11 @@ const Navbar = () => {
             <>
               <button
                 type="button"
-                className=" rounded-3xl bg-accentLinear-1 p-3 text-white hover:bg-ac-2"
+                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
                 onClick={() => connectMetamask()}
               >
                 {customTruncateHandler(account, 8)}
               </button>
-
             </>
           ) : (
             <>
@@ -135,7 +134,6 @@ const Navbar = () => {
               >
                 Connect Wallet
               </button>
-
             </>
           )}
         </div>
