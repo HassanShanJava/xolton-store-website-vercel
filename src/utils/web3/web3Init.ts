@@ -23,7 +23,7 @@ export async function initWeb3() {
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: maticChainId }],
           });
-        } catch (switchError) {
+        } catch (switchError:any  ) {
           if (switchError.code === 4902) {
             // console.log(switchError)
             console.log(

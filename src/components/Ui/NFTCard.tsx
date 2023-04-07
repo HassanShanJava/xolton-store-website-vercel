@@ -90,9 +90,9 @@ const NFTCard = ({ nft, key }: any) => {
           <Popup
             open={showPop}
             setBuy={setShowPop}
-            price={nft.price}
-            tax={nft.tax}
-            accountBalance={accountBalance}
+            price={+nft.price}
+            tax={+nft.tax}
+            accountBalance={+accountBalance}
           />
         )}
       </div>

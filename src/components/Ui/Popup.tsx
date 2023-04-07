@@ -5,7 +5,16 @@ import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 
-const Popup = ({ open, setBuy, price, tax, accountBalance }) => {
+
+interface PopUpType{
+  open:boolean,
+  setBuy:Function,
+  price:number,
+  tax:number,
+  accountBalance:number
+}
+
+const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
   const toast = useToast();
 
   const total = +price + +tax;
