@@ -60,7 +60,7 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
                       Your balance
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+accountBalance).toFixed(5)} Eth
+                      {(+accountBalance).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -69,7 +69,7 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
                       NFT Price
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+price).toFixed(5)} Eth
+                      {(+price).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -78,7 +78,7 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
                       Service fee 2%
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+tax).toFixed(5)} Eth
+                      {(+tax).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -87,7 +87,7 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)} Eth
+                      {total.toFixed(5)} <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
                 </div>

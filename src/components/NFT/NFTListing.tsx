@@ -1,21 +1,22 @@
 import React from "react";
-import NFTCard from "../Ui/NFTCard";
+import NFTCard from "./NFTCard";
 
 
 import { api } from "~/utils/api";
 
 const NFTListing = () => {
-  const { data: storeMakerData } = api.storeNFT.getStoreNFTS.useQuery(
+  const { data: storeNFTData } = api.storeNFT.getStoreNFTS.useQuery(
     {},
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  console.log(storeMakerData, "storeMakerData");
+  console.log(storeNFTData, "storeNFTData");
   return (
     <>
-      <div className="h-full w-full">
+      <div className="h-full max-h-full w-full ">
+        
         <div className="flex flex-row-reverse justify-between items-center w-full ">
           <div className="mb-3  px-2">
             <select data-te-select-init className="p-2 rounded-lg">
@@ -27,12 +28,14 @@ const NFTListing = () => {
             </select>
           </div>
         </div>
-        <div className="grid h-full  w-full grid-cols-1 gap-4 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {storeMakerData &&
-            storeMakerData.map((nft, i) => (
+        
+        <div className="grid  grid-cols-1 gap-3.5 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {storeNFTData &&
+            storeNFTData.map((nft, i) => (
               <NFTCard nft={nft} key={i} />
             ))}
         </div>
+
       </div>
     </>
   );

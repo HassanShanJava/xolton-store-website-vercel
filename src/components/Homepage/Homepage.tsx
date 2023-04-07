@@ -1,10 +1,10 @@
 import React from "react";
 import Banner from "./Banner";
-import NFTCard from "../Ui/NFTCard";
+import NFTCard from "../NFT/NFTCard";
 
 import Image from "next/image";
 import BannerImage from "../../public/images/banner.png";
-import NFTListing from "./NFTListing";
+import NFTListing from "../NFT/NFTListing";
 
 const Homepage = () => {
   return (
@@ -21,7 +21,7 @@ const Homepage = () => {
           </div>
         
 
-        <div className=" my-6  h-full min-h-screen w-full ">
+        <div className=" pt-10 pb-20  h-full min-h-screen w-full ">
           {/* <NFTCard /> */}
           <NFTListing />
         </div>

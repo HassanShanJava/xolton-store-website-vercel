@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
-import Popup from "./Popup";
+import Popup from "../Ui/Popup";
 
 import { renderNFTImage } from "~/utils/helper";
 
@@ -11,10 +11,11 @@ import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
+import Link from "next/link";
 
 const NFTCard = ({ nft, key }: any) => {
   const [showPop, setShowPop] = useState(false);
-  const [accountBalance, setAccountBalance] = useState('');
+  const [accountBalance, setAccountBalance] = useState("");
 
   const toast = useToast();
 
@@ -23,19 +24,13 @@ const NFTCard = ({ nft, key }: any) => {
   console.log(nft, "nft");
 
   const { account } = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state:any) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
   console.log(account, "account");
   // const [isConnected, setConnect] = useState(
   //   account && account != "" ? true : false
   // );
 
-
-
-
-
-
-
-  // console.log(web3.eth.getBalance())
+  // console.log(web3.MATIC.getBalance())
 
   const buyNFT = async () => {
     account != ""
@@ -49,29 +44,33 @@ const NFTCard = ({ nft, key }: any) => {
         })
       : "";
 
-      const balance =await web3?.eth.getBalance(account)
-      console.log(balance,"balance") 
-      const accountBalance = web3?.utils.fromWei(balance, "ether")
-      // console.log(accountBalance,"accountBalance")
-      setAccountBalance(accountBalance)
+    const balance = await web3?.eth.getBalance(account);
+    console.log(balance, "balance");
+    const accountBalance = web3?.utils.fromWei(balance, "ether");
+    // console.log(accountBalance,"accountBalance")
+    setAccountBalance(accountBalance);
   };
   return (
     <React.Fragment>
-      <div className="mx-auto h-full  max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-bg-1 p-3 hover:bg-white">
-        <div className="my-auto flex h-[60%] items-center justify-center object-contain sx:h-[60%] md:h-[70%]">
-          <Image
-            src={renderNFTImage(nft)}
-            alt="/nft"
-            width={260}
-            height={290}
-            priority
-            className="mx-auto h-full max-h-[290px]  w-full max-w-[260px]  rounded-xl object-cover"
-          />
-        </div>
+      <div className="px-auto h-full  max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-bg-1 p-3 hover:bg-white">
+        <Link href={`/nft-details/${nft.id}`}>
+          <div className="py-auto flex h-[60%] items-center justify-center object-contain sx:h-[60%] md:h-[70%]">
+            <Image
+              src={renderNFTImage(nft)}
+              alt="/nft"
+              width={260}
+              height={290}
+              priority
+              className="px-auto h-full max-h-[290px]  w-full max-w-[260px]  rounded-xl object-cover"
+            />
+          </div>
+        </Link>
 
         <div className="flex items-center justify-between px-2.5 py-3">
           <p>{nft?.name}</p>
-          <p>{nft?.price} Eth</p>
+          <p>
+            {nft?.price} <span className="text-xs lowercase">MATIC</span>
+          </p>
         </div>
 
         <div className="px-2">
