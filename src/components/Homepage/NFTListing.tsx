@@ -5,7 +5,7 @@ import NFTCard from "../Ui/NFTCard";
 import { api } from "~/utils/api";
 
 const NFTListing = () => {
-  const { data: storeMakerData } = api.storeMaker.getStoreMaker.useQuery(
+  const { data: storeMakerData } = api.storeNFT.getStoreNFTS.useQuery(
     {},
     {
       refetchOnWindowFocus: false,
@@ -30,7 +30,7 @@ const NFTListing = () => {
         <div className="grid h-full  w-full grid-cols-1 gap-4 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {storeMakerData &&
             storeMakerData.map((nft, i) => (
-              <NFTCard nft={nft.store_nft} key={i} />
+              <NFTCard nft={nft} key={i} />
             ))}
         </div>
       </div>
