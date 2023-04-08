@@ -29,7 +29,7 @@ const NFTListing = () => {
           </div>
         </div>
         
-        <div className="grid  grid-cols-1 gap-3.5 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid h-full w-full  grid-cols-1  gap-y-10 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {storeNFTData &&
             storeNFTData.map((nft, i) => (
               <NFTCard nft={nft} key={i} />

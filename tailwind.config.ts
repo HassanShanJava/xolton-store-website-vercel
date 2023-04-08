@@ -11,6 +11,9 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      inter: ['Inter', 'sans-serif'],
+    },
     extend: {
       colors: {
         "ac-1": "#FB74B5",
@@ -25,6 +28,7 @@ export default {
         "ct-2": "#030607",
         "bg-1": "#F1F3F5",
         "gt-1": "#A0AEC0",
+        "tx-1":"rgba(0,0,0,0.48)"
       },
       backgroundImage: {
         "gradient-24":

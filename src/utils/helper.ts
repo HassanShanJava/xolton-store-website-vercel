@@ -23,7 +23,7 @@ export function formatTrpcError(trpcError = 'Something went wrong!' as string) {
 }
 
 // CONCAT DATA
-export function customTruncateHandler(str = '', n = 15) {
+export function customTruncateHandler(str = '', n =10 ) {
   return str?.length > n ? str?.slice(0, n) + '...' : str;
 }
 // VALIDATE IMAGE TYPE

@@ -37,6 +37,7 @@ model User {
   store_makerorder  StoreMakerOrder[]
   store_takerorder  StoreTakerOrder[]
   store_nft_orders  StoreNftOrder[]
+  store_blogs       StoreBlogs[]
 
   // To return `Date`s intact through the API we use transformers
   // https://trpc.io/docs/data-transformers
@@ -139,9 +140,9 @@ model StoreMakerOrder {
   tokenId     String?
   tax         String?
   nonce       String?
-  v           String?
-  r           String?
-  s           String?
+  signed_v    String?
+  signed_r    String?
+  signed_s    String?
 
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
@@ -200,6 +201,32 @@ model StoreNftOrder {
 
   @@index([store_id, nft_id])
   @@map("store_nft_orders")
+}
+
+// store collections which created by store owners
+model StoreBlogs {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  store_id    String  @db.ObjectId
+  title       String
+  meta        String
+  data        String
+  description String
+  thumb       String?
+  media       String?
+  media_type  String?
+
+  status      String?
+  is_active   Boolean   @default(false)
+  is_deleted  Boolean   @default(false)
+  is_featured Boolean   @default(false)
+  is_trending Boolean   @default(false)
+  is_blocked  Boolean   @default(false)
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  User        User      @relation(fields: [store_id], references: [id])
+
+  @@index([store_id])
+  @@map("store_blogs")
 }
 
 enum Plan {
