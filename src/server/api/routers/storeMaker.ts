@@ -13,7 +13,7 @@ export const storeMakerRouter = router({
       try {
         const makerOrder = await ctx.prisma.storeMakerOrder.findMany({
           where: {
-            store_id: "642271fe20c73df3d28f4a5e",
+            store_id: "641ad2a5a5275ac1ff1e0646",
           },
           select: {
             id: true,
@@ -28,9 +28,9 @@ export const storeMakerRouter = router({
             tokenId: true,
             tax: true,
             nonce: true,
-            v: true,
-            r: true,
-            s: true,
+            signed_v: true,
+            signed_r: true,
+            signed_s: true,
             created_at: true,
             updated_at: true,
             store_nft: {

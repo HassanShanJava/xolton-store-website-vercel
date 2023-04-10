@@ -139,9 +139,9 @@ model StoreMakerOrder {
   tokenId     String?
   tax         String?
   nonce       String?
-  v           String?
-  r           String?
-  s           String?
+  signed_v    String?
+  signed_r    String?
+  signed_s    String?
 
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
