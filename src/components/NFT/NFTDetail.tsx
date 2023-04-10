@@ -210,7 +210,7 @@ const NFTDetail = () => {
               <button
                 type="button"
                 className="border-b border-black p-1"
-                onClick={() => {}}
+                onClick={() => {router.push(`/${NFTDetail?.contract_id} `)}}
               >
                 View More
               </button>
