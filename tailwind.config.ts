@@ -28,7 +28,8 @@ export default {
         "ct-2": "#030607",
         "bg-1": "#F1F3F5",
         "gt-1": "#A0AEC0",
-        "tx-1":"rgba(0,0,0,0.48)"
+        "tx-1":"rgba(0,0,0,0.48)",
+        "tx-2":"rgba(0,0,0,0.24)",
       },
       backgroundImage: {
         "gradient-24":

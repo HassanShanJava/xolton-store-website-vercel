@@ -8,25 +8,25 @@ import NFTListing from "../NFT/NFTListing";
 
 const Homepage = () => {
   return (
-    <>
-      <div className="h-full max-h-full w-full  bg-bg-1 px-8 pt-8">
-          <div className=" relative py-4 h-[300px] w-full object-cover ">
+    <div>
+      <div className="h-full  w-full  bg-bg-1 px-4 pt-8">
+          <div className=" relative py-4  h-[200px]  md:h-[300px]  w-full object-cover ">
             {/* <Banner /> */}
             <Image
               src={BannerImage}
               alt="/banner"
               fill
-              className=" rounded-[20px] object-cover "
+              className="px-2 rounded-[20px] object-cover "
             />
           </div>
         
 
-        <div className=" pt-10 pb-20  h-full min-h-screen w-full ">
-          {/* <NFTCard /> */}
           <NFTListing />
-        </div>
+        {/* <div className=" mt-10 mb-20  h-full min-h-screen w-full ">
+        </div> */}
+          {/* <NFTCard /> */}
       </div>
-    </>
+    </div>
   );
 };
 

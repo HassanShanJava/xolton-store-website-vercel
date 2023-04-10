@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
@@ -40,12 +40,13 @@ const Navbar = () => {
         })
       );
     } else {
-      toast({
-        title: data?.message as string,
-        status: "error",
-        isClosable: true,
-        position: "top-right",
-      });
+      data &&
+        toast({
+          title: data?.message?.message as string,
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
     }
   };
 
@@ -115,26 +116,22 @@ const Navbar = () => {
         </ul>
 
         <div className="mr-4">
-          {account !== "" ? (
-            <>
-              <button
-                type="button"
-                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
-                onClick={() => connectMetamask()}
-              >
-                {customTruncateHandler(account, 8)}
-              </button>
-            </>
+          {account != "" ? (
+            <button
+              type="button"
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
+              onClick={() => connectMetamask()}
+            >
+              {customTruncateHandler(account, 8)}
+            </button>
           ) : (
-            <>
-              <button
-                type="button"
-                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
-                onClick={() => connectMetamask()}
-              >
-                Connect Wallet
-              </button>
-            </>
+            <button
+              type="button"
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
+              onClick={() => connectMetamask()}
+            >
+              Connect Wallet
+            </button>
           )}
         </div>
       </div>

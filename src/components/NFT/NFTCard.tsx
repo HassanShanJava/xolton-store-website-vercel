@@ -11,6 +11,7 @@ import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
+
 import Link from "next/link";
 
 const NFTCard = ({ nft, key }: any) => {
@@ -47,22 +48,24 @@ const NFTCard = ({ nft, key }: any) => {
     const balance = await web3?.eth.getBalance(account);
     // console.log(balance, "balance");
     const accountBalance = web3?.utils.fromWei(balance, "ether");
-    console.log(accountBalance,"accountBalance")
+    console.log(accountBalance, "accountBalance");
     setAccountBalance(accountBalance);
   };
   return (
-    <React.Fragment>
-      <div className="px-auto  h-full max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+    <>
+      <div className="mx-auto  h-full max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
-          <div className="h-full max-h-[290px] w-full max-w-[290px]">
-            <div className="py-auto flex h-full  items-center justify-center object-cover ">
+          <div className="h-full mx-auto max-h-[290px] w-full max-w-[290px]">
+            <div className="  h-full w-full  object-cover ">
               <Image
                 src={renderNFTImage(nft)}
                 alt="/nft"
                 width={260}
                 height={290}
+                // fill
                 priority
-                className="px-auto h-full max-h-[290px]  w-full max-w-[260px]  rounded-xl object-cover"
+                quality={100}
+                className="mx-auto h-full max-h-[290px]  w-full max-w-[260px]  rounded-xl  object-cover object-center"
               />
             </div>
           </div>
@@ -86,18 +89,18 @@ const NFTCard = ({ nft, key }: any) => {
           >
             Buy
           </button>
+          {showPop && (
+            <Popup
+              open={showPop}
+              setBuy={setShowPop}
+              price={+nft.price}
+              tax={+nft.tax}
+              accountBalance={+accountBalance}
+            />
+          )}
         </div>
-        {showPop && (
-          <Popup
-            open={showPop}
-            setBuy={setShowPop}
-            price={+nft.price}
-            tax={+nft.tax}
-            accountBalance={+accountBalance}
-          />
-        )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
