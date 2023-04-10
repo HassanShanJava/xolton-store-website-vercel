@@ -41,7 +41,7 @@ const NFTCard = ({ nft, key }: any) => {
           title: "Connect Wallet",
           status: "error",
           isClosable: true,
-          position: "top-right",
+          position: "top-left",
         })
       : "";
 

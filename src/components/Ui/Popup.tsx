@@ -24,7 +24,7 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
         title: "Not Enough Balance",
         status: "error",
         isClosable: true,
-        position: "top-right",
+        position: "top-left",
       });
       return ;
     }

@@ -57,7 +57,7 @@ const NFTDetail = () => {
           title: "Connect Wallet",
           status: "error",
           isClosable: true,
-          position: "top-right",
+          position: "top-left",
         })
       : "";
 
@@ -89,6 +89,7 @@ const NFTDetail = () => {
                   alt="/nft"
                   width={700}
                   height={500}
+                  priority
                   quality={100}
                   className="relative h-full max-h-[500px] w-full  max-w-[680px] rounded-xl object-cover"
                 />
@@ -203,7 +204,7 @@ const NFTDetail = () => {
           </div>
 
           {/* collection */}
-          <div className="min-h-screen mx-auto h-full w-full max-w-7xl bg-bg-1 px-8 py-6">
+          <div className="mx-auto h-full min-h-screen w-full max-w-7xl bg-bg-1 px-8 py-6">
             <div className="mx-auto flex items-center justify-between px-4 py-3">
               <p>From the same collection</p>
               <button

@@ -16,6 +16,7 @@ const Homepage = () => {
               src={BannerImage}
               alt="/banner"
               fill
+              quality={100}
               className="px-2 rounded-[20px] object-cover "
             />
           </div>

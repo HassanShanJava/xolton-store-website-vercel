@@ -29,7 +29,7 @@ const Navbar = () => {
         title: "Wallet connected",
         status: "success",
         isClosable: true,
-        position: "top-right",
+        position: "top-left",
       });
 
       dispatch(
@@ -45,7 +45,7 @@ const Navbar = () => {
           title: data?.message?.message as string,
           status: "error",
           isClosable: true,
-          position: "top-right",
+          position: "top-left",
         });
     }
   };
@@ -97,7 +97,9 @@ const Navbar = () => {
         </div>
 
         <div className="relative ml-4 hidden h-10 w-10 sm:flex">
-          <Image src={Logo} alt="/logo" fill />
+          <Link href={"/"}>
+            <Image src={Logo} alt="/logo" fill />
+          </Link>
         </div>
 
         <ul className="hidden items-center justify-between sm:flex ">
