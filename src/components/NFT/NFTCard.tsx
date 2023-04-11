@@ -53,51 +53,50 @@ const NFTCard = ({ nft, key }: any) => {
   };
   return (
     <>
-      <div className="mx-auto  h-full max-h-[420px] w-full max-w-[290px] rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" mx-auto w-72 h-auto rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
-          <div className="h-full mx-auto max-h-[290px] w-full max-w-[290px]">
-            <div className="  h-full w-full  object-cover ">
-              <Image
-                src={renderNFTImage(nft)}
-                alt="/nft"
-                width={260}
-                height={290}
-                // fill
-                priority
-                quality={100}
-                className="mx-auto h-full max-h-[290px]  w-full max-w-[260px]  rounded-xl  object-cover object-center"
-              />
-            </div>
+          <div className="relative h-80 max-h-[290px]  w-full  ">
+            <Image
+              src={renderNFTImage(nft)}
+              alt="/nft"
+              fill
+              priority
+              quality={100}
+              className="mx-auto rounded-xl  object-cover "
+            />
           </div>
         </Link>
 
-        <div className="flex items-center justify-between px-2.5 py-3">
-          <p>{nft?.name}</p>
-          <p>
-            {nft?.price} <span className="text-xs lowercase">MATIC</span>
-          </p>
-        </div>
+        <div className="">
+          <div className="flex items-center justify-between px-2.5 py-4">
+            <p>{nft?.name}</p>
+            <p>
+              {nft?.price} <span className="text-xs lowercase">MATIC</span>
+            </p>
+          </div>
 
-        <div className="px-2">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              buyNFT();
-            }}
-            className="  w-full rounded-[6px] bg-black py-3 text-center text-white hover:bg-accentLinear-1 "
-          >
-            Buy
-          </button>
-          {showPop && (
-            <Popup
-              open={showPop}
-              setBuy={setShowPop}
-              price={+nft.price}
-              tax={+nft.tax}
-              accountBalance={+accountBalance}
-            />
-          )}
+          <div className="px-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                buyNFT();
+              }}
+              className="  w-full rounded-[6px] bg-black py-3 text-center text-white hover:bg-accentLinear-1 "
+            >
+              Buy
+            </button>
+            {showPop && (
+              <Popup
+                nft={nft}
+                open={showPop}
+                setBuy={setShowPop}
+                price={+nft.price}
+                tax={+nft.tax}
+                accountBalance={+accountBalance}
+              />
+            )}
+          </div>
         </div>
       </div>
     </>

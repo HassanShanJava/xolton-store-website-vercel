@@ -80,14 +80,14 @@ const NFTDetail = () => {
   return (
     <div>
       {NFTDetail && (
-        <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8 pt-12 font-inter">
-          <div className=" mx-auto flex w-full max-w-7xl flex-col   items-start justify-between md:flex-row">
+        <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 md:px-7 pt-12 font-inter">
+          <div className=" mx-auto flex w-full max-w-6.5xl flex-col   items-start justify-between md:flex-row">
             <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-[450px] md:sticky">
               <div className="h-[400px] w-full">
                 <Image
                   src={renderNFTImage(NFTDetail)}
                   alt="/nft"
-                  width={700}
+                  width={700} 
                   height={500}
                   priority
                   quality={100}
@@ -204,18 +204,18 @@ const NFTDetail = () => {
           </div>
 
           {/* collection */}
-          <div className="mx-auto h-full min-h-screen w-full max-w-7xl bg-bg-1 px-8 py-6">
-            <div className="mx-auto flex items-center justify-between px-4 py-3">
-              <p>From the same collection</p>
+          <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 sm:px-10 py-6">
+            <div className="mx-auto flex items-center justify-between sm:px-5 py-3">
+              <p className="text-sm md:text-md lg:text-lg">From the same collection</p>
               <button
                 type="button"
-                className="border-b border-black p-1"
+                className="border-b border-transparent duration-300 px-4 hover:border-black p-1 text-sm md:text-md lg:text-lg hover:bg-white rounded-lg " 
                 onClick={() => {router.push(`/?contract_id=${NFTDetail?.contract_id} `)}}
               >
                 View More
               </button>
             </div>
-            <div className=" grid h-full min-h-screen w-full  grid-cols-1    sx:grid-cols-2  lg:grid-cols-3">
+            <div className="  h-full  w-full gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
               {NFTCollection &&
                 NFTCollection.map((collectionNFT, i) => (
                   <NFTCard nft={collectionNFT} key={i} />

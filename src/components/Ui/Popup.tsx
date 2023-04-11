@@ -4,21 +4,25 @@ import Web3 from "web3";
 import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
-
+import { buyNFT } from "~/utils/web3/buyNFT";
 
 interface PopUpType{
   open:boolean,
   setBuy:Function,
   price:number,
   tax:number,
+  nft:any,
   accountBalance:number
 }
 
-const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
+const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
   const toast = useToast();
 
+  const { account } = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state:any) => state.web3);
+  
   const total = +price + +tax;
-  const purchaseNFT = () => {
+  const purchaseNFT = async() => {
     if (accountBalance < total) {
       toast({
         title: "Not Enough Balance",
@@ -27,6 +31,28 @@ const Popup = ({ open, setBuy, price, tax, accountBalance }:PopUpType) => {
         position: "top-left",
       });
       return ;
+    } else{
+      console.log("NFT OO ",nft)
+      console.log("WEB3 NFT : ",nft?.store_makerorder[0])
+      const buyData = await buyNFT(web3,account,total,nft?.store_makerorder[0])
+      if (buyData?.success){
+        console.log("BUY DATA :: ",buyData)
+        toast({
+          title: "Transaction Completed",
+          status: "success",
+          isClosable: true,
+          position: "top-right",
+        });
+        
+      } else {
+        console.log("BUY Error :",buyData)
+        toast({
+          title: buyData.msg as string,
+          status: "error",
+          isClosable: true,
+          position: "top-right",
+        });
+      }
     }
   };
 
