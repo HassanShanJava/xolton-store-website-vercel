@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
+import { setAccount } from "~/store/slices/web3Slice";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -48,7 +49,23 @@ const Navbar = () => {
       });
     }
   };
+  
+  if (typeof window !== "undefined") {
+    
+    window?.ethereum?.on("accountsChanged", function (accounts: String) {
+      console.log("account :: ",accounts[0])
+      dispatch(setAccount(accounts[0]));
+    });
 
+    window?.ethereum.on('chainChanged', function(chainId: String){
+      console.log('chainChanged', chainId)
+      if (chainId != "0x13881"){
+        dispatch(setAccount(''));
+      } 
+    });
+  }
+
+  // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
       <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4">

@@ -5,8 +5,6 @@ import MarketPlaceAddress from './contractData/NFTMarket-address.json';
 import Web3 from 'web3';
 const toWei = (num) => Web3.utils.toWei(num.toString(), "ether");
 
-
-
 export async function buyNFT(
     web3: object,
     account: string,
