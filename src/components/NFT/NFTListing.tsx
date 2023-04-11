@@ -59,7 +59,7 @@ const NFTListing = () => {
   console.log(contract_id, "contract_id ");
   return (
     <>
-      <div className=" h-full  w-full p-10 ">
+      <div className=" h-full  w-full py-10 ">
         <div className="justify-left flex w-full flex-row-reverse items-center ">
           <div className="mb-3  px-2 ">
             <input
