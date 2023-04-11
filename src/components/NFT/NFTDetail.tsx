@@ -83,7 +83,7 @@ const NFTDetail = () => {
         <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8 pt-12 font-inter">
           <div className=" mx-auto flex w-full max-w-7xl flex-col   items-start justify-between md:flex-row">
             <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-[450px] md:sticky">
-              <div className="h-[450px] w-full">
+              <div className="h-[400px] w-full">
                 <Image
                   src={renderNFTImage(NFTDetail)}
                   alt="/nft"
