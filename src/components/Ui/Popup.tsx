@@ -20,8 +20,10 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
 
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state:any) => state.web3);
-  
-  const total = +price + +tax;
+  console.log("NFT Tax L: ",tax)
+  const total = (+price + +tax).toFixed(5);
+  console.log("Price :: ",price)
+  console.log("Total :: ",total)
   const purchaseNFT = async() => {
     if (accountBalance < total) {
       toast({
@@ -112,7 +114,7 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)} Eth
+                      {total} Eth
                     </p>
                   </div>
                 </div>
