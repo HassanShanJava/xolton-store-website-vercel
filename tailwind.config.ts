@@ -40,16 +40,17 @@ export default {
     screens: {
       xss: "300px",
       xs: "340px",
-      sx:"500px",
+      sx:"580px",
       sm: "640px",
       // => @media (min-width: 640px) { ... }
 
       md: "768px",
+      mdx: "920px",
       // => @media (min-width: 768px) { ... }
 
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
-
+      xlg:"1200px",
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 

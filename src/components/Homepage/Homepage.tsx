@@ -9,7 +9,7 @@ import NFTListing from "../NFT/NFTListing";
 const Homepage = () => {
   return (
     <div>
-      <div className="h-full  w-full  bg-bg-1 px-4 pt-8">
+      <div className="h-full  w-full min-h-screen bg-bg-1 px-4 pt-8">
           <div className=" relative py-4  h-[200px]  md:h-[300px]  w-full object-cover ">
             {/* <Banner /> */}
             <Image

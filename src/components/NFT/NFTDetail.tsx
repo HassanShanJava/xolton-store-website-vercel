@@ -136,6 +136,7 @@ const NFTDetail = () => {
                   {showPop && NFTDetail && (
                     <Popup
                       open={showPop}
+                      nft={NFTDetail}
                       setBuy={setShowPop}
                       price={+NFTDetail?.price}
                       tax={+NFTDetail?.tax}

@@ -42,7 +42,7 @@ const NFTListing = () => {
   };
 
   const { data: storeNFTData } = api.storeNFT.getStoreNFTS.useQuery(
-    sortFilter,
+    { ...sortFilter, is_listed: true },
     {
       refetchOnWindowFocus: false,
     }
@@ -50,7 +50,7 @@ const NFTListing = () => {
 
   console.log(sortFilter, "sortFilter front");
   const { data: NFTCollection } = api.storeNFT.getNFTHomeCollection.useQuery(
-    { ...sortFilter, contract_id: contract_id },
+    { ...sortFilter, contract_id: contract_id, is_listed: true },
     {
       refetchOnWindowFocus: false,
     }
@@ -60,19 +60,20 @@ const NFTListing = () => {
   return (
     <>
       <div className=" h-full  w-full py-10 ">
-        <div className="justify-left flex w-full flex-row-reverse items-center ">
-          <div className="mb-3  px-2 ">
+        <div className="justify-left flex w-full flex-col items-center xs:flex-row-reverse ">
+          <div className="mb-3 w-full xs:w-60   ">
             <input
               type="text"
               placeholder="Search by NFT Name"
-              className="mx-2 w-60 rounded-lg p-2 focus:outline-none"
+              className=" w-full   rounded-lg p-2 focus:outline-none "
               onChange={handleKeyPress}
             />
           </div>
-          <div className="mb-3  px-2">
+
+          <div className="mx-2 mb-3 w-full xs:w-44">
             <select
               data-te-select-init
-              className="rounded-lg p-2 focus:outline-none"
+              className="w-full rounded-lg p-2  focus:outline-none"
               onChange={(e) => sorNFT(e.target.value)}
             >
               <option value="A to Z" selected disabled hidden>
@@ -89,7 +90,7 @@ const NFTListing = () => {
         {storeNFTData && contract_id == undefined && (
           <div
             className={
-              "grid    w-full grid-cols-1 gap-4  gap-y-10 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+              "grid w-full grid-cols-1 gap-x-2 gap-y-4 sx:grid-cols-2 mdx:grid-cols-3 xlg:grid-cols-4"
             }
           >
             {storeNFTData.map((nft, i) => (
@@ -99,7 +100,11 @@ const NFTListing = () => {
         )}
 
         {contract_id !== undefined && NFTCollection && (
-          <div className="grid h-full   w-full grid-cols-1 gap-4  gap-y-10 sx:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div
+            className={
+              "grid w-full grid-cols-1 gap-x-2 gap-y-4 sx:grid-cols-2 mdx:grid-cols-3 xlg:grid-cols-4"
+            }
+          >
             {NFTCollection.map((nft, i) => (
               <NFTCard nft={nft} />
             ))}

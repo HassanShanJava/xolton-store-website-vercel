@@ -5,24 +5,55 @@ import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
+import { api } from "~/utils/api";
 
-interface PopUpType{
-  open:boolean,
-  setBuy:Function,
-  price:number,
-  tax:number,
-  nft:any,
-  accountBalance:number
+import { Spinner } from "@chakra-ui/react";
+import { checkTargetForNewValues } from "framer-motion";
+
+interface PopUpType {
+  open: boolean;
+  setBuy: Function;
+  price: number;
+  tax: number;
+  nft: any;
+  accountBalance: number;
 }
 
-const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
+const Popup = ({
+  open,
+  setBuy,
+  nft,
+  price,
+  tax,
+  accountBalance,
+}: PopUpType) => {
+  const [isPurchase, setIsPurchase] = useState<any>("");
   const toast = useToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state:any) => state.web3);
-  
+  const { web3 } = useSelector((state: any) => state.web3);
+
   const total = +price + +tax;
-  const purchaseNFT = async() => {
+
+  const nftUpdate = api.storeNFT.updateStoreNFT.useMutation({
+    onSuccess: () => {
+      console.log("nft updated successfully");
+    },
+    onError(error: any) {
+      console.log({ error });
+    },
+  });
+
+  const nftOrder = api.storeNFTOrder.updateStoreNFTOrder.useMutation({
+    onSuccess: () => {
+      console.log("nft ordered successfully");
+    },
+    onError(error: any) {
+      console.log({ error });
+    },
+  });
+
+  const purchaseNFT = async () => {
     if (accountBalance < total) {
       toast({
         title: "Not Enough Balance",
@@ -30,22 +61,56 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
         isClosable: true,
         position: "top-left",
       });
-      return ;
-    } else{
-      console.log("NFT OO ",nft)
-      console.log("WEB3 NFT : ",nft?.store_makerorder[0])
-      const buyData = await buyNFT(web3,account,total,nft?.store_makerorder[0])
-      if (buyData?.success){
-        console.log("BUY DATA :: ",buyData)
+      return;
+    } else {
+      setIsPurchase(false);
+      console.log("NFT OO ", nft);
+      console.log("WEB3 NFT : ", nft?.store_makerorder[0]);
+      const buyData = await buyNFT(
+        web3,
+        account,
+        total,
+        nft?.store_makerorder[0]
+      );
+      if (buyData?.success) {
+        console.log("BUY DATA :: ", buyData);
+        // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
+
+        const payload = {
+          id: nft.id,
+          owner: buyData.owner,
+          transaction_id: buyData.transaction_id,
+          is_listed: false,
+          status: "Purchase",
+        };
+
+        const payloadOrder = {
+          store_id: nft.store_id,
+          nft_id: nft.id,
+          owner_address: buyData?.owner,
+          transaction_id: buyData?.transaction_id,
+          nft_name: nft.name,
+          amount: +nft.price,
+          sell_type: '',
+          previous_owner_address: buyData?.previous_owner,
+          is_deleted: false,
+        };
+
+        console.log(payloadOrder, "payloadOrder");
+        const data = await nftUpdate.mutateAsync(payload);
+        const dataOrder = await nftOrder.mutateAsync(payloadOrder);
+
         toast({
           title: "Transaction Completed",
           status: "success",
           isClosable: true,
           position: "top-right",
         });
-        
+
+        setIsPurchase(true);
+        setBuy(false);
       } else {
-        console.log("BUY Error :",buyData)
+        console.log("BUY Error :", buyData);
         toast({
           title: buyData.msg as string,
           status: "error",
@@ -86,7 +151,8 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                       Your balance
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+accountBalance).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
+                      {(+accountBalance).toFixed(5)}{" "}
+                      <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -95,7 +161,8 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                       NFT Price
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+price).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
+                      {(+price).toFixed(5)}{" "}
+                      <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -104,7 +171,8 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                       Service fee 2%
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {(+tax).toFixed(5)} <span className="text-xs lowercase">MATIC</span>
+                      {(+tax).toFixed(5)}{" "}
+                      <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
@@ -113,7 +181,8 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)} <span className="text-xs lowercase">MATIC</span>
+                      {total.toFixed(5)}{" "}
+                      <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
                 </div>
@@ -123,8 +192,9 @@ const Popup = ({ open, setBuy,nft, price, tax, accountBalance }:PopUpType) => {
                     className="mb-1 mr-1 w-full rounded bg-accentLinear-1 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
                     onClick={purchaseNFT}
+                    disabled={isPurchase}
                   >
-                    Purchase
+                    {isPurchase !== false ? "Purchase" : <Spinner />}
                   </button>
                 </div>
               </div>

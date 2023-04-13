@@ -35,7 +35,7 @@ export async function buyNFT(
             makerOrder?.nftContract,
             toWei(makerOrder?.price).toString(),
             makerOrder?.tokenId,
-            toWei(makerOrder?.tax).toString(),
+            toWei((makerOrder?.tax)).toString(),
             makerOrder?.nonce,
             makerOrder?.signed_v,
             makerOrder?.signed_r,
@@ -60,6 +60,7 @@ export async function buyNFT(
             console.log('Hash... ', transaction_id);
         });
         return { success: true, transaction_id: transaction_id,previous_owner:makerOrder?.signer,owner:account };
+        // return { success: true, transaction_id: "123",previous_owner:"2124",owner:"121131213" };
     }catch(error: any){
         console.log("ERROR :: ",error)
         console.log('error::', error);

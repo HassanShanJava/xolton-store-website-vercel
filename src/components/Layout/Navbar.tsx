@@ -69,7 +69,7 @@ const Navbar = () => {
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4 shadow-md">
         {/* for mobile menu state */}
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
