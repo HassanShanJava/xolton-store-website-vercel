@@ -21,7 +21,7 @@ export const storeNFTRouter = router({
 
           // },
           where: {
-            store_id: "641ad2a5a5275ac1ff1e0646",
+            store_id: "643553afb6289384c23ff4a9",
             is_listed:true,
           },
           select: {

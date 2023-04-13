@@ -13,7 +13,7 @@ export const storeMakerRouter = router({
       try {
         const makerOrder = await ctx.prisma.storeMakerOrder.findMany({
           where: {
-            store_id: "641ad2a5a5275ac1ff1e0646",
+            store_id: "643553afb6289384c23ff4a9",
           },
           select: {
             id: true,
