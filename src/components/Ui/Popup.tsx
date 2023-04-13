@@ -31,29 +31,12 @@ const Popup = ({
   const toast = useToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state: any) => state.web3);
-
-  const total = +price + +tax;
-
-  const nftUpdate = api.storeNFT.updateStoreNFT.useMutation({
-    onSuccess: () => {
-      console.log("nft updated successfully");
-    },
-    onError(error: any) {
-      console.log({ error });
-    },
-  });
-
-  const nftOrder = api.storeNFTOrder.updateStoreNFTOrder.useMutation({
-    onSuccess: () => {
-      console.log("nft ordered successfully");
-    },
-    onError(error: any) {
-      console.log({ error });
-    },
-  });
-
-  const purchaseNFT = async () => {
+  const { web3 } = useSelector((state:any) => state.web3);
+  console.log("NFT Tax L: ",tax)
+  const total = (+price + +tax).toFixed(5);
+  console.log("Price :: ",price)
+  console.log("Total :: ",total)
+  const purchaseNFT = async() => {
     if (accountBalance < total) {
       toast({
         title: "Not Enough Balance",
@@ -181,8 +164,7 @@ const Popup = ({
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)}{" "}
-                      <span className="text-xs lowercase">MATIC</span>
+                      {total} Eth
                     </p>
                   </div>
                 </div>
