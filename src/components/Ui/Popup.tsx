@@ -31,12 +31,43 @@ const Popup = ({
   const toast = useToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state:any) => state.web3);
-  console.log("NFT Tax L: ",tax)
-  const total = (+price + +tax).toFixed(5);
-  console.log("Price :: ",price)
-  console.log("Total :: ",total)
-  const purchaseNFT = async() => {
+  const { web3 } = useSelector((state: any) => state.web3);
+  console.log("NFT Tax L: ", tax);
+  const total = Number((+price + +tax).toFixed(5));
+  console.log("Price :: ", price);
+  console.log("Total :: ", total);
+
+
+
+
+
+  const nftUpdate = api.storeNFT.updateStoreNFT.useMutation({
+    onSuccess: () => {
+      console.log("Updated nft successfully");
+
+      // router.push('/admin/wallet-connect');
+    },
+    onError(error: any) {
+      console.log({ error });
+    },
+  });
+  const nftOrder = api.storeNFTOrder.updateStoreNFTOrder.useMutation({
+    onSuccess: () => {
+      console.log("Orderd nft successfully");
+
+      // router.push('/admin/wallet-connect');
+    },
+    onError(error: any) {
+      console.log({ error });
+    },
+  });
+
+
+
+  const purchaseNFT = async () => {
+
+
+
     if (accountBalance < total) {
       toast({
         title: "Not Enough Balance",
@@ -47,6 +78,7 @@ const Popup = ({
       return;
     } else {
       setIsPurchase(false);
+
       console.log("NFT OO ", nft);
       console.log("WEB3 NFT : ", nft?.store_makerorder[0]);
       const buyData = await buyNFT(
@@ -58,7 +90,7 @@ const Popup = ({
       if (buyData?.success) {
         console.log("BUY DATA :: ", buyData);
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
-
+    
         const payload = {
           id: nft.id,
           owner: buyData.owner,
@@ -74,7 +106,7 @@ const Popup = ({
           transaction_id: buyData?.transaction_id,
           nft_name: nft.name,
           amount: +nft.price,
-          sell_type: '',
+          sell_type: "",
           previous_owner_address: buyData?.previous_owner,
           is_deleted: false,
         };
@@ -164,7 +196,7 @@ const Popup = ({
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total} Eth
+                      {total} <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
                 </div>
