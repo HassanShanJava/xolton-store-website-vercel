@@ -6,7 +6,7 @@ import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
 import { api } from "~/utils/api";
-
+import { useRouter } from "next/router";
 import { Spinner } from "@chakra-ui/react";
 import { checkTargetForNewValues } from "framer-motion";
 
@@ -27,25 +27,23 @@ const Popup = ({
   tax,
   accountBalance,
 }: PopUpType) => {
+
+  const router = useRouter();
+
   const [isPurchase, setIsPurchase] = useState<any>("");
   const toast = useToast();
 
-  const { account } = useSelector((state: RootState) => state.web3);
+  const { account }:any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
+
   console.log("NFT Tax L: ", tax);
-  const total = Number((+price + +tax).toFixed(5));
   console.log("Price :: ", price);
+  const total:any = Number((+price + +tax).toFixed(5));
   console.log("Total :: ", total);
-
-
-
-
 
   const nftUpdate = api.storeNFT.updateStoreNFT.useMutation({
     onSuccess: () => {
       console.log("Updated nft successfully");
-
-      // router.push('/admin/wallet-connect');
     },
     onError(error: any) {
       console.log({ error });
@@ -54,20 +52,13 @@ const Popup = ({
   const nftOrder = api.storeNFTOrder.updateStoreNFTOrder.useMutation({
     onSuccess: () => {
       console.log("Orderd nft successfully");
-
-      // router.push('/admin/wallet-connect');
     },
     onError(error: any) {
       console.log({ error });
     },
   });
 
-
-
   const purchaseNFT = async () => {
-
-
-
     if (accountBalance < total) {
       toast({
         title: "Not Enough Balance",
@@ -87,10 +78,11 @@ const Popup = ({
         total,
         nft?.store_makerorder[0]
       );
+
       if (buyData?.success) {
         console.log("BUY DATA :: ", buyData);
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
-    
+
         const payload = {
           id: nft.id,
           owner: buyData.owner,
@@ -105,7 +97,9 @@ const Popup = ({
           owner_address: buyData?.owner,
           transaction_id: buyData?.transaction_id,
           nft_name: nft.name,
-          amount: +nft.price,
+          total_amount: total, // 2.04
+          net_amount: total -  (2 * +nft.tax),  // 1.96
+          total_tax: (2 * +nft.tax), // 0.08
           sell_type: "",
           previous_owner_address: buyData?.previous_owner,
           is_deleted: false,
@@ -124,6 +118,7 @@ const Popup = ({
 
         setIsPurchase(true);
         setBuy(false);
+        router.push("/")
       } else {
         console.log("BUY Error :", buyData);
         toast({
@@ -132,6 +127,8 @@ const Popup = ({
           isClosable: true,
           position: "top-right",
         });
+
+        setBuy(false);
       }
     }
   };

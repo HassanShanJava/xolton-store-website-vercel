@@ -6,7 +6,7 @@ import {
   renderNFTImage,
   customTruncateHandler,
   maticToUSD,
-  // maticToUSD,
+
 } from "~/utils/helper";
 import { useSelector } from "react-redux";
 import NFTCard from "./NFTCard";
@@ -24,7 +24,7 @@ const NFTDetail = () => {
 
   const { id } = router.query;
 
-  const { data: NFTDetail } = api.storeNFT.getNFTDetail.useQuery(
+  const { data: NFTDetail }:any = api.storeNFT.getNFTDetail.useQuery(
     { id: id },
     {
       refetchOnWindowFocus: false,
@@ -68,11 +68,21 @@ const NFTDetail = () => {
   };
 
   useEffect(() => {
+    
     (async () => {
-      const maitccprice = await maticToUSD(+NFTDetail?.price);
-      // console.log(usdMatic,"usdMatic")
-      setUsdMatic(maitccprice);
-    })();
+        if(NFTDetail !==null || NFTDetail !==undefined){
+        try{
+
+          const nftPrice:number = NFTDetail?.price ? +NFTDetail?.price : 0
+          const maitccprice = await maticToUSD(nftPrice);
+          // console.log(usdMatic,"usdMatic")
+          setUsdMatic(maitccprice);
+
+        }catch(e){
+          console.log(e,"consvertion error front-end")
+        }
+      }
+      })();
   }, [NFTDetail?.price]);
 
   console.log({ usdMatic });
@@ -80,14 +90,14 @@ const NFTDetail = () => {
   return (
     <div>
       {NFTDetail && (
-        <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 md:px-7 pt-12 font-inter">
-          <div className=" mx-auto flex w-full max-w-6.5xl flex-col   items-start justify-between md:flex-row">
+        <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 pt-12 font-storeFont md:px-7">
+          <div className=" max-w-6.5xl mx-auto flex w-full flex-col   items-start justify-between md:flex-row">
             <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-[450px] md:sticky">
               <div className="h-[400px] w-full">
                 <Image
                   src={renderNFTImage(NFTDetail)}
                   alt="/nft"
-                  width={700} 
+                  width={700}
                   height={500}
                   priority
                   quality={100}
@@ -138,8 +148,8 @@ const NFTDetail = () => {
                       open={showPop}
                       nft={NFTDetail}
                       setBuy={setShowPop}
-                      price={+NFTDetail?.price}
-                      tax={+NFTDetail?.tax}
+                      price={+NFTDetail.price }
+                      tax={+NFTDetail.tax}
                       accountBalance={+accountBalance}
                     />
                   )}
@@ -178,7 +188,7 @@ const NFTDetail = () => {
                     <div className=" border-t border-tx-2" />
                     <div className="flex justify-between p-3  ">
                       <p>Token Standard</p>
-                      <p>ERC-20</p>
+                      <p>ERC-721</p>
                     </div>
                     {/*divider  */}
                     <div className=" border-t border-tx-2" />
@@ -196,7 +206,7 @@ const NFTDetail = () => {
                     <div className=" border-t border-tx-2" />
                     <div className="flex justify-between p-3 ">
                       <p>Blockchain</p>
-                      <p>Ethereum</p>
+                      <p>Polygon - Matic</p>
                     </div>
                   </div>
                 </div>
@@ -205,18 +215,22 @@ const NFTDetail = () => {
           </div>
 
           {/* collection */}
-          <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 sm:px-10 py-6">
-            <div className="mx-auto flex items-center justify-between sm:px-5 py-3">
-              <p className="text-sm md:text-md lg:text-lg">From the same collection</p>
+          <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 py-6 sm:px-10">
+            <div className="mx-auto flex items-center justify-between py-3 sm:px-5">
+              <p className="md:text-md text-sm lg:text-lg">
+                From the same collection
+              </p>
               <button
                 type="button"
-                className="border-b border-transparent duration-300 px-4 hover:border-black p-1 text-sm md:text-md lg:text-lg hover:bg-white rounded-lg " 
-                onClick={() => {router.push(`/?contract_id=${NFTDetail?.contract_id} `)}}
+                className="md:text-md rounded-lg border-b border-transparent p-1 px-4 text-sm duration-300 hover:border-black hover:bg-white lg:text-lg "
+                onClick={() => {
+                  router.push(`/?contract_id=${NFTDetail?.contract_id} `);
+                }}
               >
                 View More
               </button>
             </div>
-            <div className="  h-full  w-full gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+            <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
               {NFTCollection &&
                 NFTCollection.map((collectionNFT, i) => (
                   <NFTCard nft={collectionNFT} key={i} />
@@ -228,5 +242,7 @@ const NFTDetail = () => {
     </div>
   );
 };
+
+const CollectionList = () => {};
 
 export default NFTDetail;

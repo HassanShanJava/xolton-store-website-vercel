@@ -2,14 +2,12 @@ import { TRPCError } from "@trpc/server";
 import { router, publicProcedure } from "../trpc";
 
 import { StoreMakerSchema } from "~/schema/storeMakerSchema";
-import { prisma } from "~/server/db";
 
 export const storeMakerRouter = router({
   getStoreMaker: publicProcedure
     .input(StoreMakerSchema)
-    .query(async ({ ctx, input }) => {
-      //   console.log(ctx, 'ctx');
-      // ctx.prisma.
+    .query(async ({ ctx}) => {
+      
       try {
         const makerOrder = await ctx.prisma.storeMakerOrder.findMany({
           where: {

@@ -34,16 +34,23 @@ const NFTCard = ({ nft, key }: any) => {
   // console.log(web3.MATIC.getBalance())
 
   const buyNFT = async () => {
-    account != ""
-      ? setShowPop(true)
-      : account == ""
+    account == ""
+    ? toast({
+        title: "Connect Wallet",
+        status: "error",
+        isClosable: true,
+        position: "top-left",
+      })
+    
+      : account == nft.creator_id
       ? toast({
-          title: "Connect Wallet",
+          title: "Owner cannot buy there own NFT",
           status: "error",
           isClosable: true,
           position: "top-left",
         })
-      : "";
+      : setShowPop(true);
+       
 
     const balance = await web3?.eth.getBalance(account);
     // console.log(balance, "balance");
@@ -53,7 +60,7 @@ const NFTCard = ({ nft, key }: any) => {
   };
   return (
     <>
-      <div className=" mx-auto w-72 h-auto rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
           <div className="relative h-80 max-h-[290px]  w-full  ">
             <Image

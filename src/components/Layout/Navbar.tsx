@@ -22,7 +22,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const connectMetamask = async () => {
-    let data = await initWeb3();
+    let data:any = await initWeb3();
     console.log("Data : ", data);
     if (data?.success !== false) {
       console.log("check");
@@ -43,7 +43,7 @@ const Navbar = () => {
     } else {
       data &&
         toast({
-          title: data?.message?.message as string,
+          title: data.message.message ,
           status: "error",
           isClosable: true,
           position: "top-left",
@@ -138,7 +138,7 @@ const Navbar = () => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
+              className=" sm:text-md rounded-3xl font-storeFont bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
               onClick={() => connectMetamask()}
             >
               {customTruncateHandler(account, 8)}
@@ -146,7 +146,7 @@ const Navbar = () => {
           ) : (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
+              className=" sm:text-md rounded-3xl font-storeFont bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
               onClick={() => connectMetamask()}
             >
               Connect Wallet

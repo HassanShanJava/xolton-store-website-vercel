@@ -7,7 +7,7 @@ import {
   StoreNFTOrderSchema,
   StoreNFTCollectionSchema,
 } from "~/schema/storeNFTSchema";
-import { prisma } from "~/server/db";
+
 
 export const storeNFTRouter = router({
   updateStoreNFT: publicProcedure
@@ -42,9 +42,9 @@ export const storeNFTRouter = router({
   getStoreNFTS: publicProcedure
     .input(StoreNFTSchema)
     .query(async ({ ctx, input }) => {
-      console.log(input, "input");
+      
       const options: any = {
-        where: { is_listed: true,status:"", },
+        where: { is_listed: true, status: "" },
         orderBy: {},
       };
 
@@ -79,7 +79,7 @@ export const storeNFTRouter = router({
           where: {
             store_id: "64354a0b1b6d9ce54c8d242d",
             is_listed: true,
-            status:"",
+            status: "",
             ...options.where,
           },
           select: {
@@ -169,7 +169,7 @@ export const storeNFTRouter = router({
           where: {
             id: input.id,
             is_listed: true,
-            status:"",
+            status: "",
           },
           select: {
             id: true,
@@ -253,9 +253,10 @@ export const storeNFTRouter = router({
       try {
         const NFTS = await ctx.prisma.storeNft.findMany({
           where: {
+            store_id: "64354a0b1b6d9ce54c8d242d",
             contract_id: input.contract_id,
             is_listed: true,
-            status:"",
+            status: "",
           },
 
           take: 6,
@@ -277,7 +278,11 @@ export const storeNFTRouter = router({
       console.log(input, "input jhome collection");
 
       const options: any = {
-        where: { contract_id: input?.contract_id, is_listed: true },
+        where: {
+          contract_id: input?.contract_id,
+          is_listed: true,
+          store_id: "64354a0b1b6d9ce54c8d242d",
+        },
         orderBy: {},
       };
 

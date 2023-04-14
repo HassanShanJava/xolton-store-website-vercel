@@ -2,6 +2,7 @@ import { router } from "~/server/api/trpc";
 import { storeNFTRouter } from "./routers/storeNFT";
 import { storeMakerRouter } from "./routers/storeMaker";
 import { storeNFTOrderRouter } from "./routers/storeNFTOrder";
+import { storeCollectionRouter } from "./routers/storeCollection";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = router({
   storeNFT: storeNFTRouter,
   storeMaker:storeMakerRouter,
   storeNFTOrder:storeNFTOrderRouter,
+  storeCollection:storeCollectionRouter,
 });
 
 // export type definition of API

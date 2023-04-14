@@ -12,7 +12,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      inter: ['Inter', 'sans-serif'],
+      storeFont: ['Inter', 'sans-serif'],
     },
     extend: {
       colors: {
@@ -30,6 +30,7 @@ export default {
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",
+        "tx-3":"#9CA3AF",
       },
       backgroundImage: {
         "gradient-24":

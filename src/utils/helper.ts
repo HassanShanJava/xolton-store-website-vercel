@@ -46,12 +46,16 @@ export const displayDate = (payload: any) => {
 };
 
 export async function maticToUSD(price = 0 as number) {
-  const data = await fetch(
-    "https://min-api.cryptocompare.com/data/histoday?fsym=MATIC&tsym=USD&limit=1&aggregate=1&e=Cexio"
-  );
+  try {
+    const data = await fetch(
+      "https://min-api.cryptocompare.com/data/histoday?fsym=MATIC&tsym=USD&limit=1&aggregate=1&e=Cexio"
+    );
 
-  const response = await data.json();
-  const maticPrice = +response.Data[1].open * Number(price);
-  // console.log(maticPrice.toFixed(3), price, "Data");
-  return `${maticPrice.toFixed(3)}`;
+    const response = await data.json();
+    const maticPrice = +response.Data[1].open * Number(price);
+    // console.log(maticPrice.toFixed(3), price, "Data");
+    return `${maticPrice.toFixed(3)}`;
+  } catch (error: any) {
+    console.log(error, "convertor matic to usd error");
+  }
 }

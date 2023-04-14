@@ -1,15 +1,15 @@
 // Mint NFt
-import NftAbi from './contractData/NFT.json';
+
 import MarketPlaceAbi from './contractData/NFTMarket.json';
 import MarketPlaceAddress from './contractData/NFTMarket-address.json';
 import Web3 from 'web3';
-const toWei = (num) => Web3.utils.toWei(num.toString(), "ether");
+const toWei:any = (num:any) => Web3.utils.toWei(num.toString(), "ether");
 
 export async function buyNFT(
-    web3: object,
+    web3: any,
     account: string,
     totalPrice:Int16Array,
-    makerOrder: object
+    makerOrder: any
   ) {
     console.log(
       'web3, account, url, nftAddress ::: ',
@@ -19,8 +19,8 @@ export async function buyNFT(
       makerOrder
     );
 
-    let makeArr=[];
-    let takeArr=[];
+    const makeArr:any=[];
+    const takeArr:any=[];
     // make contract Instance
     const marketPlacecContract = new web3.eth.Contract(
         MarketPlaceAbi.abi, //ABI

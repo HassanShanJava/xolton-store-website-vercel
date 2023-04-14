@@ -90,7 +90,6 @@ model StoreNft {
   store_makerorder StoreMakerOrder[]
   store_nft_orders StoreNftOrder[]
 
-
   User             User            @relation(fields: [store_id], references: [id])
   store_collection StoreCollection @relation(fields: [contract_id], references: [id])
 
@@ -156,7 +155,6 @@ model StoreMakerOrder {
   User       User      @relation(fields: [store_id], references: [id])
   store_nft  StoreNft  @relation(fields: [nft_id], references: [id])
 
-
   @@index([store_id])
   @@map("store_makerorder")
 }
@@ -186,18 +184,20 @@ model StoreTakerOrder {
 }
 
 model StoreNftOrder {
-  id                     String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                     String    @id @default(auto()) @map("_id") @db.ObjectId
   store_id               String?   @db.ObjectId
   nft_id                 String?   @db.ObjectId
   nft_name               String
-  amount                 Float?
+  total_amount           Float?
+  net_amount             Float?
+  total_tax              Float?
   sell_type              String
   transaction_id         String
   previous_owner_address String
   owner_address          String
-  is_deleted             Boolean  @default(false)
-  created_at             DateTime @default(now())
-  updated_at             DateTime @default(now()) @updatedAt
+  is_deleted             Boolean   @default(false)
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @default(now()) @updatedAt
   users                  User?     @relation(fields: [store_id], references: [id])
   store_nfts             StoreNft? @relation(fields: [nft_id], references: [id])
 

@@ -19,7 +19,7 @@ export default function Document() {
           rel="stylesheet"
         />
       </Head>
-      <body>
+      <body className="font-storeFont">
         <Main />
         <NextScript />
       </body>
