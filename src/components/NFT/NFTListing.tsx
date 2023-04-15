@@ -4,7 +4,6 @@ import NFTCard from "./NFTCard";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 
-
 const NFTListing = () => {
   const router = useRouter();
   const { contract_id } = router.query;
@@ -21,7 +20,7 @@ const NFTListing = () => {
           ...prevFilters,
           searchQuery: e.target.value,
         }));
-      }, 400);
+      }, 800);
     } else {
       setTimeout(() => {
         setSortFilter((prevFilters) => ({
@@ -49,8 +48,8 @@ const NFTListing = () => {
   );
 
   console.log(sortFilter, "sortFilter front");
-  const { data: NFTCollection }= api.storeNFT.getNFTHomeCollection.useQuery(
-    { ...sortFilter, contract_id: contract_id, },
+  const { data: NFTCollection } = api.storeNFT.getNFTHomeCollection.useQuery(
+    { ...sortFilter, contract_id: contract_id },
     {
       refetchOnWindowFocus: false,
     }
@@ -65,7 +64,7 @@ const NFTListing = () => {
             <input
               type="text"
               placeholder="Search by NFT Name"
-              className=" w-full text-sm  rounded-lg p-2 focus:outline-none font-storeFont "
+              className=" w-full rounded-lg  p-2 font-storeFont text-sm focus:outline-none "
               onChange={handleKeyPress}
             />
           </div>
@@ -73,16 +72,30 @@ const NFTListing = () => {
           <div className="mx-2 mb-3 w-full xs:w-56">
             <select
               data-te-select-init
-              className="w-full rounded-lg text-tx-3 p-2 text-sm focus:outline-none font-storeFont"
+              className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
               onChange={(e) => sorNFT(e.target.value)}
             >
-              <option value="Sort By" selected disabled hidden className="font-storeFont">
+              <option
+                value="Sort By"
+                selected
+                disabled
+                hidden
+                className="font-storeFont"
+              >
                 Sort By
               </option>
-              <option value="name-asc" className="font-storeFont">A to Z</option>
-              <option value="name-desc" className="font-storeFont">Z to A</option>
-              <option value="price-desc" className="font-storeFont">Price Highest to Lowest</option>
-              <option value="price-asc" className="font-storeFont">Price Lowest to Highest</option>
+              <option value="name-asc" className="font-storeFont">
+                A to Z
+              </option>
+              <option value="name-desc" className="font-storeFont">
+                Z to A
+              </option>
+              <option value="price-desc" className="font-storeFont">
+                Price Highest to Lowest
+              </option>
+              <option value="price-asc" className="font-storeFont">
+                Price Lowest to Highest
+              </option>
             </select>
           </div>
         </div>

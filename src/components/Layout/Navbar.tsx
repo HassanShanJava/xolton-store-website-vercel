@@ -105,7 +105,7 @@ const Navbar = () => {
               <Link href="/about-us">
                 <li className="flex items-center py-4 text-xl">About Us</li>
               </Link>
-              <Link href="/">
+              <Link href="/faqs">
                 <li className="flex items-center py-4 text-xl">FAQ</li>
               </Link>
             </ul>
@@ -128,7 +128,7 @@ const Navbar = () => {
           <Link href="/about-us">
             <li className="mx-4">About Us</li>
           </Link>
-          <Link href="/">
+          <Link href="/faqs">
             <li className="mx-4">FAQ</li>
           </Link>
         </ul>
