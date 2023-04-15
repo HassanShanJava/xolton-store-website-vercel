@@ -13,11 +13,9 @@ import { DropDownItem } from "~/components/craftComponent/user2/DropDownItem";
 import lz from "lzutf8";
 
 export default function CraftJsComponent(props: any) {
-  console.log("props:::", props.storeBlogsData?.data);
   const blogData: any = lz.decompress(
     lz.decodeBase64(props.storeBlogsData?.data)
   );
-  console.log("blogData:::", blogData);
   //  actions.deserialize(json);
   return (
     <div

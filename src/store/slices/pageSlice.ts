@@ -1,25 +1,22 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface StoreWebPageData {
-    pageData?: object | null;
- 
+  pageData?: [] | null;
 }
 
 export const initialState: StoreWebPageData = {
   pageData: null,
-
 };
 
 export const pageSlice = createSlice({
-  name: 'pageData',
+  name: "pageData",
   initialState,
   reducers: {
     storeWebPageData: (state, action: PayloadAction<any>) => {
-        console.log("ACTION ... : ",action.payload)    
-        state.pageData = action.payload;
+      console.log("ACTION ... : ", action.payload);
+      state.pageData = action.payload;
     },
-
   },
 });
 

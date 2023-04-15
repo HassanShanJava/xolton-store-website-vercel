@@ -1,11 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import { useSelector } from "react-redux";
 import { customTruncateHandler } from "~/store/helper";
+import { RootState } from "~/store/store";
 import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 
 const BlogsListing = () => {
+  const router = useRouter();
+  const { asPath } = useRouter();
+  const { pageData } = useSelector((state: RootState) => state.page);
+  const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
+  // let storeBlogsData: any;
+  if (pageContent !== undefined && pageContent?.visibility) {
+    console.log("i am here");
+  } else {
+    router.push("/");
+  }
   const { data: storeBlogsData, isFetched } =
     api.storeBlogs.getStoreBlogs.useQuery(
       {},
