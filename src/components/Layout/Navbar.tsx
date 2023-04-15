@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
+import { setAccount } from "~/store/slices/web3Slice";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -21,7 +22,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const connectMetamask = async () => {
-    let data = await initWeb3();
+    let data: any = await initWeb3();
     console.log("Data : ", data);
     if (data?.success !== false) {
       console.log("check");
@@ -29,7 +30,7 @@ const Navbar = () => {
         title: "Wallet connected",
         status: "success",
         isClosable: true,
-        position: "top-right",
+        position: "top-left",
       });
 
       dispatch(
@@ -40,18 +41,34 @@ const Navbar = () => {
         })
       );
     } else {
-      toast({
-        title: data?.message as string,
-        status: "error",
-        isClosable: true,
-        position: "top-right",
-      });
+      data &&
+        toast({
+          title: data.message.message,
+          status: "error",
+          isClosable: true,
+          position: "top-left",
+        });
     }
   };
 
+  if (typeof window !== "undefined") {
+    window?.ethereum?.on("accountsChanged", function (accounts: String) {
+      console.log("account :: ", accounts[0]);
+      dispatch(setAccount(accounts[0]));
+    });
+
+    window?.ethereum.on("chainChanged", function (chainId: String) {
+      console.log("chainChanged", chainId);
+      if (chainId != "0x13881") {
+        dispatch(setAccount(""));
+      }
+    });
+  }
+
+  // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4 shadow-md">
         {/* for mobile menu state */}
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
@@ -82,7 +99,7 @@ const Navbar = () => {
               <Link href="/">
                 <li className="flex items-center py-4 text-xl">Home</li>
               </Link>
-              <Link href="/">
+              <Link href="/blogs">
                 <li className="flex items-center py-4 text-xl">Blog</li>
               </Link>
               <Link href="/about-us">
@@ -96,14 +113,16 @@ const Navbar = () => {
         </div>
 
         <div className="relative ml-4 hidden h-10 w-10 sm:flex">
-          <Image src={Logo} alt="/logo" fill />
+          <Link href={"/"}>
+            <Image src={Logo} alt="/logo" fill />
+          </Link>
         </div>
 
         <ul className="hidden items-center justify-between sm:flex ">
           <Link href="/">
             <li className="mx-4">Home</li>
           </Link>
-          <Link href="/">
+          <Link href="/blogs">
             <li className="mx-4">Blog</li>
           </Link>
           <Link href="/about-us">
@@ -115,26 +134,22 @@ const Navbar = () => {
         </ul>
 
         <div className="mr-4">
-          {account !== "" ? (
-            <>
-              <button
-                type="button"
-                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2"
-                onClick={() => connectMetamask()}
-              >
-                {customTruncateHandler(account, 8)}
-              </button>
-            </>
+          {account != "" ? (
+            <button
+              type="button"
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 font-storeFont text-sm text-white hover:bg-ac-2"
+              onClick={() => connectMetamask()}
+            >
+              {customTruncateHandler(account, 8)}
+            </button>
           ) : (
-            <>
-              <button
-                type="button"
-                className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 text-sm text-white hover:bg-ac-2 sm:px-3"
-                onClick={() => connectMetamask()}
-              >
-                Connect Wallet
-              </button>
-            </>
+            <button
+              type="button"
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 font-storeFont text-sm text-white hover:bg-ac-2 sm:px-3"
+              onClick={() => connectMetamask()}
+            >
+              Connect Wallet
+            </button>
           )}
         </div>
       </div>

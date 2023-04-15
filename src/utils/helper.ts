@@ -21,7 +21,7 @@ export function formatTrpcError(trpcError = "Something went wrong!" as string) {
 }
 
 // CONCAT DATA
-export function customTruncateHandler(str = "", n = 15) {
+export function customTruncateHandler(str = "", n = 10) {
   return str?.length > n ? str?.slice(0, n) + "..." : str;
 }
 // VALIDATE IMAGE TYPE
@@ -44,3 +44,18 @@ export const displayDate = (payload: any) => {
   const formattedDate = `${da}-${mo}-${ye}`;
   return formattedDate;
 };
+
+export async function maticToUSD(price = 0 as number) {
+  try {
+    const data = await fetch(
+      "https://min-api.cryptocompare.com/data/histoday?fsym=MATIC&tsym=USD&limit=1&aggregate=1&e=Cexio"
+    );
+
+    const response = await data.json();
+    const maticPrice = +response.Data[1].open * Number(price);
+    // console.log(maticPrice.toFixed(3), price, "Data");
+    return `${maticPrice.toFixed(3)}`;
+  } catch (error: any) {
+    console.log(error, "convertor matic to usd error");
+  }
+}

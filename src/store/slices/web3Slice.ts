@@ -23,10 +23,14 @@ export const web3Slice = createSlice({
         state.account = action.payload?.account;
         state.chainId = action.payload?.chainId;
     },
+    setAccount: (state, action) => {
+      console.log("action :: ",action)
+      state.account = action.payload;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { web3Init } = web3Slice.actions;
+export const { web3Init,setAccount } = web3Slice.actions;
 
 export default web3Slice.reducer;

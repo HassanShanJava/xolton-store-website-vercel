@@ -16,7 +16,7 @@ const BlogsListing = () => {
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8">
-        <section className="pb-10 pt-20 lg:pb-20 lg:pt-[120px]">
+        <section className="pb-6 pt-6 lg:pb-6 ">
           <div className="container mx-auto">
             <div className="-mx-4 flex flex-wrap justify-center">
               <div className="w-full px-4">
@@ -39,25 +39,22 @@ const BlogsListing = () => {
               {isFetched &&
                 storeBlogsData?.map((store, i) => (
                   <Link
-                    href={`/blogs/${store?.id}`}
+                    href={`/blogs/${store?.meta}`}
                     key={i}
                     className="group w-full max-w-lg px-4"
                   >
                     <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
-                      <div className="mb-8 h-[240px] w-full overflow-hidden rounded">
+                      <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
                         <Image
                           src={renderNFTImage(store)}
                           alt="image"
-                          width={500}
-                          height={500}
+                          width={5000}
+                          height={5000}
                           quality={100}
-                          className="w-full object-contain object-bottom"
+                          className=" object-contain"
                         />
                       </div>
                       <div>
-                        <span className="bg-primary mb-5 inline-block rounded px-4 py-1 text-center text-xs font-semibold leading-loose text-gray-600">
-                          {displayDate(store?.created_at)}
-                        </span>
                         <h3>
                           <a
                             href="javascript:void(0)"
@@ -67,8 +64,11 @@ const BlogsListing = () => {
                           </a>
                         </h3>
                         <p className="text-body-color text-base">
-                          {store?.title}
+                          {customTruncateHandler(store?.description, 20)}
                         </p>
+                        <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
+                          {displayDate(store?.created_at)}
+                        </span>
                       </div>
                     </div>
                   </Link>

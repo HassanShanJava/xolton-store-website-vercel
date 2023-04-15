@@ -11,6 +11,9 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontFamily: {
+      storeFont: ['Inter', 'sans-serif'],
+    },
     extend: {
       colors: {
         "ac-1": "#FB74B5",
@@ -25,6 +28,9 @@ export default {
         "ct-2": "#030607",
         "bg-1": "#F1F3F5",
         "gt-1": "#A0AEC0",
+        "tx-1":"rgba(0,0,0,0.48)",
+        "tx-2":"rgba(0,0,0,0.24)",
+        "tx-3":"#9CA3AF",
       },
       backgroundImage: {
         "gradient-24":
@@ -35,16 +41,17 @@ export default {
     screens: {
       xss: "300px",
       xs: "340px",
-      sx:"500px",
+      sx:"580px",
       sm: "640px",
       // => @media (min-width: 640px) { ... }
 
       md: "768px",
+      mdx: "920px",
       // => @media (min-width: 768px) { ... }
 
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
-
+      xlg:"1200px",
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 

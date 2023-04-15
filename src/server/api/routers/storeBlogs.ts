@@ -16,7 +16,7 @@ export const storeBlogsRouter = router({
           orderBy: { created_at: "desc" },
 
           where: {
-            store_id: "642271fe20c73df3d28f4a5e",
+            store_id: "642eabca10d4d3ccb791b494",
           },
         });
 
@@ -39,8 +39,8 @@ export const storeBlogsRouter = router({
         // upload IPFS DATA
         const exists: any = await ctx.prisma.storeBlogs.findFirst({
           where: {
-            id: input?.id,
-            store_id: "642271fe20c73df3d28f4a5e",
+            meta: input?.id,
+            store_id: "642eabca10d4d3ccb791b494",
           },
         });
         return exists;

@@ -1,28 +1,86 @@
 import { TRPCError } from "@trpc/server";
 import { router, publicProcedure } from "../trpc";
 
-import { StoreNFTSchema } from "~/schema/storeNFTSchema";
-import { prisma } from "~/server/db";
+import {
+  StoreNFTSchema,
+  StoreNFTDetailSchema,
+  StoreNFTOrderSchema,
+  StoreNFTCollectionSchema,
+} from "~/schema/storeNFTSchema";
+
 
 export const storeNFTRouter = router({
+  updateStoreNFT: publicProcedure
+    .input(StoreNFTOrderSchema)
+    .mutation(async ({ ctx, input }) => {
+      try {
+        console.log(input, "update to do");
+
+        const updateInput: any = {
+          owner_id: input.owner,
+          transaction_id: input.transaction_id,
+          is_listed: input.is_listed,
+          status: input.status,
+        };
+        console.log(updateInput, "updateInput");
+        const nftUpdate = await ctx.prisma.storeNft.update({
+          where: {
+            id: input?.id,
+          },
+          data: updateInput,
+        });
+        return nftUpdate;
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+
   getStoreNFTS: publicProcedure
     .input(StoreNFTSchema)
     .query(async ({ ctx, input }) => {
-      //   console.log(ctx, 'ctx');
-      // ctx.prisma.
+      
+      const options: any = {
+        where: { is_listed: true, status: "" },
+        orderBy: {},
+      };
+
+      if (input.orderBy) {
+        const object: any = input.orderBy.split("-"); //["name","asc"]
+        options.orderBy.OR = [];
+        // search by name
+        if (object[0] == "name") {
+          options.orderBy = [
+            {
+              name: object[1],
+            },
+          ];
+        } else if (object[0] == "price") {
+          options.orderBy = [
+            {
+              price: object[1],
+            },
+          ];
+        }
+      }
+
+      if (input.searchQuery) {
+        options.where.OR = [];
+        // search by name
+        options.where.OR.push({
+          name: { contains: input.searchQuery, mode: "insensitive" },
+        });
+      }
       try {
         const NFTS = await ctx.prisma.storeNft.findMany({
-          // where: {
-          //   store_id: "642271fe20c73df3d28f4a5e",
-          //   is_listed: true,
-          //   NOT:{
-          //     status:"purchase"
-          //   }
-
-          // },
           where: {
-            store_id: "642271fe20c73df3d28f4a5e",
-            is_listed:true,
+            store_id: "64354a0b1b6d9ce54c8d242d",
+            is_listed: true,
+            status: "",
+            ...options.where,
           },
           select: {
             id: true,
@@ -79,9 +137,98 @@ export const storeNFTRouter = router({
                 tokenId: true,
                 tax: true,
                 nonce: true,
-                v: true,
-                r: true,
-                s: true,
+                signed_v: true,
+                signed_r: true,
+                signed_s: true,
+                created_at: true,
+                updated_at: true,
+              },
+            },
+          },
+
+          orderBy: options.orderBy,
+        });
+
+        return NFTS;
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+
+  getNFTDetail: publicProcedure
+    .input(StoreNFTDetailSchema)
+    .query(async ({ ctx, input }) => {
+      console.log(input, "input");
+
+      try {
+        const NFTS = await ctx.prisma.storeNft.findFirst({
+          where: {
+            id: input.id,
+            is_listed: true,
+            status: "",
+          },
+          select: {
+            id: true,
+            store_id: true,
+            contract_id: true,
+            name: true,
+            external_link: true,
+            price: true,
+            min_price: true,
+            royalty: true,
+            service_fee: true,
+            thumb: true,
+            tax: true,
+            ipfs_url: true,
+            description: true,
+            tags: true,
+            donation: true,
+            blockchian_type: true,
+            sell_type: true,
+            status: true,
+            item_id: true,
+            media: true,
+            token_id: true,
+            block_reason: true,
+            transaction_id: true,
+            block_id: true,
+            contract_address: true,
+            creator_id: true,
+            owner_id: true,
+            collection_id: true,
+            media_type: true,
+            total_minted: true,
+            royalties: true,
+            copies: true,
+            is_active: true,
+            is_deleted: true,
+            is_listed: true,
+            is_featured: true,
+            is_trending: true,
+            is_blocked: true,
+            created_at: true,
+            updated_at: true,
+            store_makerorder: {
+              select: {
+                id: true,
+                store_id: true,
+                nft_id: true,
+                is_listed: true,
+                isOrderAsk: true,
+                signer: true,
+                baseAccount: true,
+                nftContract: true,
+                price: true,
+                tokenId: true,
+                tax: true,
+                nonce: true,
+                signed_v: true,
+                signed_r: true,
+                signed_s: true,
                 created_at: true,
                 updated_at: true,
               },
@@ -89,7 +236,90 @@ export const storeNFTRouter = router({
           },
         });
 
-        console.log(NFTS, "NFTS");
+        return NFTS;
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+
+  getNFTCollection: publicProcedure
+    .input(StoreNFTCollectionSchema)
+    .query(async ({ ctx, input }) => {
+      console.log(input, "input");
+      try {
+        const NFTS = await ctx.prisma.storeNft.findMany({
+          where: {
+            store_id: "64354a0b1b6d9ce54c8d242d",
+            contract_id: input.contract_id,
+            is_listed: true,
+            status: "",
+          },
+
+          take: 6,
+        });
+
+        return NFTS;
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+
+  getNFTHomeCollection: publicProcedure
+    .input(StoreNFTCollectionSchema)
+    .query(async ({ ctx, input }) => {
+      console.log(input, "input jhome collection");
+
+      const options: any = {
+        where: {
+          contract_id: input?.contract_id,
+          is_listed: true,
+          store_id: "64354a0b1b6d9ce54c8d242d",
+        },
+        orderBy: {},
+      };
+
+      if (input.orderBy) {
+        const object: any = input.orderBy.split("-"); //["name","asc"]
+        // options.orderBy.OR = [];
+        // search by name
+        if (object[0] == "name") {
+          options.orderBy = [
+            {
+              name: object[1],
+            },
+          ];
+        } else if (object[0] == "price") {
+          options.orderBy = [
+            {
+              price: object[1],
+            },
+          ];
+        }
+      }
+
+      if (input.searchQuery) {
+        options.where.OR = [];
+        // search by name
+        options.where.OR.push({
+          name: { contains: input.searchQuery, mode: "insensitive" },
+        });
+      }
+      try {
+        const NFTS = await ctx.prisma.storeNft.findMany({
+          where: {
+            ...options.where,
+          },
+          orderBy: options.orderBy,
+        });
+
         return NFTS;
       } catch (e) {
         console.log("error:::", e);

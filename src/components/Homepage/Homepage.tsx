@@ -1,33 +1,69 @@
 import React from "react";
-import Banner from "./Banner";
-import NFTCard from "../Ui/NFTCard";
 
+import NFTCard from "../NFT/NFTCard";
+
+
+import { renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
 import BannerImage from "../../public/images/banner.png";
-import NFTListing from "./NFTListing";
+import NFTListing from "../NFT/NFTListing";
+
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 const Homepage = () => {
-  return (
-    <>
-      <div className="h-full max-h-full w-full  bg-pm-11 px-8 pt-8">
-          <div className=" relative py-4 h-[300px] w-full object-cover ">
-            {/* <Banner /> */}
-            <Image
-              src={BannerImage}
-              alt="/banner"
-              fill
-              className=" rounded-[20px] object-cover "
-            />
-          </div>
-        
+  const router = useRouter();
+  const { contract_id } = router.query;
 
-        <div className=" my-6  h-full min-h-screen w-full ">
-          {/* <NFTCard /> */}
-          <NFTListing />
-        </div>
+  
+  return (
+    <div>
+      <div className="h-full  min-h-screen w-full bg-bg-1 px-4 pt-8">
+        <Banner collection_id={contract_id} />
+        <NFTListing />
+
       </div>
-    </>
+    </div>
   );
+};
+
+const Banner = ({ collection_id }:any) => {
+  const { data: NFTCollection } = api.storeCollection.getStoreCollection.useQuery(
+    {  id: collection_id },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  if (collection_id !==undefined) {
+    return (
+      <>
+        <div className=" relative h-[200px]  w-full  object-cover  py-4 md:h-[300px] ">
+          <Image
+            src={renderNFTImage(NFTCollection)}
+            alt="/collection banner"
+            fill
+            quality={100}
+            className="rounded-[20px] object-cover px-2 "
+          />
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className=" relative h-[200px]  w-full  object-cover  py-4 md:h-[300px] ">
+          <Image
+            src={BannerImage}
+            alt="/banner"
+            fill
+            quality={100}
+            className={`rounded-[20px]  object-cover px-2`}
+          />
+        </div>
+      </>
+    );
+  }
 };
 
 export default Homepage;

@@ -1,9 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import Homepage from "~/components/Homepage/Homepage";
 
-import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -22,7 +20,7 @@ const Home: NextPage = () => {
           referrerPolicy="no-referrer"
         />
       </Head>
-      <main>
+      <main >
 
         <Homepage/>
       </main>

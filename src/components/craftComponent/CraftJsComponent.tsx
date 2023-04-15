@@ -9,11 +9,12 @@ import {
 import { Container } from "~/components/craftComponent/user2/Container";
 import Images from "~/components/craftComponent/user2/Image";
 import { Text } from "~/components/craftComponent/user2/Text";
+import { DropDownItem } from "~/components/craftComponent/user2/DropDownItem";
 import lz from "lzutf8";
 
 export default function CraftJsComponent(props: any) {
   console.log("props:::", props.storeBlogsData?.data);
-  const blogData: object | null = lz.decompress(
+  const blogData: any = lz.decompress(
     lz.decodeBase64(props.storeBlogsData?.data)
   );
   console.log("blogData:::", blogData);
@@ -21,9 +22,8 @@ export default function CraftJsComponent(props: any) {
   return (
     <div
       className={`   w-full
-        border-none bg-white`}
+         bg-white`}
     >
-      <div>Date:</div>
       {blogData && (
         <Editor
           resolver={{
@@ -34,6 +34,7 @@ export default function CraftJsComponent(props: any) {
             CardTop,
             CardBottom,
             Images,
+            DropDownItem,
           }}
           enabled={false}
         >

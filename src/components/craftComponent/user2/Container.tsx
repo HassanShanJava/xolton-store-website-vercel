@@ -34,17 +34,19 @@ export const Container = ({
       {...props}
       // templateColumns={`repeat(${+box}, 1fr)`}
       ref={(ref: any) => connect(drag(ref))}
+      border={"none !important"}
       style={{
         margin: "5px 0",
         background,
         padding: `${padding}px`,
         width: `${width}%`,
         display: `flex`,
-        border: "none !important",
 
-        flexDirection: `${box ? box : "column"}`,
+        // flexDirection: `${box ? box : 'column'}`,
       }}
-      className={`gap-2  !border-none `}
+      className={` gap-2 xs:flex-col  sm:flex-col  md:${
+        box ? box : "flex-col"
+      }`}
     >
       {children}
     </Flex>
@@ -124,8 +126,8 @@ export const ContainerSettings = () => {
             setProp((props) => (props.box = e.target.value));
           }}
         >
-          <option value="row">Row</option>
-          <option value="column">Column</option>
+          <option value="flex-row">Row</option>
+          <option value="flex-col">Column</option>
         </Select>
       </FormControl>
 
