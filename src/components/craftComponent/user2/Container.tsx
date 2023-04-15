@@ -44,7 +44,7 @@ export const Container = ({
 
         // flexDirection: `${box ? box : 'column'}`,
       }}
-      className={` gap-2 xs:flex-col  sm:flex-col  md:${
+      className={` gap-2 !border-0 xs:flex-col  sm:flex-col  md:${
         box ? box : "flex-col"
       }`}
     >
@@ -75,7 +75,7 @@ export const ContainerSettings = () => {
           type="color"
           defaultValue={background}
           onChange={(e: any) => {
-            setProp((props) => (props.background = e.target.value), 1000);
+            setProp((props: any) => (props.background = e.target.value), 1000);
           }}
         />
       </FormControl>
@@ -89,7 +89,7 @@ export const ContainerSettings = () => {
           max={50}
           defaultValue={padding}
           onChange={(val: any) => {
-            setProp((props) => (props.padding = val), 1000);
+            setProp((props: any) => (props.padding = val), 1000);
           }}
         >
           <SliderTrack>
@@ -108,7 +108,7 @@ export const ContainerSettings = () => {
           max={100}
           defaultValue={width}
           onChange={(val: any) => {
-            setProp((props) => (props.width = val), 1000);
+            setProp((props: any) => (props.width = val), 1000);
           }}
         >
           <SliderTrack>
@@ -123,7 +123,7 @@ export const ContainerSettings = () => {
           placeholder="Select Direction"
           value={box}
           onChange={(e: any) => {
-            setProp((props) => (props.box = e.target.value));
+            setProp((props: any) => (props.box = e.target.value));
           }}
         >
           <option value="flex-row">Row</option>

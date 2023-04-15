@@ -6,10 +6,10 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-} from '@chakra-ui/react';
-import { useNode } from '@craftjs/core';
-import React, { useState, useEffect } from 'react';
-import ContentEditable from 'react-contenteditable';
+} from "@chakra-ui/react";
+import { useNode } from "@craftjs/core";
+import React, { useState, useEffect } from "react";
+import ContentEditable from "react-contenteditable";
 
 export const Text = ({
   text,
@@ -47,7 +47,9 @@ export const Text = ({
       <ContentEditable
         html={text}
         disabled={!editable}
-        onChange={(e) => setProp((props) => (props.text = e.target.value), 500)}
+        onChange={(e) =>
+          setProp((props: any) => (props.text = e.target.value), 500)
+        }
         style={{
           fontSize: `${fontSize}px`,
           fontStyle: `${fontStyle}`,
@@ -85,8 +87,8 @@ const TextSettings = () => {
           min={1}
           max={55}
           onChange={(val: any) => {
-            console.log(val, 'number');
-            setProp((props) => (props.fontSize = val), 1000);
+            console.log(val, "number");
+            setProp((props: any) => (props.fontSize = val), 1000);
           }}
         >
           <SliderTrack>
@@ -101,7 +103,7 @@ const TextSettings = () => {
           placeholder="Select font alignment"
           value={fontAlign}
           onChange={(e: any) => {
-            setProp((props) => (props.fontAlign = e.target.value));
+            setProp((props: any) => (props.fontAlign = e.target.value));
           }}
         >
           <option value="center">Center</option>
@@ -115,7 +117,7 @@ const TextSettings = () => {
           placeholder="Select font style"
           value={fontStyle}
           onChange={(e: any) => {
-            setProp((props) => (props.fontStyle = e.target.value));
+            setProp((props: any) => (props.fontStyle = e.target.value));
           }}
         >
           <option value="normal">Normal</option>
@@ -129,7 +131,7 @@ const TextSettings = () => {
           placeholder="Select font weight"
           value={fontWeight}
           onChange={(e: any) => {
-            setProp((props) => (props.fontWeight = e.target.value));
+            setProp((props: any) => (props.fontWeight = e.target.value));
           }}
         >
           <option value="normal">Normal</option>
@@ -142,7 +144,7 @@ const TextSettings = () => {
 };
 
 export const TextDefaultProps = {
-  text: 'Hi',
+  text: "Hi",
   fontSize: 20,
 };
 

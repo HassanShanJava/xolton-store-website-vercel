@@ -1,13 +1,13 @@
-import { Element, useNode } from '@craftjs/core';
-import React from 'react';
+import { Element, useNode } from "@craftjs/core";
+import React from "react";
 
-import { Button } from './Button';
+import { Button } from "./Button";
 import {
   Container,
   ContainerSettings,
   ContainerDefaultProps,
-} from './Container';
-import { Text } from './Text';
+} from "./Container";
+import { Text } from "./Text";
 
 export const CardTop = ({ children, ...props }: any) => {
   const {
@@ -19,12 +19,12 @@ export const CardTop = ({ children, ...props }: any) => {
       ref={connect}
       className="text-only"
       style={{
-        padding: '10px',
-        marginBottom: '10px',
-        borderBottom: '1px solid #eee',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        padding: "10px",
+        marginBottom: "10px",
+        borderBottom: "1px solid #eee",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
       }}
     >
       {children}
@@ -34,8 +34,10 @@ export const CardTop = ({ children, ...props }: any) => {
 
 CardTop.craft = {
   rules: {
-    canMoveIn: (incomingNodes) =>
-      incomingNodes.every((incomingNode) => incomingNode.data.type === Text),
+    canMoveIn: (incomingNodes: any) =>
+      incomingNodes.every(
+        (incomingNode: any) => incomingNode.data.type === Text
+      ),
   },
 };
 
@@ -44,7 +46,7 @@ export const CardBottom = ({ children, ...props }: any) => {
     connectors: { connect },
   } = useNode();
   return (
-    <div {...props} style={{ padding: '10px 0' }} ref={connect}>
+    <div {...props} style={{ padding: "10px 0" }} ref={connect}>
       {children}
     </div>
   );
@@ -52,8 +54,10 @@ export const CardBottom = ({ children, ...props }: any) => {
 
 CardBottom.craft = {
   rules: {
-    canMoveIn: (incomingNodes) =>
-      incomingNodes.every((incomingNode) => incomingNode.data.type === Button),
+    canMoveIn: (incomingNodes: any) =>
+      incomingNodes.every(
+        (incomingNode: any) => incomingNode.data.type === Button
+      ),
   },
   selected: true,
 };

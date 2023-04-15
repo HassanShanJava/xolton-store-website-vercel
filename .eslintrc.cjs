@@ -18,7 +18,7 @@ const config = {
   parserOptions: {
     project: path.join(__dirname, "tsconfig.json"),
   },
-  plugins: ["@typescript-eslint",'prettier'],
+  plugins: ["@typescript-eslint", "prettier"],
   extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   rules: {
     "@typescript-eslint/consistent-type-imports": [
@@ -32,12 +32,11 @@ const config = {
     "prettier/prettier": [
       "error",
       {
-        "endOfLine": "auto"
+        endOfLine: "auto",
       },
     ],
+    "@typescript-eslint/no-explicit-any": "off",
   },
-  
-  
 };
 
 module.exports = config;

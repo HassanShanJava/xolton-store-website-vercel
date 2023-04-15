@@ -1,4 +1,4 @@
-import { useNode } from '@craftjs/core';
+import { useNode } from "@craftjs/core";
 
 import {
   Button as ChakraButton,
@@ -9,8 +9,8 @@ import {
   RadioGroup,
   Select,
   Stack,
-} from '@chakra-ui/react';
-import React from 'react';
+} from "@chakra-ui/react";
+import React from "react";
 
 export const Button = ({ size, variant, color, text, ...props }: any) => {
   const {
@@ -19,7 +19,7 @@ export const Button = ({ size, variant, color, text, ...props }: any) => {
   return (
     <ChakraButton
       ref={(ref: any) => connect(drag(ref))}
-      style={{ margin: '5px' }}
+      style={{ margin: "5px" }}
       size={size}
       variant={variant}
       colorScheme={color}
@@ -39,14 +39,14 @@ export const ButtonSettings = () => {
   }));
 
   return (
-    <div className="flex flex-col gap-2 space-y-2 mb-2">
+    <div className="mb-2 flex flex-col gap-2 space-y-2">
       <FormControl size="small">
         <FormLabel>Text</FormLabel>
         <Input
           value={props.text}
           placeholder="Enter Text"
           onChange={(e: any) => {
-            setProp((props) => (props.text = e.target.value));
+            setProp((props: any) => (props.text = e.target.value));
           }}
         />
       </FormControl>
@@ -55,7 +55,7 @@ export const ButtonSettings = () => {
           <FormLabel>Size</FormLabel>
           <RadioGroup
             defaultValue={props.size}
-            onChange={(value) => setProp((props) => (props.size = value))}
+            onChange={(value) => setProp((props: any) => (props.size = value))}
           >
             <Stack spacing={5} direction="column">
               <Radio colorScheme="red" value="sm">
@@ -89,7 +89,9 @@ export const ButtonSettings = () => {
           <FormLabel>Variant</FormLabel>
           <RadioGroup
             defaultValue={props.variant}
-            onChange={(value) => setProp((props) => (props.variant = value))}
+            onChange={(value) =>
+              setProp((props: any) => (props.variant = value))
+            }
           >
             <Stack spacing={5} direction="column">
               <Radio colorScheme="red" value="solid">
@@ -114,7 +116,7 @@ export const ButtonSettings = () => {
           placeholder="Select font weight"
           value={props.color}
           onChange={(e: any) => {
-            setProp((props) => (props.color = e.target.value));
+            setProp((props: any) => (props.color = e.target.value));
           }}
         >
           <option value="teal">Teal</option>
@@ -131,10 +133,10 @@ export const ButtonSettings = () => {
 };
 
 export const ButtonDefaultProps = {
-  size: 'small',
-  variant: 'contained',
-  color: 'primary',
-  text: 'Click me',
+  size: "small",
+  variant: "contained",
+  color: "primary",
+  text: "Click me",
 };
 
 Button.craft = {

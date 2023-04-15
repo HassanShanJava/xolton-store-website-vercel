@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNode } from "@craftjs/core";
-import PropTypes from "prop-types";
 
 import { FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { isValidImageType } from "~/utils/helper";
@@ -92,7 +91,7 @@ function ImageSettings() {
         {/* <Input
           value={src}
           onChange={(e) => {
-            setProp((props) => (props.src = e.target.value));
+            setProp((props:any) => (props.src = e.target.value));
           }}
         /> */}
       </FormControl>
@@ -101,7 +100,7 @@ function ImageSettings() {
         <Input
           value={src}
           onChange={(e) => {
-            setProp((props) => (props.src = e.target.value));
+            setProp((props: any) => (props.src = e.target.value));
           }}
         />
       </FormControl>
@@ -111,7 +110,7 @@ function ImageSettings() {
         <Input
           value={alt}
           onChange={(e) => {
-            setProp((props) => (props.alt = e.target.value));
+            setProp((props: any) => (props.alt = e.target.value));
           }}
         />
       </FormControl>
@@ -121,7 +120,7 @@ function ImageSettings() {
         <Input
           value={href}
           onChange={(e) => {
-            setProp((props) => (props.href = e.target.value));
+            setProp((props: any) => (props.href = e.target.value));
           }}
         />
       </FormControl>
@@ -131,7 +130,7 @@ function ImageSettings() {
           <Input
             value={width}
             onChange={(e) => {
-              setProp((props) => (props.width = e.target.value));
+              setProp((props: any) => (props.width = e.target.value));
             }}
           />
         </FormControl>
@@ -140,7 +139,7 @@ function ImageSettings() {
           <Input
             value={height}
             onChange={(e) => {
-              setProp((props) => (props.height = e.target.value));
+              setProp((props: any) => (props.height = e.target.value));
             }}
           />
         </FormControl>
@@ -151,7 +150,7 @@ function ImageSettings() {
           placeholder="Select Resize Option"
           value={objectType}
           onChange={(e: any) => {
-            setProp((props) => (props.objectType = e.target.value));
+            setProp((props: any) => (props.objectType = e.target.value));
           }}
         >
           <option value="cover">Cover</option>
@@ -182,12 +181,4 @@ Images.craft = {
   },
 };
 
-Images.propTypes = {
-  src: PropTypes.string,
-  alt: PropTypes.string,
-  href: PropTypes.string,
-
-  onClick: PropTypes.func,
-  onFocus: PropTypes.func,
-};
 export default Images;

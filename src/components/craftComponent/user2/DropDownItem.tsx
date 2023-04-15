@@ -13,10 +13,10 @@ import {
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
-} from '@chakra-ui/react';
-import { useNode } from '@craftjs/core';
-import React, { useState, useEffect } from 'react';
-import ContentEditable from 'react-contenteditable';
+} from "@chakra-ui/react";
+import { useNode } from "@craftjs/core";
+import React, { useState, useEffect } from "react";
+import ContentEditable from "react-contenteditable";
 
 export const DropDownItem = ({
   text,
@@ -57,12 +57,12 @@ export const DropDownItem = ({
       onClick={() => selected && setEditable(true)}
     >
       <Button onClick={() => setIsOpen(!isOpen)} className="w-full  " size="lg">
-        {' '}
+        {" "}
         <ContentEditable
           html={text}
           disabled={!editable}
           onChange={(e) =>
-            setProp((props) => (props.text = e.target.value), 500)
+            setProp((props: any) => (props.text = e.target.value), 500)
           }
           style={{
             fontSize: `${fontSize}px`,
@@ -82,14 +82,14 @@ export const DropDownItem = ({
           html={text2}
           disabled={!editable}
           onChange={(e) =>
-            setProp((props) => (props.text2 = e.target.value), 500)
+            setProp((props: any) => (props.text2 = e.target.value), 500)
           }
           style={{
             fontSize: `${fontSize1}px`,
             fontStyle: `${fontStyle}`,
             fontWeight: `${fontWeight}`,
           }}
-          className="flex flex-1 text-left p-4"
+          className="flex flex-1 p-4 text-left"
         />
       </Collapse>
     </div>
@@ -105,7 +105,7 @@ export const DropDownItem = ({
     //   html={text}
     //   disabled={!editable}
     //   onChange={(e) =>
-    //     setProp((props) => (props.text = e.target.value), 500)
+    //     setProp((props:any) => (props.text = e.target.value), 500)
     //   }
     //   style={{
     //     fontSize: `${fontSize}px`,
@@ -122,7 +122,7 @@ export const DropDownItem = ({
     //         html={text2}
     //         disabled={!editable}
     //         onChange={(e) =>
-    //           setProp((props) => (props.text2 = e.target.value), 500)
+    //           setProp((props:any) => (props.text2 = e.target.value), 500)
     //         }
     //         style={{
     //           fontSize: `${fontSize}px`,
@@ -163,8 +163,8 @@ const TextSettings = () => {
           min={1}
           max={50}
           onChange={(val: any) => {
-            console.log(val, 'number');
-            setProp((props) => (props.fontSize = val), 1000);
+            console.log(val, "number");
+            setProp((props: any) => (props.fontSize = val), 1000);
           }}
         >
           <SliderTrack>
@@ -182,8 +182,8 @@ const TextSettings = () => {
           min={1}
           max={50}
           onChange={(val: any) => {
-            console.log(val, 'number');
-            setProp((props) => (props.fontSize1 = val), 1000);
+            console.log(val, "number");
+            setProp((props: any) => (props.fontSize1 = val), 1000);
           }}
         >
           <SliderTrack>
@@ -198,7 +198,7 @@ const TextSettings = () => {
           placeholder="Select font style"
           value={fontStyle}
           onChange={(e: any) => {
-            setProp((props) => (props.fontStyle = e.target.value));
+            setProp((props: any) => (props.fontStyle = e.target.value));
           }}
         >
           <option value="normal">Normal</option>
@@ -212,7 +212,7 @@ const TextSettings = () => {
           placeholder="Select font weight"
           value={fontWeight}
           onChange={(e: any) => {
-            setProp((props) => (props.fontWeight = e.target.value));
+            setProp((props: any) => (props.fontWeight = e.target.value));
           }}
         >
           <option value="normal">Normal</option>
@@ -225,8 +225,8 @@ const TextSettings = () => {
 };
 
 export const TextDefaultProps = {
-  text: 'Hi',
-  text2: 'Hi',
+  text: "Hi",
+  text2: "Hi",
   fontSize: 20,
 };
 
