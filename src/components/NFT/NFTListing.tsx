@@ -72,7 +72,7 @@ const NFTListing = () => {
         >
           {NFTCollectionDetail && (
             <div>
-              <h1>{NFTCollectionDetail.name}</h1>
+              <h1 className="text-2xl">{NFTCollectionDetail.name}</h1>
             </div>
           )}
           <div
@@ -89,7 +89,7 @@ const NFTListing = () => {
               />
             </div>
 
-            <div className="mx-2  w-full xs:w-56">
+            <div className="mx-2 my-2 w-full xs:w-56 md:my-0">
               <select
                 data-te-select-init
                 className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
@@ -147,7 +147,7 @@ const NFTListing = () => {
 
         {storeNFTData == undefined && NFTCollection == undefined && (
           <div className="flex min-h-[40vh] items-center justify-center">
-            <h1>No NFT's available yet</h1>
+            <h1 className="text-2xl ">No NFT's available yet</h1>
           </div>
         )}
       </div>

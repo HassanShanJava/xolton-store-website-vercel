@@ -4,6 +4,7 @@ import { storeMakerRouter } from "./routers/storeMaker";
 import { storeBlogsRouter } from "./routers/storeBlogs";
 import { storeNFTOrderRouter } from "./routers/storeNFTOrder";
 import { storeCollectionRouter } from "./routers/storeCollection";
+import { storeWebRouter } from "./routers/storeWeb";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = router({
   storeMaker: storeMakerRouter,
   storeNFTOrder: storeNFTOrderRouter,
   storeCollection: storeCollectionRouter,
+  storeWeb:storeWebRouter,
 });
 
 // export type definition of API

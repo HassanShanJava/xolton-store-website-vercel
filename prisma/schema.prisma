@@ -11,13 +11,13 @@ generator client {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  email         String   @unique
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  email         String    @unique
   otp           String
   user_name     String?
   full_name     String?
   company_name  String?
-  plan          Plan     @default(free_trial)
+  plan          PlanEnums @default(free_trial)
   access_wallet String?
   payout_wallet String?
   bio           String?
@@ -27,16 +27,18 @@ model User {
   profile_pic   String?
   address       String?
   last_login    String?
-  is_registered Boolean  @default(false)
-  is_deleted    Boolean  @default(false)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  is_registered Boolean   @default(false)
+  is_deleted    Boolean   @default(false)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
 
+  store_web         StoreWeb[]
   store_nfts        StoreNft[]
   store_collections StoreCollection[]
   store_makerorder  StoreMakerOrder[]
   store_takerorder  StoreTakerOrder[]
   store_nft_orders  StoreNftOrder[]
+  store_web_pages   StoreWebPages[]
   store_blogs       StoreBlogs[]
 
   // To return `Date`s intact through the API we use transformers
@@ -45,11 +47,28 @@ model User {
   @@map("users")
 }
 
+model StoreWeb {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  store_id        String          @db.ObjectId
+  project_focus   String[]
+  name            String
+  logo_image      String
+  banner_image    String
+  domain_name     String          @unique
+  socials         String[]
+  theme           ThemeType
+  store_web_pages StoreWebPages[]
+
+  User User @relation(fields: [store_id], references: [id])
+
+  @@map("store_websites")
+}
+
 // store nfts which created by store owners
 model StoreNft {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  store_id         String   @db.ObjectId
-  contract_id      String   @db.ObjectId
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  store_id         String            @db.ObjectId
+  contract_id      String            @db.ObjectId
   name             String
   external_link    String?
   price            String?
@@ -64,7 +83,7 @@ model StoreNft {
   donation         String?
   blockchian_type  String?
   sell_type        String?
-  status           String?
+  status           String?           @default("")
   item_id          String?
   media            String?
   token_id         String
@@ -79,62 +98,60 @@ model StoreNft {
   total_minted     String?
   royalties        String?
   copies           String?
-  is_active        Boolean?  @default(false)
-  is_deleted       Boolean?  @default(false)
-  is_listed        Boolean?  @default(false)
-  is_featured      Boolean?  @default(false)
-  is_trending      Boolean?  @default(false)
-  is_blocked       Boolean?  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
- store_makerorder           StoreMakerOrder[]
- store_nft_orders StoreNftOrder[]
- 
- 
- 
+  is_active        Boolean?          @default(false)
+  is_deleted       Boolean?          @default(false)
+  is_listed        Boolean?          @default(false)
+  is_featured      Boolean?          @default(false)
+  is_trending      Boolean?          @default(false)
+  is_blocked       Boolean?          @default(false)
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now()) @updatedAt
+  store_makerorder StoreMakerOrder[]
+  store_nft_orders StoreNftOrder[]
 
-  User            User    @relation(fields: [store_id], references: [id])
-  store_collection            StoreCollection    @relation(fields: [contract_id], references: [id])
+  store_collection StoreCollection @relation(fields: [contract_id], references: [id])
+  User             User?           @relation(fields: [userId], references: [id])
+  userId           String?         @db.ObjectId
+
   @@index([store_id])
   @@map("store_nfts")
 }
 
 // store collections which created by store owners
 model StoreCollection {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  store_id         String @db.ObjectId
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  store_id         String     @db.ObjectId
   name             String
   symbol           String
   thumb            String?
   media_type       String?
   media            String?
-  item_id           String?
-  token_id          String?
-  transaction_id    String?
-  contract_address  String?
+  item_id          String?
+  token_id         String?
+  transaction_id   String?
+  contract_address String?
   owner_id         String
-  status            String?
-   is_active         Boolean  @default(false)
-  is_deleted        Boolean  @default(false)
-  is_featured       Boolean  @default(false)
-  is_trending       Boolean  @default(false)
-  is_blocked        Boolean  @default(false)
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @updatedAt
- store_nfts     StoreNft[] 
-  User            User    @relation(fields: [store_id], references: [id])
-
+  status           String?
+  is_active        Boolean    @default(false)
+  is_deleted       Boolean    @default(false)
+  is_featured      Boolean    @default(false)
+  is_trending      Boolean    @default(false)
+  is_blocked       Boolean    @default(false)
+  created_at       DateTime?  @default(now())
+  updated_at       DateTime?  @updatedAt
+  store_nfts       StoreNft[]
+  User             User       @relation(fields: [store_id], references: [id])
 
   @@index([store_id])
   @@map("store_collection")
 }
 
-model StoreMakerOrder  {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  store_id          String   @db.ObjectId
-  nft_id          String   @db.ObjectId
-  is_listed        Boolean
-  isOrderAsk        Boolean
+model StoreMakerOrder {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  store_id   String  @db.ObjectId
+  nft_id     String  @db.ObjectId
+  is_listed  Boolean
+  isOrderAsk Boolean
 
   signer      String
   baseAccount String?
@@ -147,44 +164,45 @@ model StoreMakerOrder  {
   signed_r    String?
   signed_s    String?
 
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @updatedAt
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
   // is_active         Boolean  @default(false)
   // is_deleted        Boolean  @default(false)
   // is_lsited         Boolean  @default(false)
   // is_featured       Boolean  @default(false)
   // is_trending       Boolean  @default(false)
   // is_blocked        Boolean  @default(false)
-  User            User    @relation(fields: [store_id], references: [id])
-  store_nft            StoreNft    @relation(fields: [nft_id], references: [id])
+  User       User      @relation(fields: [store_id], references: [id])
+  store_nft  StoreNft  @relation(fields: [nft_id], references: [id])
 
   @@index([store_id])
   @@map("store_makerorder")
 }
- 
- model StoreTakerOrder   {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  store_id          String   @db.ObjectId
-  is_listed        String
-  isOrderAsk        String
 
-  taker             String
-  price             String?
-  minPercentageToAsk       String?
+model StoreTakerOrder {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  store_id   String @db.ObjectId
+  is_listed  String
+  isOrderAsk String
 
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @updatedAt
+  taker              String
+  price              String?
+  minPercentageToAsk String?
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
   // is_active         Boolean  @default(false)
   // is_deleted        Boolean  @default(false)
   // is_lsited         Boolean  @default(false)
   // is_featured       Boolean  @default(false)
   // is_trending       Boolean  @default(false)
   // is_blocked        Boolean  @default(false)
-  User            User    @relation(fields: [store_id], references: [id])
+  User       User      @relation(fields: [store_id], references: [id])
 
   @@index([store_id])
   @@map("store_takerorder")
 }
+
 model StoreNftOrder {
   id                     String    @id @default(auto()) @map("_id") @db.ObjectId
   store_id               String?   @db.ObjectId
@@ -207,11 +225,52 @@ model StoreNftOrder {
   @@map("store_nft_orders")
 }
 
+model StorePages {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  page_name   String
+  link        String
+  status      StorePagesEnums @default(default)
+  visibility  Boolean         @default(false)
+  is_editable Boolean         @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("store_pages")
+}
+
+model StoreWebPages {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  page_name    String
+  link         String
+  status       StorePagesEnums @default(default)
+  visibility   Boolean         @default(false)
+  is_editable  Boolean         @default(false)
+  page_content String?
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @default(now()) @updatedAt
+
+  User     User?   @relation(fields: [store_id], references: [id])
+  store_id String? @db.ObjectId
+
+  StoreWeb     StoreWeb? @relation(fields: [store_web_id], references: [id])
+  store_web_id String?   @db.ObjectId
+
+  @@index([store_id, store_web_id])
+  @@map("store_web_pages")
+}
+
+enum StorePagesEnums {
+  default
+
+  @@map("StorePages")
+}
+
 // store collections which created by store owners
 model StoreBlogs {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   store_id    String  @db.ObjectId
-  title       String @unique
+  title       String
   meta        String
   data        String
   description String
@@ -233,8 +292,27 @@ model StoreBlogs {
   @@map("store_blogs")
 }
 
-enum Plan {
+enum PlanEnums {
   free_trial
   platinum
   diamond
+
+  @@map("Plan")
+}
+
+// Address is an embedded document
+type ThemeType {
+  colors ThemeColors
+  fonts  ThemeFonts
+}
+
+type ThemeColors {
+  header     String
+  background String
+  button     String
+}
+
+type ThemeFonts {
+  primary   String
+  secondary String
 }

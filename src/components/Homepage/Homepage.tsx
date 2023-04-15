@@ -38,7 +38,7 @@ const Banner = ({ collection_id }:any) => {
   if (collection_id !==undefined) {
     return (
       <>
-        <div className=" relative h-[200px]  w-full  object-cover  py-4 md:h-[300px] ">
+        <div className=" relative h-[150px] sm:h-[200px]  w-full  object-cover  py-4 md:h-[300px] ">
           <Image
             src={renderNFTImage(NFTCollection)}
             alt="/collection banner"
@@ -52,7 +52,7 @@ const Banner = ({ collection_id }:any) => {
   } else {
     return (
       <>
-        <div className=" relative h-[200px]  w-full  object-cover  py-4 md:h-[300px] ">
+        <div className=" relative h-[150px] sm:h-[200px] w-full  object-cover  py-4 md:h-[300px] ">
           <Image
             src={BannerImage}
             alt="/banner"

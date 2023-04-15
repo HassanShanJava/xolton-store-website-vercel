@@ -12,14 +12,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 import { setAccount } from "~/store/slices/web3Slice";
+import { api } from "~/utils/api";
+import { storeWebPageData } from "~/store/slices/pageSlice";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
+  const dispatch = useDispatch();
   const toast = useToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
-  const dispatch = useDispatch();
 
   const connectMetamask = async () => {
     let data: any = await initWeb3();
@@ -65,6 +67,25 @@ const Navbar = () => {
     });
   }
 
+  const { data: NFTStoreNavbar, isFetched } =
+    api.storeWeb.getStoreNavbar.useQuery(
+      {},
+      {
+        refetchOnWindowFocus: false,
+      }
+    );
+  useEffect(() => {
+    if (isFetched) {
+      dispatch(storeWebPageData(NFTStoreNavbar));
+    }
+  }, [NFTStoreNavbar, isFetched]);
+
+  console.log(NFTStoreNavbar, "NFTStoreNavbar");
+
+  const navData =
+    isFetched && NFTStoreNavbar?.filter((nav) => nav.link != "/nft-detail");
+
+  console.log(navData, "navData");
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
@@ -83,8 +104,8 @@ const Navbar = () => {
         <div
           className={
             nav
-              ? "fixed left-0 top-0 z-10 h-screen w-[300px] bg-white duration-300"
-              : "fixed left-[-100%] top-0 z-10 h-screen w-[300px] bg-white duration-300"
+              ? "fixed left-0 top-0 z-10 h-screen max-w-[300px] bg-white duration-300"
+              : "fixed left-[-100%] top-0 z-10 h-screen max-w-[300px] bg-white duration-300"
           }
         >
           <div
@@ -96,18 +117,14 @@ const Navbar = () => {
 
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
-              <Link href="/">
-                <li className="flex items-center py-4 text-xl">Home</li>
-              </Link>
-              <Link href="/blogs">
-                <li className="flex items-center py-4 text-xl">Blog</li>
-              </Link>
-              <Link href="/about-us">
-                <li className="flex items-center py-4 text-xl">About Us</li>
-              </Link>
-              <Link href="/">
-                <li className="flex items-center py-4 text-xl">FAQ</li>
-              </Link>
+              {navData &&
+                navData.map((list) => (
+                  <Link href={list.link}>
+                    <li className="flex items-center py-4 text-xl">
+                      {list.page_name}
+                    </li>
+                  </Link>
+                ))}
             </ul>
           </nav>
         </div>
@@ -119,18 +136,12 @@ const Navbar = () => {
         </div>
 
         <ul className="hidden items-center justify-between sm:flex ">
-          <Link href="/">
-            <li className="mx-4">Home</li>
-          </Link>
-          <Link href="/blogs">
-            <li className="mx-4">Blog</li>
-          </Link>
-          <Link href="/about-us">
-            <li className="mx-4">About Us</li>
-          </Link>
-          <Link href="/">
-            <li className="mx-4">FAQ</li>
-          </Link>
+          {navData &&
+            navData.map((list) => (
+              <Link href={list.link}>
+                <li className="mx-4">{list.page_name}</li>
+              </Link>
+            ))}
         </ul>
 
         <div className="mr-4">
