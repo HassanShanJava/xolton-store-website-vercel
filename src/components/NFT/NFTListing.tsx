@@ -53,22 +53,33 @@ const NFTListing = () => {
 
   console.log(contract_id, "contract_id ");
 
-  const { data: NFTCollectionDetail } = api.storeCollection.getStoreCollection.useQuery(
-    { id: contract_id },
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+  const { data: NFTCollectionDetail } =
+    api.storeCollection.getStoreCollection.useQuery(
+      { id: contract_id },
+      {
+        refetchOnWindowFocus: false,
+      }
+    );
   return (
     <>
       <div className=" h-full  w-full ">
-        <div className="m-4 flex flex-col md:flex-row justify-between items-center">
+        <div
+          className={
+            storeNFTData !== undefined
+              ? "m-4 flex flex-col items-center justify-between xs:flex-row"
+              : "hidden"
+          }
+        >
           {NFTCollectionDetail && (
             <div>
               <h1>{NFTCollectionDetail.name}</h1>
             </div>
           )}
-          <div className="justify-left flex  flex-col items-center xs:flex-row-reverse ">
+          <div
+            className={`flex  flex-col ${
+              NFTCollectionDetail ? "" : "w-full"
+            } items-center xs:flex-row-reverse`}
+          >
             <div className="w-full xs:w-60   ">
               <input
                 type="text"
@@ -131,6 +142,12 @@ const NFTListing = () => {
             {NFTCollection.map((nft, i) => (
               <NFTCard nft={nft} />
             ))}
+          </div>
+        )}
+
+        {storeNFTData == undefined && NFTCollection == undefined && (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <h1>No NFT's available yet</h1>
           </div>
         )}
       </div>
