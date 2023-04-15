@@ -96,7 +96,8 @@ const Navbar = () => {
   console.log(NFTStoreNavbar, "NFTStoreNavbar");
 
   const navData =
-    isFetched && NFTStoreNavbar?.filter((nav) => nav.link != "/nft-detail");
+    isFetched &&
+    NFTStoreNavbar?.filter((nav: any) => nav.link != "/nft-detail");
 
   console.log(navData, "navData");
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
@@ -131,7 +132,7 @@ const Navbar = () => {
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navData &&
-                navData.map((list) => (
+                navData.map((list: any) => (
                   <Link href={list.link}>
                     <li className="flex items-center py-4 text-xl">
                       {list.page_name}
@@ -150,7 +151,7 @@ const Navbar = () => {
 
         <ul className="hidden items-center justify-between sm:flex ">
           {navData &&
-            navData.map((list) => (
+            navData.map((list: any) => (
               <Link href={list.link}>
                 <li className="mx-4">{list.page_name}</li>
               </Link>

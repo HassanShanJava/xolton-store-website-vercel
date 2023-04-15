@@ -1,10 +1,23 @@
 import React from "react";
 import CraftJsComponent from "../craftComponent/CraftJsComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "~/store/store";
+import { useRouter } from "next/router";
 
 const AboutUs = () => {
-  const storeBlogsData: any = {
-    data: "eyJST09UIjp7InR5cGXECHJlc29sdmVkTmFtZSI6IkNvbnRhaW5lciJ9LCJpc0NhbnZhcyI6dHJ1ZSwicHJvcHPENWJhY2tncm91bmQiOiIjZjFmM2Y1IiwicGFkZGluZyI6MjAsImRhdGEtY3kiOiJyb290LWPMWWRpc3BsYXnRdCwiY3VzdG9tIjp7fSwiaGlkZGVuIjpmYWxzZSwibm9kZXMiOlsiWjBvVm9Da0FixDFfeVBveVlNRmxaIiwiUjlGM0FKVGZ4OCJdLCJsaW5rZWROxjd7fX0szDr6AQNJbWFnZXPuAQDnAIPpAQFzcmMiOiIvX25leHQvc3RhdGljL21lZGlhL2Nvbm5lY3RpbmdfYXJ0d29ya3MuYmVmZTdlNGQuc3ZnIiwidXBsb2HkATpodHRwczovL2RmbWluNmV3bmttMzAuY2xvdWRmcm9udC5uZXQvxi5zLzE0OGU4Mjk0LWIzOGEtNGY0NS04ZjlkLTQ1OTY3ZDRkNjEzYy1hb3QtZjItcHYwMi0wMC0wMS0xMS0wNi1zdGlsbDA3NS0lMjgxJTI5LnBu5ACKYWx0IjoiTG9nbyIsImhyZWbkAc8iLCJvYmplY3RU5QEgImNvduUBm3dpZHRoIjoiMTAwxC5laWdoxD4yNDXyAdPnAUTuAdBwYXJlbsQz5QKE+QHg9QG66wHn+gG6VGV4dP4BuHTEIjoiQUJPVVQgVeQAoWZvbnRTaXplIjoyNuwCtWZyYW1lLcUwxiVBbGlnbuQBD2VudOUBEMU6dHlsxHpub3JtYWzHFVfoARtib2xk8gEc5QCm/wEa/wEa7AEa6wL0/wPX/wPX/wPXZyI6MekCBTEwMCwiYm945AEpbGV4LXJvd/8D2P8A7vQD6GVOY09UU2EyOFPkA+hHRkMxSHdjNU32A9vLIP8BB/8BB/EBB8UB+QEH/wD29AD26gGx+gD8RGNMLS1adVBDdfYA7+sBHP8A7/8A7/8A7+0A7zk2/wDu/wDu+QDubWJrRWc0MVE4afYA7ssg+wDuYXLlA276A/7/AOo6M/IA38RU9wDa7QKf/wOy6QDO6ASCWEhZRllkclhKRiIsImJ1dHRvbnMiOiJaRV9wR25NdGtrIuQA+Msm/gD4VG9w/QHk6gTYY2FyZC10xi/yAOzESPcA7+sBhPoByW45MmYyMXRkZGMiLCJVVnUxMVdQWC1W9gHWyy3/BdT/BdTmBdRib3V0IFhvbHRvbu4F2O0IjegBAOUF2y0x/wWf7wEE7QG2/wHz7QDr6wEL/wDr/wDr5QDrYXJlIGFsbG93ZWQgdXAgaGXEEN8U3xTQFN8T3zrfE2VyZTxkaXY+PGJyPjwvxQrEBdQnc3BhbiBz5AdmPVwiY29sb3I6IHJnYigwIMQCLyB2YXIoLS10d+YBz29wYWNpdHkpKTsg5AIALWZhbWlseTrHJmNoYWtyYS3EGnMtYm9keSk7XCLVdi/Edz7ffd99333ffesBHO0CzTE1+gLNMv8Czf8Czf8CzesLRuoEpf4ElkJvdMR3/wSZ7ADMYsky8gScx07/BJ/9BJ9GLUkwQjEwWXdR9gSSyyD6ANpC5QWu/wwg5QGtIm3kBj12YXJpYeUApHNvbGnEEuUCSyI6InRl5Qo05wPWY2xpY2vlAgMi8QHk5gEYLeYGKfIBH+cAk/cBG+sBsP8B6e8BD+sIhf8NL/8NL/oNL1Rvc2hpX2Jhbm5lci42ZWY3N2IwNfANKOkMqsVs/wyr/wyr/wyr8AE86wpX/wE87QE8fQ==",
-  };
+  const router = useRouter();
+  const { asPath } = useRouter();
+  const { pageData } = useSelector((state: RootState) => state.page);
+  const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
+  let storeBlogsData: any;
+  if (pageContent !== undefined && pageContent?.visibility) {
+    storeBlogsData = {
+      data: pageContent?.page_content,
+    };
+  } else {
+    router.push("/");
+  }
+
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8 py-4">
