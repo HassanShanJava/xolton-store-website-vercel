@@ -60,7 +60,7 @@ const NFTCard = ({ nft, key }: any) => {
   };
   return (
     <>
-      <div className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div key={key} className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
           <div className="relative h-80 max-h-[290px]  w-full  ">
             <Image

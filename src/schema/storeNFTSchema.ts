@@ -35,6 +35,7 @@ export const StoreNFTDetailSchema = z.object({
 
 export const StoreNFTCollectionSchema = z.object({
   contract_id: z.any().optional(),
+  remove_nft_id: z.any().optional(),
   searchQuery: z.string().nullable().optional(),
   orderBy: z.string().optional(),
 });

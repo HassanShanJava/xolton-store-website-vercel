@@ -6,7 +6,6 @@ import {
   renderNFTImage,
   customTruncateHandler,
   maticToUSD,
-
 } from "~/utils/helper";
 import { useSelector } from "react-redux";
 import NFTCard from "./NFTCard";
@@ -24,15 +23,17 @@ const NFTDetail = () => {
 
   const { id } = router.query;
 
-  const { data: NFTDetail }:any = api.storeNFT.getNFTDetail.useQuery(
+  const { data: NFTDetail }: any = api.storeNFT.getNFTDetail.useQuery(
     { id: id },
     {
       refetchOnWindowFocus: false,
     }
   );
 
+  console.log(NFTDetail,"NFTDetail")
+
   const { data: NFTCollection } = api.storeNFT.getNFTCollection.useQuery(
-    { contract_id: NFTDetail?.contract_id },
+    { contract_id: NFTDetail?.contract_id, remove_nft_id: id },
     {
       refetchOnWindowFocus: false,
     }
@@ -44,11 +45,11 @@ const NFTDetail = () => {
 
   const toast = useToast();
 
-  // console.log(initWeb3,"web3Init")
 
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
+  // buy nft
   const buyNFT = async () => {
     account != ""
       ? setShowPop(true)
@@ -67,25 +68,23 @@ const NFTDetail = () => {
     setAccountBalance(accountBalance);
   };
 
+  // convert matic to usd
   useEffect(() => {
-    
     (async () => {
-        if(NFTDetail !==null || NFTDetail !==undefined){
-        try{
-
-          const nftPrice:number = NFTDetail?.price ? +NFTDetail?.price : 0
+      if (NFTDetail !== null || NFTDetail !== undefined) {
+        try {
+          const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
           const maitccprice = await maticToUSD(nftPrice);
           // console.log(usdMatic,"usdMatic")
           setUsdMatic(maitccprice);
-
-        }catch(e){
-          console.log(e,"consvertion error front-end")
+        } catch (e) {
+          console.log(e, "consvertion error front-end");
         }
       }
-      })();
+    })();
   }, [NFTDetail?.price]);
 
-  console.log({ usdMatic });
+
 
   return (
     <div>
@@ -148,7 +147,7 @@ const NFTDetail = () => {
                       open={showPop}
                       nft={NFTDetail}
                       setBuy={setShowPop}
-                      price={+NFTDetail.price }
+                      price={+NFTDetail.price}
                       tax={+NFTDetail.tax}
                       accountBalance={+accountBalance}
                     />
@@ -215,34 +214,44 @@ const NFTDetail = () => {
           </div>
 
           {/* collection */}
-          <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 py-6 sm:px-10">
-            <div className="mx-auto flex items-center justify-between py-3 sm:px-5">
-              <p className="md:text-md text-sm lg:text-lg">
-                From the same collection
-              </p>
-              <button
-                type="button"
-                className="md:text-md rounded-lg border-b border-transparent p-1 px-4 text-sm duration-300 hover:border-black hover:bg-white lg:text-lg "
-                onClick={() => {
-                  router.push(`/?contract_id=${NFTDetail?.contract_id} `);
-                }}
-              >
-                View More
-              </button>
-            </div>
-            <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-              {NFTCollection &&
-                NFTCollection.map((collectionNFT, i) => (
-                  <NFTCard nft={collectionNFT} key={i} />
-                ))}
-            </div>
-          </div>
+          <CollectionList
+            contract_id={NFTDetail?.contract_id}
+            NFTCollection={NFTCollection}
+          />
         </div>
       )}
     </div>
   );
 };
 
-const CollectionList = () => {};
+const CollectionList = ({ contract_id, NFTCollection }: any) => {
+  const router = useRouter();
+  return (
+    NFTCollection?.length != 0 && (
+      <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 py-6 sm:px-10">
+        <div className="mx-auto flex items-center justify-between py-3 sm:px-5">
+          <p className="md:text-md text-sm lg:text-lg">
+            From the same collection
+          </p>
+          <button
+            type="button"
+            className="md:text-md rounded-lg border-b border-transparent p-1 px-4 text-sm duration-300 hover:border-black hover:bg-white lg:text-lg "
+            onClick={() => {
+              router.push(`/?contract_id=${contract_id} `);
+            }}
+          >
+            View More
+          </button>
+        </div>
+        <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+          {NFTCollection &&
+            NFTCollection.map((collectionNFT:any, i: any) => (
+              <NFTCard nft={collectionNFT} key={i} />
+            ))}
+        </div>
+      </div>
+    )
+  );
+};
 
 export default NFTDetail;
