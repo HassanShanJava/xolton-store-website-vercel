@@ -51,14 +51,14 @@ const BlogsListing = () => {
                           width={5000}
                           height={5000}
                           quality={100}
-                          className=" object-contain"
+                          className="h-[240px] w-full object-cover"
                         />
                       </div>
                       <div>
                         <h3>
                           <a
                             href="javascript:void(0)"
-                            className="text-dark hover:text-primary mb-4 inline-block text-xl font-semibold sm:text-2xl lg:text-xl xl:text-2xl"
+                            className="text-dark hover:text-primary mb-1 inline-block text-xl font-semibold capitalize sm:text-2xl lg:text-xl xl:text-2xl"
                           >
                             {customTruncateHandler(store?.title, 20)}
                           </a>

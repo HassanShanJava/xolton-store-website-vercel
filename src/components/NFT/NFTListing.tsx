@@ -16,7 +16,7 @@ const NFTListing = () => {
           ...prevFilters,
           searchQuery: e.target.value,
         }));
-      }, 400);
+      }, 800);
     } else {
       setTimeout(() => {
         setSortFilter((prevFilters) => ({
