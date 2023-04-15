@@ -32,11 +32,12 @@ model User {
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
 
-  store_nfts        StoreNft[]
-  store_collections StoreCollection[]
-  store_makerorder  StoreMakerOrder[]
-  store_takerorder  StoreTakerOrder[]
-  store_nft_orders  StoreNftOrder[]
+  store_nfts                  StoreNft[]
+ store_collections           StoreCollection[]
+ store_makerorder           StoreMakerOrder[]
+ store_takerorder           StoreTakerOrder[]
+store_nft_orders  StoreNftOrder[]
+store_blogs     StoreBlogs[]
 
   // To return `Date`s intact through the API we use transformers
   // https://trpc.io/docs/data-transformers
@@ -46,9 +47,9 @@ model User {
 
 // store nfts which created by store owners
 model StoreNft {
-  id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  store_id         String            @db.ObjectId
-  contract_id      String            @db.ObjectId
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  store_id         String   @db.ObjectId
+  contract_id      String   @db.ObjectId
   name             String
   external_link    String?
   price            String?
@@ -78,110 +79,112 @@ model StoreNft {
   total_minted     String?
   royalties        String?
   copies           String?
-  is_active        Boolean?          @default(false)
-  is_deleted       Boolean?          @default(false)
-  is_listed        Boolean?          @default(false)
-  is_featured      Boolean?          @default(false)
-  is_trending      Boolean?          @default(false)
-  is_blocked       Boolean?          @default(false)
-  created_at       DateTime          @default(now())
-  updated_at       DateTime          @default(now()) @updatedAt
-  store_makerorder StoreMakerOrder[]
-  store_nft_orders StoreNftOrder[]
+  is_active        Boolean?  @default(false)
+  is_deleted       Boolean?  @default(false)
+  is_listed        Boolean?  @default(false)
+  is_featured      Boolean?  @default(false)
+  is_trending      Boolean?  @default(false)
+  is_blocked       Boolean?  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+ store_makerorder           StoreMakerOrder[]
+ store_nft_orders StoreNftOrder[]
+ 
+ 
+ 
 
-  User             User            @relation(fields: [store_id], references: [id])
-  store_collection StoreCollection @relation(fields: [contract_id], references: [id])
-
+  User            User    @relation(fields: [store_id], references: [id])
+  store_collection            StoreCollection    @relation(fields: [contract_id], references: [id])
   @@index([store_id])
   @@map("store_nfts")
 }
 
 // store collections which created by store owners
 model StoreCollection {
-  id               String     @id @default(auto()) @map("_id") @db.ObjectId
-  store_id         String     @db.ObjectId
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  store_id         String @db.ObjectId
   name             String
   symbol           String
   thumb            String?
   media_type       String?
   media            String?
-  item_id          String?
-  token_id         String?
-  transaction_id   String?
-  contract_address String?
+  item_id           String?
+  token_id          String?
+  transaction_id    String?
+  contract_address  String?
   owner_id         String
-  status           String?
-  is_active        Boolean    @default(false)
-  is_deleted       Boolean    @default(false)
-  is_featured      Boolean    @default(false)
-  is_trending      Boolean    @default(false)
-  is_blocked       Boolean    @default(false)
-  created_at       DateTime?  @default(now())
-  updated_at       DateTime?  @updatedAt
-  store_nfts       StoreNft[]
-  User             User       @relation(fields: [store_id], references: [id])
+  status            String?
+   is_active         Boolean  @default(false)
+  is_deleted        Boolean  @default(false)
+  is_featured       Boolean  @default(false)
+  is_trending       Boolean  @default(false)
+  is_blocked        Boolean  @default(false)
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
+ store_nfts     StoreNft[] 
+  User            User    @relation(fields: [store_id], references: [id])
+
 
   @@index([store_id])
   @@map("store_collection")
 }
 
-model StoreMakerOrder {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  store_id   String  @db.ObjectId
-  nft_id     String  @db.ObjectId
-  is_listed  Boolean
-  isOrderAsk Boolean
+model StoreMakerOrder  {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  store_id          String   @db.ObjectId
+  nft_id          String   @db.ObjectId
+  is_listed        Boolean
+  isOrderAsk        Boolean
 
-  signer      String
-  baseAccount String?
-  nftContract String?
-  price       String?
-  tokenId     String?
-  tax         String?
-  nonce       String?
-  v           String?
-  r           String?
-  s           String?
+  signer            String
+  baseAccount       String?
+  nftContract       String?
+  price             String?
+  tokenId           String?
+  tax               String?
+  nonce             String?
+  signed_v                 String?
+  signed_r                 String?
+  signed_s                 String?
 
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
   // is_active         Boolean  @default(false)
   // is_deleted        Boolean  @default(false)
   // is_lsited         Boolean  @default(false)
   // is_featured       Boolean  @default(false)
   // is_trending       Boolean  @default(false)
   // is_blocked        Boolean  @default(false)
-  User       User      @relation(fields: [store_id], references: [id])
-  store_nft  StoreNft  @relation(fields: [nft_id], references: [id])
+  User            User    @relation(fields: [store_id], references: [id])
+  store_nft            StoreNft    @relation(fields: [nft_id], references: [id])
 
   @@index([store_id])
   @@map("store_makerorder")
 }
+ 
+ model StoreTakerOrder   {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  store_id          String   @db.ObjectId
+  is_listed        String
+  isOrderAsk        String
 
-model StoreTakerOrder {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  store_id   String @db.ObjectId
-  is_listed  String
-  isOrderAsk String
+  taker             String
+  price             String?
+  minPercentageToAsk       String?
 
-  taker              String
-  price              String?
-  minPercentageToAsk String?
-
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @updatedAt
   // is_active         Boolean  @default(false)
   // is_deleted        Boolean  @default(false)
   // is_lsited         Boolean  @default(false)
   // is_featured       Boolean  @default(false)
   // is_trending       Boolean  @default(false)
   // is_blocked        Boolean  @default(false)
-  User       User      @relation(fields: [store_id], references: [id])
+  User            User    @relation(fields: [store_id], references: [id])
 
   @@index([store_id])
   @@map("store_takerorder")
 }
-
 model StoreNftOrder {
   id                     String   @id @default(auto()) @map("_id") @db.ObjectId
   store_id               String   @db.ObjectId
@@ -200,6 +203,34 @@ model StoreNftOrder {
 
   @@index([store_id, nft_id])
   @@map("store_nft_orders")
+}
+
+// store collections which created by store owners
+model StoreBlogs {
+  id                String @id @default(auto()) @map("_id") @db.ObjectId
+  store_id          String @db.ObjectId
+  title             String
+  meta              String
+  data              String
+  description       String
+  thumb            String?
+  media            String?
+  media_type       String?
+
+ 
+  status            String?
+  is_active         Boolean  @default(false)
+  is_deleted        Boolean  @default(false)
+  is_featured       Boolean  @default(false)
+  is_trending       Boolean  @default(false)
+  is_blocked        Boolean  @default(false)
+  created_at        DateTime? @default(now())
+  updated_at        DateTime? @updatedAt
+  User              User    @relation(fields: [store_id], references: [id])
+
+
+  @@index([store_id])
+  @@map("store_blogs")
 }
 
 enum Plan {
