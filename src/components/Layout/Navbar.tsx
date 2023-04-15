@@ -14,6 +14,7 @@ import { useToast } from "@chakra-ui/react";
 import { setAccount } from "~/store/slices/web3Slice";
 import { api } from "~/utils/api";
 import { storeWebPageData } from "~/store/slices/pageSlice";
+import { storeWebThemeData } from "~/store/slices/themeSlice";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -74,11 +75,23 @@ const Navbar = () => {
         refetchOnWindowFocus: false,
       }
     );
+
+  const { data: themes, isFetched: fetchesTheme } =
+    api.storeWeb.getStoreTheme.useQuery(
+      {},
+      {
+        refetchOnWindowFocus: false,
+      }
+    );
+
+  console.log(themes, "themes");
+
   useEffect(() => {
     if (isFetched) {
       dispatch(storeWebPageData(NFTStoreNavbar));
+      dispatch(storeWebThemeData(themes));
     }
-  }, [NFTStoreNavbar, isFetched]);
+  }, [NFTStoreNavbar, themes, isFetched, fetchesTheme]);
 
   console.log(NFTStoreNavbar, "NFTStoreNavbar");
 

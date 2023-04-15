@@ -24,4 +24,27 @@ export const storeWebRouter = router({
         });
       }
     }),
+
+
+  getStoreTheme:  publicProcedure
+  .input(StoreWebSchema)
+  .query(async ({ ctx, input }) => {
+    try {
+      const website = await ctx.prisma.storeWeb.findFirst({
+        where: {
+          store_id: "642eabca10d4d3ccb791b494",          
+        },
+        select:{
+          theme:true
+        }
+      })
+      return website
+    } catch (e) {
+      console.log("error:::", e);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
+      });
+    }
+  }), 
 });
