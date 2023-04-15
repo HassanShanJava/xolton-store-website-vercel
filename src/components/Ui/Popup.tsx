@@ -113,7 +113,7 @@ const Popup = ({
           title: "Transaction Completed",
           status: "success",
           isClosable: true,
-          position: "top-right",
+          position: "top-left",
         });
 
         setIsPurchase(true);
@@ -125,7 +125,7 @@ const Popup = ({
           title: buyData.msg as string,
           status: "error",
           isClosable: true,
-          position: "top-right",
+          position: "top-left",
         });
 
         setBuy(false);

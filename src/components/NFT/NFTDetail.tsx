@@ -30,7 +30,7 @@ const NFTDetail = () => {
     }
   );
 
-  console.log(NFTDetail,"NFTDetail")
+  console.log(NFTDetail, "NFTDetail");
 
   const { data: NFTCollection } = api.storeNFT.getNFTCollection.useQuery(
     { contract_id: NFTDetail?.contract_id, remove_nft_id: id },
@@ -44,7 +44,6 @@ const NFTDetail = () => {
   const [usdMatic, setUsdMatic] = useState<any>("");
 
   const toast = useToast();
-
 
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
@@ -83,8 +82,6 @@ const NFTDetail = () => {
       }
     })();
   }, [NFTDetail?.price]);
-
-
 
   return (
     <div>
@@ -196,12 +193,6 @@ const NFTDetail = () => {
                       <p>{NFTDetail.token_id}</p>
                     </div>
                     {/*divider  */}
-                    {/* <div className=" border-t border-tx-2" />
-                    <div className="flex justify-between p-3  ">
-                      <p>Collection ID</p>
-                      <p>{NFTDetail.contract_id}</p>
-                    </div> */}
-                    {/*divider  */}
                     <div className=" border-t border-tx-2" />
                     <div className="flex justify-between p-3 ">
                       <p>Blockchain</p>
@@ -224,7 +215,7 @@ const NFTDetail = () => {
   );
 };
 
-const CollectionList = ({ contract_id, NFTCollection }: any) => {
+const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
     NFTCollection?.length != 0 && (
@@ -245,7 +236,7 @@ const CollectionList = ({ contract_id, NFTCollection }: any) => {
         </div>
         <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
           {NFTCollection &&
-            NFTCollection.map((collectionNFT:any, i: any) => (
+            NFTCollection.map((collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
             ))}
         </div>

@@ -57,7 +57,7 @@ const Navbar = () => {
       dispatch(setAccount(accounts[0]));
     });
 
-    window?.ethereum.on("chainChanged", function (chainId: String) {
+    window?.ethereum?.on("chainChanged", function (chainId: String) {
       console.log("chainChanged", chainId);
       if (chainId != "0x13881") {
         dispatch(setAccount(""));

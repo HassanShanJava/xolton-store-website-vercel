@@ -89,7 +89,7 @@ const NFTCard = ({ nft, key }: any) => {
                 e.preventDefault();
                 buyNFT();
               }}
-              className="  w-full rounded-[6px] bg-black py-3 text-center text-white hover:bg-accentLinear-1 "
+              className="font-storeFont  w-full rounded-[6px] bg-black py-3 text-center text-white hover:bg-accentLinear-1 "
             >
               Buy
             </button>
