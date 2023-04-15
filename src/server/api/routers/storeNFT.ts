@@ -257,12 +257,13 @@ export const storeNFTRouter = router({
             contract_id: input.contract_id,
             is_listed: true,
             status: "",
+
           },
 
           take: 6,
         });
-
-        return NFTS;
+        const filteredNFTS=NFTS.filter((nft)=>nft.id !=input.remove_nft_id)
+        return filteredNFTS;
       } catch (e) {
         console.log("error:::", e);
         throw new TRPCError({

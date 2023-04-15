@@ -7,11 +7,7 @@ import { useRouter } from "next/router";
 const NFTListing = () => {
   const router = useRouter();
   const { contract_id } = router.query;
-
   const [sortFilter, setSortFilter] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // const debounceTerm = useDebounce(searchTerm, 400);
 
   function handleKeyPress(e: any) {
     if (contract_id == undefined) {
@@ -56,47 +52,72 @@ const NFTListing = () => {
   );
 
   console.log(contract_id, "contract_id ");
+
+  const { data: NFTCollectionDetail } =
+    api.storeCollection.getStoreCollection.useQuery(
+      { id: contract_id },
+      {
+        refetchOnWindowFocus: false,
+      }
+    );
   return (
     <>
-      <div className=" h-full  w-full py-10 ">
-        <div className="justify-left flex w-full flex-col items-center xs:flex-row-reverse ">
-          <div className="mb-3 w-full xs:w-60   ">
-            <input
-              type="text"
-              placeholder="Search by NFT Name"
-              className=" w-full rounded-lg  p-2 font-storeFont text-sm focus:outline-none "
-              onChange={handleKeyPress}
-            />
-          </div>
+      <div className=" h-full  w-full ">
+        <div
+          className={
+            storeNFTData !== undefined
+              ? "m-4 flex flex-col items-center justify-between xs:flex-row"
+              : "hidden"
+          }
+        >
+          {NFTCollectionDetail && (
+            <div>
+              <h1>{NFTCollectionDetail.name}</h1>
+            </div>
+          )}
+          <div
+            className={`flex  flex-col ${
+              NFTCollectionDetail ? "" : "w-full"
+            } items-center xs:flex-row-reverse`}
+          >
+            <div className="w-full xs:w-60   ">
+              <input
+                type="text"
+                placeholder="Search by NFT Name"
+                className=" w-full rounded-lg  p-2 font-storeFont text-sm focus:outline-none "
+                onChange={handleKeyPress}
+              />
+            </div>
 
-          <div className="mx-2 mb-3 w-full xs:w-56">
-            <select
-              data-te-select-init
-              className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
-              onChange={(e) => sorNFT(e.target.value)}
-            >
-              <option
-                value="Sort By"
-                selected
-                disabled
-                hidden
-                className="font-storeFont"
+            <div className="mx-2  w-full xs:w-56">
+              <select
+                data-te-select-init
+                className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
+                onChange={(e) => sorNFT(e.target.value)}
               >
-                Sort By
-              </option>
-              <option value="name-asc" className="font-storeFont">
-                A to Z
-              </option>
-              <option value="name-desc" className="font-storeFont">
-                Z to A
-              </option>
-              <option value="price-desc" className="font-storeFont">
-                Price Highest to Lowest
-              </option>
-              <option value="price-asc" className="font-storeFont">
-                Price Lowest to Highest
-              </option>
-            </select>
+                <option
+                  value="Sort By"
+                  selected
+                  disabled
+                  hidden
+                  className="font-storeFont"
+                >
+                  Sort By
+                </option>
+                <option value="name-asc" className="font-storeFont">
+                  A to Z
+                </option>
+                <option value="name-desc" className="font-storeFont">
+                  Z to A
+                </option>
+                <option value="price-desc" className="font-storeFont">
+                  Price Highest to Lowest
+                </option>
+                <option value="price-asc" className="font-storeFont">
+                  Price Lowest to Highest
+                </option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -121,6 +142,12 @@ const NFTListing = () => {
             {NFTCollection.map((nft, i) => (
               <NFTCard nft={nft} />
             ))}
+          </div>
+        )}
+
+        {storeNFTData == undefined && NFTCollection == undefined && (
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <h1>No NFT's available yet</h1>
           </div>
         )}
       </div>
