@@ -66,6 +66,7 @@ const NFTCard = ({ nft }: any) => {
               alt="/nft"
               fill
               priority
+              priority
               quality={100}
               className="mx-auto rounded-xl  object-cover "
             />

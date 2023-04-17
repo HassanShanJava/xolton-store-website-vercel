@@ -65,6 +65,7 @@ const BlogsListing = () => {
                           height={5000}
                           quality={100}
                           className="h-[240px] w-full object-cover"
+                          priority
                         />
                       </div>
                       <div>

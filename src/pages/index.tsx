@@ -1,6 +1,14 @@
 import { type NextPage } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
-import Homepage from "~/components/Homepage/Homepage";
+// import Homepage from "~/components/Homepage/Homepage";
+
+
+
+const Homepage = dynamic(() => import("~/components/Homepage/Homepage"), {
+  ssr: true,
+});
+
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -8,9 +16,6 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Xoltan Marketplace Store</title>
-        <meta name="description" content="Xoltan Marketplace Store" />
-        <link rel="icon" href="/favicon.ico" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
@@ -28,12 +33,3 @@ const Home: NextPage = () => {
 
 export default Home;
 
-// This gets called on every request
-// export async function getServerSideProps() {
-//   // Fetch data from external API
-//   const res = await fetch(`https://.../data`)
-//   const data = await res.json()
-
-//   // Pass data to the page via props
-//   return { props: { data } }
-// }

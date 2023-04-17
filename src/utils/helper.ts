@@ -35,6 +35,12 @@ export function renderNFTImage(nft: any) {
     ? ""
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.thumb}`;
 }
+export function renderNFTIcon(nft: any) {
+  return `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.logo_image}`;
+}
+export function renderBanner(nft: any) {
+  return `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.banner_image}`;
+}
 
 export const displayDate = (payload: any) => {
   const date = new Date(payload);

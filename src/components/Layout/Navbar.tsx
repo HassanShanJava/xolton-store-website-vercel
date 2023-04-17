@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
-import { customTruncateHandler } from "~/utils/helper";
+import { customTruncateHandler, renderNFTIcon } from "~/utils/helper";
 import { web3Init } from "~/store/slices/web3Slice";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
@@ -32,10 +32,9 @@ const Navbar = () => {
       toast({
         title: "Wallet connected",
         status: "success",
-        
+
         isClosable: true,
         position: "top-left",
-        
       });
 
       dispatch(
@@ -58,7 +57,7 @@ const Navbar = () => {
 
   if (typeof window !== "undefined") {
     window?.ethereum?.on("accountsChanged", function (accounts: String) {
-      if (account !== ""){
+      if (account !== "") {
         console.log("account :: ", accounts[0]);
         dispatch(setAccount(accounts[0]));
       }
@@ -72,6 +71,13 @@ const Navbar = () => {
     });
   }
 
+  const { data: details } = api.storeWeb.getStoreDetails.useQuery(
+    {},
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
   const { data: NFTStoreNavbar, isFetched } =
     api.storeWeb.getStoreNavbar.useQuery(
       {},
@@ -79,7 +85,7 @@ const Navbar = () => {
         refetchOnWindowFocus: false,
       }
     );
-
+  console.log(NFTStoreNavbar, "NFTStoreNavbar");
   const { data: themes, isFetched: fetchesTheme } =
     api.storeWeb.getStoreTheme.useQuery(
       {},
@@ -97,7 +103,7 @@ const Navbar = () => {
     }
   }, [NFTStoreNavbar, themes, isFetched, fetchesTheme]);
 
-  console.log(NFTStoreNavbar, "NFTStoreNavbar")
+  console.log(NFTStoreNavbar, "NFTStoreNavbar");
 
   const navData =
     isFetched &&
@@ -114,7 +120,7 @@ const Navbar = () => {
             ""
           ) : (
             <div className="relative ml-4 flex h-8 w-8">
-              <Image src={MenuIcon} alt="/logo" fill/>
+              <Image src={MenuIcon} alt="/logo" fill priority />
             </div>
           )}
         </div>
@@ -136,8 +142,8 @@ const Navbar = () => {
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navData &&
-                navData.map((list: any) => (
-                  <Link href={list.link}>
+                navData.map((list: any, i: number) => (
+                  <Link href={list.link} key={i}>
                     <li className="flex items-center py-4 text-xl">
                       {list.page_name}
                     </li>
@@ -147,16 +153,16 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="relative ml-4 hidden h-10 w-10 sm:flex">
+        <div className="relative ml-4 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
-            <Image src={Logo} alt="/logo" fill />
+            {details&&<Image src={renderNFTIcon(details)} alt="/logo" fill />}
           </Link>
         </div>
 
-        <ul className="hidden items-center justify-between sm:flex text-sm">
+        <ul className="hidden items-center justify-between text-sm sm:flex">
           {navData &&
-            navData.map((list: any) => (
-              <Link href={list.link}>
+            navData.map((list: any, i: number) => (
+              <Link href={list.link} key={i}>
                 <li className="mx-4">{list.page_name}</li>
               </Link>
             ))}
@@ -184,5 +190,14 @@ const Navbar = () => {
     </>
   );
 };
+
+// // This gets called on every request
+// export async function getServerSideProps() {
+//   // Fetch data from external API
+  
+
+//   // Pass data to the page via props
+//   return { props: { details } };
+// }
 
 export default Navbar;
