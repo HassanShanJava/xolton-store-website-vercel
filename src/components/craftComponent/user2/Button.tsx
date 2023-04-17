@@ -11,11 +11,20 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import React from "react";
+import { useRouter } from "next/router";
 
-export const Button = ({ size, variant, color, text, ...props }: any) => {
+export const Button = ({ size, variant, color, text, src, ...props }: any) => {
+  const router = useRouter();
   const {
     connectors: { connect, drag },
   } = useNode();
+  const handleClick = (src: any) => {
+    if (src) {
+      // router.push(src);
+      const newWindow = window.open(src, "_blank", "noopener,noreferrer");
+      if (newWindow) newWindow.opener = null;
+    }
+  };
   return (
     <ChakraButton
       ref={(ref: any) => connect(drag(ref))}
@@ -23,6 +32,7 @@ export const Button = ({ size, variant, color, text, ...props }: any) => {
       size={size}
       variant={variant}
       colorScheme={color}
+      onClick={() => handleClick(src)}
       {...props}
     >
       {text}
@@ -40,6 +50,16 @@ export const ButtonSettings = () => {
 
   return (
     <div className="mb-2 flex flex-col gap-2 space-y-2">
+      <FormControl size="small">
+        <FormLabel>Link</FormLabel>
+        <Input
+          value={props.src}
+          placeholder="Enter Link"
+          onChange={(e: any) => {
+            setProp((props: any) => (props.src = e.target.value));
+          }}
+        />
+      </FormControl>
       <FormControl size="small">
         <FormLabel>Text</FormLabel>
         <Input
