@@ -94,10 +94,10 @@ const NFTListing = () => {
                 data-te-select-init
                 className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
                 onChange={(e) => sorNFT(e.target.value)}
+                value={"select"}
               >
                 <option
-                  value="Sort By"
-                  selected
+                  value="select"
                   disabled
                   hidden
                   className="font-storeFont"
@@ -128,7 +128,9 @@ const NFTListing = () => {
             }
           >
             {storeNFTData.map((nft, i) => (
-              <NFTCard nft={nft} />
+              <span key={i}>
+                <NFTCard nft={nft}  />
+              </span>
             ))}
           </div>
         )}
@@ -140,7 +142,9 @@ const NFTListing = () => {
             }
           >
             {NFTCollection.map((nft, i) => (
-              <NFTCard nft={nft} />
+              <span key={i}>
+                <NFTCard nft={nft}  />
+              </span>
             ))}
           </div>
         )}

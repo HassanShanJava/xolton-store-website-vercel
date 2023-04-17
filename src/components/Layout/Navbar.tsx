@@ -32,8 +32,10 @@ const Navbar = () => {
       toast({
         title: "Wallet connected",
         status: "success",
+        
         isClosable: true,
         position: "top-left",
+        
       });
 
       dispatch(
@@ -56,8 +58,10 @@ const Navbar = () => {
 
   if (typeof window !== "undefined") {
     window?.ethereum?.on("accountsChanged", function (accounts: String) {
-      console.log("account :: ", accounts[0]);
-      dispatch(setAccount(accounts[0]));
+      if (account !== ""){
+        console.log("account :: ", accounts[0]);
+        dispatch(setAccount(accounts[0]));
+      }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -93,7 +97,7 @@ const Navbar = () => {
     }
   }, [NFTStoreNavbar, themes, isFetched, fetchesTheme]);
 
-  console.log(NFTStoreNavbar, "NFTStoreNavbar");
+  console.log(NFTStoreNavbar, "NFTStoreNavbar")
 
   const navData =
     isFetched &&
@@ -103,14 +107,14 @@ const Navbar = () => {
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-4 shadow-md">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
         {/* for mobile menu state */}
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
             ""
           ) : (
-            <div className="relative ml-4 flex h-10 w-10">
-              <Image src={MenuIcon} alt="/logo" fill />
+            <div className="relative ml-4 flex h-8 w-8">
+              <Image src={MenuIcon} alt="/logo" fill/>
             </div>
           )}
         </div>
@@ -118,8 +122,8 @@ const Navbar = () => {
         <div
           className={
             nav
-              ? "fixed left-0 top-0 z-10 h-screen max-w-[300px] bg-white duration-300"
-              : "fixed left-[-100%] top-0 z-10 h-screen max-w-[300px] bg-white duration-300"
+              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
+              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
           }
         >
           <div
@@ -149,7 +153,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <ul className="hidden items-center justify-between sm:flex ">
+        <ul className="hidden items-center justify-between sm:flex text-sm">
           {navData &&
             navData.map((list: any) => (
               <Link href={list.link}>
@@ -162,15 +166,14 @@ const Navbar = () => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 font-storeFont text-sm text-white hover:bg-ac-2"
-              onClick={() => connectMetamask()}
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2"
             >
               {customTruncateHandler(account, 8)}
             </button>
           ) : (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-2 font-storeFont text-sm text-white hover:bg-ac-2 sm:px-3"
+              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2 sm:px-3"
               onClick={() => connectMetamask()}
             >
               Connect Wallet

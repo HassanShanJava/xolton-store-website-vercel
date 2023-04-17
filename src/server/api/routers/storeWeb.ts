@@ -10,9 +10,9 @@ export const storeWebRouter = router({
       try {
         const navbar = await ctx.prisma.storeWebPages.findMany({
           where: {
-            store_id: "642eabca10d4d3ccb791b494",
-            visibility:true,
-            
+            store_id: process.env.STORE_ID,
+            visibility: true,
+
           }
         })
         return navbar
@@ -26,25 +26,69 @@ export const storeWebRouter = router({
     }),
 
 
-  getStoreTheme:  publicProcedure
-  .input(StoreWebSchema)
-  .query(async ({ ctx, input }) => {
-    try {
-      const website = await ctx.prisma.storeWeb.findFirst({
-        where: {
-          store_id: "642eabca10d4d3ccb791b494",          
-        },
-        select:{
-          theme:true
-        }
-      })
-      return website
-    } catch (e) {
-      console.log("error:::", e);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Something went wrong",
-      });
-    }
-  }), 
+  getStoreTheme: publicProcedure
+    .input(StoreWebSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        const website = await ctx.prisma.storeWeb.findFirst({
+          where: {
+            store_id: process.env.STORE_ID,
+          },
+          select: {
+            theme: true
+          }
+        })
+        return website
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+
+  getStoreDetails: publicProcedure
+    .input(StoreWebSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        const website = await ctx.prisma.storeWeb.findFirst({
+          where: {
+            store_id: process.env.STORE_ID,
+          },
+          select: {
+            name: true,
+            logo_image: true,
+          }
+        })
+        return website
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+  getStoreBanner: publicProcedure
+    .input(StoreWebSchema)
+    .query(async ({ ctx, input }) => {
+      try {
+        const website = await ctx.prisma.storeWeb.findFirst({
+          where: {
+            store_id: process.env.STORE_ID,
+          },
+          select: {
+            banner_image: true,
+          }
+        })
+        return website
+      } catch (e) {
+        console.log("error:::", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
 });
