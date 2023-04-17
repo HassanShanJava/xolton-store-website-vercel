@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Homepage from "~/components/Homepage/Homepage";
 
-
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
@@ -20,12 +19,21 @@ const Home: NextPage = () => {
           referrerPolicy="no-referrer"
         />
       </Head>
-      <main >
-
-        <Homepage/>
+      <main>
+        <Homepage />
       </main>
     </>
   );
 };
 
 export default Home;
+
+// This gets called on every request
+// export async function getServerSideProps() {
+//   // Fetch data from external API
+//   const res = await fetch(`https://.../data`)
+//   const data = await res.json()
+
+//   // Pass data to the page via props
+//   return { props: { data } }
+// }

@@ -14,7 +14,7 @@ import { useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
 
-const NFTCard = ({ nft, key }: any) => {
+const NFTCard = ({ nft }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
 
@@ -35,13 +35,12 @@ const NFTCard = ({ nft, key }: any) => {
 
   const buyNFT = async () => {
     account == ""
-    ? toast({
-        title: "Connect Wallet",
-        status: "error",
-        isClosable: true,
-        position: "top-left",
-      })
-    
+      ? toast({
+          title: "Connect Wallet",
+          status: "error",
+          isClosable: true,
+          position: "top-left",
+        })
       : account == nft.creator_id
       ? toast({
           title: "Owner cannot buy there own NFT",
@@ -50,7 +49,6 @@ const NFTCard = ({ nft, key }: any) => {
           position: "top-left",
         })
       : setShowPop(true);
-       
 
     const balance = await web3?.eth.getBalance(account);
     // console.log(balance, "balance");
@@ -60,7 +58,7 @@ const NFTCard = ({ nft, key }: any) => {
   };
   return (
     <>
-      <div key={key} className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
           <div className="relative h-80 max-h-[290px]  w-full  ">
             <Image
@@ -89,7 +87,7 @@ const NFTCard = ({ nft, key }: any) => {
                 e.preventDefault();
                 buyNFT();
               }}
-              className="font-storeFont  w-full rounded-[6px] bg-black py-3 text-center text-white hover:bg-accentLinear-1 "
+              className="w-full  rounded-[6px] bg-black py-3 text-center font-storeFont text-white hover:bg-accentLinear-1 "
             >
               Buy
             </button>
