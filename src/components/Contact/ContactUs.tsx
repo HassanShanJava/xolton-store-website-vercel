@@ -1,8 +1,41 @@
+import { useToast } from "@chakra-ui/react";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { api } from "~/utils/api";
 
 const ContactUs = () => {
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
+  const { handleSubmit, register } = useForm<any>();
+
+  const emailSend = api.storeEmail.sendEmail.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError(error: any) {
+      console.log({ error });
+    },
+  });
+  const toast = useToast();
+
+  const onSubmit = async (values: any) => {
+    try {
+      console.log(values, "values::");
+      const response: any = await emailSend.mutateAsync(values);
+
+      toast({
+        title: "Your message delivered to concern.",
+        status: "success",
+        isClosable: true,
+        position: "top-left",
+      });
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Something went wrong!",
+        status: "error",
+        isClosable: true,
+        position: "top-left",
+      });
+    }
   };
   return (
     <>
@@ -20,7 +53,7 @@ const ContactUs = () => {
             </div>
             <div className="mt-6 text-center"></div>
           </div>
-          <form className="" onSubmit={(e) => handleSubmit(e)}>
+          <form className="" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <span className="text-sm font-bold uppercase text-gray-600">
                 Full Name
@@ -28,6 +61,7 @@ const ContactUs = () => {
               <input
                 className="focus:shadow-outline mt-2 w-full rounded-lg bg-gray-300 p-3 text-gray-900 focus:outline-none"
                 type="text"
+                {...register("name")}
                 placeholder=""
               />
             </div>
@@ -38,6 +72,7 @@ const ContactUs = () => {
               <input
                 className="focus:shadow-outline mt-2 w-full rounded-lg bg-gray-300 p-3 text-gray-900 focus:outline-none"
                 type="email"
+                {...register("email")}
                 required
               />
             </div>
@@ -47,13 +82,14 @@ const ContactUs = () => {
               </span>
               <textarea
                 required
+                {...register("message")}
                 className="focus:shadow-outline mt-2 h-32 w-full rounded-lg bg-gray-300 p-3 text-gray-900 focus:outline-none"
               ></textarea>
             </div>
             <div className="mt-6">
               <button
                 type="submit"
-                className="focus:shadow-outline w-full rounded-lg bg-accentLinear-1 p-3 text-sm font-bold uppercase tracking-wide text-gray-100 focus:outline-none"
+                className="focus:shadow-outline w-full rounded-lg bg-black p-3 text-sm font-bold uppercase tracking-wide text-gray-100 focus:outline-none"
               >
                 Send Message
               </button>
