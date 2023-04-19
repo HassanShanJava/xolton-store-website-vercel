@@ -6,18 +6,19 @@ import { customTruncateHandler } from "~/store/helper";
 import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 import CraftJsComponent from "../craftComponent/CraftJsComponent";
+import { prisma } from "~/server/db";
 
-const BlogsListing = () => {
+const BlogsListing = ({ storeBlogsData }: any) => {
   const router = useRouter();
   const { id } = router.query;
   console.log("id:::", id);
-  const { data: storeBlogsData } = api.storeBlogs.getStoreBlogsById.useQuery(
-    { id },
-    {
-      refetchOnWindowFocus: false,
-      enabled: id ? true : false,
-    }
-  );
+  // const { data: storeBlogsData } = api.storeBlogs.getStoreBlogsById.useQuery(
+  //   { id },
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     enabled: id ? true : false,
+  //   }
+  // );
   console.log("storeBlogsData:::", storeBlogsData);
 
   return (

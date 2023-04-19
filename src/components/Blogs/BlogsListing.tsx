@@ -50,7 +50,7 @@ const BlogsListing = () => {
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {isFetched &&
-                storeBlogsData?.map((store, i) => (
+                storeBlogsData?.map((store: any, i: number) => (
                   <Link
                     href={`/blogs/${store?.meta}`}
                     key={i}
