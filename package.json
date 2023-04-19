@@ -25,6 +25,7 @@
     "browser-image-compression": "^2.0.2",
     "copy-to-clipboard": "^3.3.3",
     "framer-motion": "^10.11.2",
+    "gray-matter": "^4.0.3",
     "lzutf8": "^0.6.3",
     "next": "^13.2.4",
     "nodemailer": "^6.9.1",

@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 const PrivacyFunc = dynamic(
   () => import("~/components/Privacy/PrivacyPolicy"),
   {
-    ssr: false,
+    ssr: true,
   }
 );
 export default function FaqPage() {
