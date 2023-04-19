@@ -3,7 +3,22 @@ import React from "react";
 import { api } from "~/utils/api";
 import { renderNFTIcon } from "~/utils/helper";
 
-export default function Document({ details, isFetched }: any) {
+
+// This gets called on every request
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const { data: details } = api.storeWeb.getStoreDetails.useQuery(
+    {},
+    {
+      refetchOnWindowFocus: true,
+    }
+  );
+  // Pass data to the page via props
+  return { props: { details } };
+}
+
+
+export default function Document({ details }: any) {
   return (
     <Html>
       <Head>
@@ -34,15 +49,3 @@ export default function Document({ details, isFetched }: any) {
   );
 }
 
-// This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const { data: details, isFetched } = api.storeWeb.getStoreDetails.useQuery(
-    {},
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-  // Pass data to the page via props
-  return { props: { details, isFetched } };
-}

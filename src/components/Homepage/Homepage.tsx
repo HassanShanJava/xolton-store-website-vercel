@@ -12,6 +12,13 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 
 const Homepage = () => {
+
+  // const { data: storeWeb } = api.website.get.useQuery(
+  //   { store_id: user?.id as string },
+  //   { enabled: user?.id ? true : false, refetchOnWindowFocus: false },
+  // );
+
+
   const router = useRouter();
   const { contract_id } = router.query;
 

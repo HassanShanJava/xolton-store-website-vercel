@@ -84,7 +84,7 @@ const NFTListing = () => {
               <input
                 type="text"
                 placeholder="Search by NFT Name"
-                className=" w-full rounded-lg  p-2 font-storeFont text-sm focus:outline-none "
+                className=" w-full rounded-lg bg-white p-2 font-storeFont text-sm focus:outline-none "
                 onChange={handleKeyPress}
               />
             </div>
@@ -92,7 +92,7 @@ const NFTListing = () => {
             <div className="mx-2 my-2 w-full xs:w-56 md:my-0">
               <select
                 data-te-select-init
-                className="w-full rounded-lg p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
+                className="w-full rounded-lg p-2 font-storeFont bg-white text-sm text-tx-3 focus:outline-none"
                 onChange={(e) => sorNFT(e.target.value)}
                 value={"select"}
               >
@@ -100,7 +100,7 @@ const NFTListing = () => {
                   value="select"
                   disabled
                   hidden
-                  className="font-storeFont"
+                  className="bg-white font-storeFont"
                 >
                   Sort By
                 </option>
