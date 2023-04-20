@@ -28,6 +28,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           //     // }
           //   })
           // },
+          headers() {
+            return {
+              mode:"no-cors",
+            };
+          },
           
         }),
       ],
