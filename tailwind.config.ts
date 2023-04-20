@@ -12,7 +12,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ['Inter', 'sans-serif'],
+      storeFont: ['inter', 'sans-serif'],
     },
     extend: {
       colors: {

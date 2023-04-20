@@ -15,6 +15,7 @@ import { setAccount } from "~/store/slices/web3Slice";
 import { api } from "~/utils/api";
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
+import { trpc } from "~/utils/trpc";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -71,24 +72,27 @@ const Navbar = () => {
     });
   }
 
-  const { data: details } = api.storeWeb.getStoreDetails.useQuery(
-    {},
+  
+  const details = trpc.clientWeb.getStoreDetails.useQuery(
+    { store_id: process.env.NEXT_PUBLIC_STORE_ID },
     {
       refetchOnWindowFocus: false,
     }
   );
 
+  console.log(details, "navbar details clinet");
+
   const { data: NFTStoreNavbar, isFetched } =
-    api.storeWeb.getStoreNavbar.useQuery(
-      {},
+    trpc.clientWeb.getStoreNavbar.useQuery(
+      { store_id: process.env.NEXT_PUBLIC_STORE_ID },
       {
         refetchOnWindowFocus: false,
       }
     );
   console.log(NFTStoreNavbar, "NFTStoreNavbar");
   const { data: themes, isFetched: fetchesTheme } =
-    api.storeWeb.getStoreTheme.useQuery(
-      {},
+    trpc.clientWeb.getStoreTheme.useQuery(
+      { store_id: process.env.NEXT_PUBLIC_STORE_ID },
       {
         refetchOnWindowFocus: false,
       }
@@ -113,8 +117,8 @@ const Navbar = () => {
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
-        {/* for mobile menu state */}
+      {/* for mobile menu state */}
+      {/* <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
             ""
@@ -186,7 +190,7 @@ const Navbar = () => {
             </button>
           )}
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
@@ -194,7 +198,6 @@ const Navbar = () => {
 // // This gets called on every request
 // export async function getServerSideProps() {
 //   // Fetch data from external API
-  
 
 //   // Pass data to the page via props
 //   return { props: { details } };

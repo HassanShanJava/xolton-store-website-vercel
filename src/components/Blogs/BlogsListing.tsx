@@ -7,6 +7,7 @@ import { customTruncateHandler } from "~/store/helper";
 import { RootState } from "~/store/store";
 import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
+import { trpc } from "~/utils/trpc";
 
 const BlogsListing = () => {
   const router = useRouter();
@@ -20,8 +21,8 @@ const BlogsListing = () => {
     router.push("/");
   }
   const { data: storeBlogsData, isFetched } =
-    api.storeBlogs.getStoreBlogs.useQuery(
-      {},
+  trpc.clientBlogs.getStoreBlogs.useQuery(
+      {store_id:process.env.NEXT_PUBLIC_STORE_ID},
       {
         refetchOnWindowFocus: false,
       }

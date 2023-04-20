@@ -9,6 +9,7 @@ import BannerImage from "../../public/images/banner.png";
 import NFTListing from "../NFT/NFTListing";
 
 import { api } from "~/utils/api";
+import { trpc } from "~/utils/trpc";
 import { useRouter } from "next/router";
 
 const Homepage = () => {
@@ -35,12 +36,13 @@ const Homepage = () => {
 };
 
 const Banner = ({ collection_id }:any) => {
-  const { data: NFTCollection } = api.storeCollection.getStoreCollection.useQuery(
-    {  id: collection_id },
+  const { data: NFTCollection } = trpc.clientCollection.getStoreCollection.useQuery(
+    {  id: collection_id , store_id:process.env.NEXT_PUBLIC_STORE_ID},
     {
       refetchOnWindowFocus: false,
     }
   );
+  console.log(NFTCollection,'NFTCollection:::')
 
   if (collection_id !==undefined) {
     return (
@@ -58,8 +60,9 @@ const Banner = ({ collection_id }:any) => {
       </>
     );
   } else {
-    const { data: details, isFetched } = api.storeWeb.getStoreBanner.useQuery(
-      {},
+
+    const { data: details, isFetched } = trpc.clientWeb.getStoreBanner.useQuery(
+      {store_id:process.env.NEXT_PUBLIC_STORE_ID},
       {
         refetchOnWindowFocus: false,
       }

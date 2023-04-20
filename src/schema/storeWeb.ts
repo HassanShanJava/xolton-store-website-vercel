@@ -1,3 +1,3 @@
-import {z} from "zod"
+import { z } from "zod"
 
-export const StoreWebSchema=z.object({})
+export const StoreWebSchema = z.object({ store_id: z.any(), })

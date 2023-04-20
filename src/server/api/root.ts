@@ -13,13 +13,13 @@ import { storeEmailRouter } from "./routers/storeEmail";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = router({
-  storeNFT: storeNFTRouter,
-  storeBlogs: storeBlogsRouter,
-  storeMaker: storeMakerRouter,
-  storeNFTOrder: storeNFTOrderRouter,
-  storeCollection: storeCollectionRouter,
-  storeWeb: storeWebRouter,
-  storeEmail: storeEmailRouter,
+  clientNFT: storeNFTRouter,
+  clientBlogs: storeBlogsRouter,
+  clientMaker: storeMakerRouter,
+  clientNFTOrder: storeNFTOrderRouter,
+  clientCollection: storeCollectionRouter,
+  clientWeb: storeWebRouter,
+  clientEmail: storeEmailRouter,
 });
 
 // export type definition of API

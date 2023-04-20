@@ -16,7 +16,7 @@ export const storeBlogsRouter = router({
           orderBy: { created_at: "desc" },
 
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
           },
         });
 
@@ -40,7 +40,7 @@ export const storeBlogsRouter = router({
         const exists: any = await ctx.prisma.storeBlogs.findFirst({
           where: {
             meta: input?.id,
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
           },
         });
         return exists;

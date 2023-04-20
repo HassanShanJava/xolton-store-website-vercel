@@ -2,11 +2,12 @@ import { useToast } from "@chakra-ui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
+import { trpc } from "~/utils/trpc";
 
 const ContactUs = () => {
   const { handleSubmit, register } = useForm<any>();
 
-  const emailSend = api.storeEmail.sendEmail.useMutation({
+  const emailSend = trpc.clientEmail.sendEmail.useMutation({
     onSuccess: () => {
       console.log("success");
     },
@@ -19,7 +20,11 @@ const ContactUs = () => {
   const onSubmit = async (values: any) => {
     try {
       console.log(values, "values::");
-      const response: any = await emailSend.mutateAsync(values);
+      const payload={
+        ...values,
+        store_id:process.env.NEXT_PUBLIC_STORE_ID,
+      }
+      const response: any = await emailSend.mutateAsync(payload);
 
       toast({
         title: "Your message delivered to concern.",

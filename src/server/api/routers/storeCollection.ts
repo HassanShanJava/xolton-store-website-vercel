@@ -8,7 +8,6 @@ export const storeCollectionRouter = router({
   getStoreCollection: publicProcedure
     .input(StoreCollectionSchema)
     .query(async ({ ctx, input }) => {
-    
       try {
         if(input.id!=undefined){
           const collection = await ctx.prisma.storeCollection.findFirst({

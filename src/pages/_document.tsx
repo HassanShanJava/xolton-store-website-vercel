@@ -2,17 +2,20 @@ import { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
 import { api } from "~/utils/api";
 import { renderNFTIcon } from "~/utils/helper";
+import { trpc } from "~/utils/trpc";
 
 
 // This gets called on every request
 export async function getServerSideProps() {
   // Fetch data from external API
-  const { data: details } = api.storeWeb.getStoreDetails.useQuery(
+  const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
     {},
     {
       refetchOnWindowFocus: true,
     }
   );
+
+  console.log(details,"static details")
   // Pass data to the page via props
   return { props: { details } };
 }

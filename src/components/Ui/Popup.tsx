@@ -9,6 +9,7 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { Spinner } from "@chakra-ui/react";
 import { checkTargetForNewValues } from "framer-motion";
+import { trpc } from "~/utils/trpc";
 
 interface PopUpType {
   open: boolean;
@@ -41,7 +42,7 @@ const Popup = ({
   const total:any = Number((+price + +tax).toFixed(5));
   console.log("Total :: ", total);
 
-  const nftUpdate = api.storeNFT.updateStoreNFT.useMutation({
+  const nftUpdate = trpc.clientNFT.updateStoreNFT.useMutation({
     onSuccess: () => {
       console.log("Updated nft successfully");
     },
@@ -49,7 +50,7 @@ const Popup = ({
       console.log({ error });
     },
   });
-  const nftOrder = api.storeNFTOrder.updateStoreNFTOrder.useMutation({
+  const nftOrder = trpc.clientNFTOrder.updateStoreNFTOrder.useMutation({
     onSuccess: () => {
       console.log("Orderd nft successfully");
     },
@@ -89,6 +90,7 @@ const Popup = ({
           transaction_id: buyData.transaction_id,
           is_listed: false,
           status: "Purchase",
+          store_id:process.env.NEXT_PUBLIC_STORE_ID,
         };
 
         const payloadOrder = {

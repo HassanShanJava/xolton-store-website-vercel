@@ -6,10 +6,11 @@ import { store } from "~/store/store";
 import { Provider } from "react-redux";
 import { api } from "~/utils/api";
 import { renderNFTIcon } from "~/utils/helper";
+import { trpc } from "~/utils/trpc";
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { data: details, isFetched } = api.storeWeb.getStoreDetails.useQuery(
-    {},
+  const { data: details, isFetched } = trpc.clientWeb.getStoreDetails.useQuery(
+    {store_id:process.env.NEXT_PUBLIC_STORE_ID},
     {
       refetchOnWindowFocus: false,
     }
@@ -45,8 +46,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
 // This gets called on every request
 export async function getServerSideProps() {
   // Fetch data from external API
-  const { data: details, isFetched } = api.storeWeb.getStoreDetails.useQuery(
-    {},
+  const { data: details, isFetched } = trpc.clientWeb.getStoreDetails.useQuery(
+    {store_id:process.env.NEXT_PUBLIC_STORE_ID},
     {
       refetchOnWindowFocus: false,
     }

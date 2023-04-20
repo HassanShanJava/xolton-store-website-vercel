@@ -77,7 +77,7 @@ export const storeNFTRouter = router({
       try {
         const NFTS = await ctx.prisma.storeNft.findMany({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
             is_listed: true,
             status: "",
             ...options.where,
@@ -253,7 +253,7 @@ export const storeNFTRouter = router({
       try {
         const NFTS = await ctx.prisma.storeNft.findMany({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
             contract_id: input.contract_id,
             is_listed: true,
             status: "",
@@ -282,7 +282,7 @@ export const storeNFTRouter = router({
         where: {
           contract_id: input?.contract_id,
           is_listed: true,
-          store_id: process.env.STORE_ID,
+          store_id: process.env.NEXT_PUBLIC_STORE_ID,
         },
         orderBy: {},
       };

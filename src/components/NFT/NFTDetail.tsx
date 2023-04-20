@@ -17,14 +17,15 @@ import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
+import { trpc } from "~/utils/trpc";
 
 const NFTDetail = () => {
   const router = useRouter();
 
   const { id } = router.query;
 
-  const { data: NFTDetail }: any = api.storeNFT.getNFTDetail.useQuery(
-    { id: id },
+  const { data: NFTDetail }: any = trpc.clientNFT.getNFTDetail.useQuery(
+    { id: id, store_id:process.env.NEXT_PUBLIC_STORE_ID},
     {
       refetchOnWindowFocus: false,
     }
@@ -32,8 +33,8 @@ const NFTDetail = () => {
 
   console.log(NFTDetail, "NFTDetail");
 
-  const { data: NFTCollection } = api.storeNFT.getNFTCollection.useQuery(
-    { contract_id: NFTDetail?.contract_id, remove_nft_id: id },
+  const { data: NFTCollection } = trpc.clientNFT.getNFTCollection.useQuery(
+    { contract_id: NFTDetail?.contract_id, remove_nft_id: id , store_id:process.env.NEXT_PUBLIC_STORE_ID},
     {
       refetchOnWindowFocus: false,
     }
@@ -206,7 +207,7 @@ const NFTDetail = () => {
 
           {/* collection */}
           <CollectionList
-            contract_id={NFTDetail?.contract_id}
+            contract_id={NFTDetail?.store_id}
             NFTCollection={NFTCollection}
           />
         </div>

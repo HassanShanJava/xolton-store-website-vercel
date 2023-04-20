@@ -3,6 +3,7 @@ import NFTCard from "./NFTCard";
 
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { trpc } from "~/utils/trpc";
 
 const NFTListing = () => {
   const router = useRouter();
@@ -36,26 +37,28 @@ const NFTListing = () => {
     }));
   };
 
-  const { data: storeNFTData } = api.storeNFT.getStoreNFTS.useQuery(
-    { ...sortFilter },
+  const { data: storeNFTData } = trpc.clientNFT.getStoreNFTS.useQuery(
+    { ...sortFilter, store_id:process.env.NEXT_PUBLIC_STORE_ID },
     {
       refetchOnWindowFocus: false,
     }
   );
+  console.log(storeNFTData,"storeNFTDatastoreNFTData")
 
   console.log(sortFilter, "sortFilter front");
-  const { data: NFTCollection } = api.storeNFT.getNFTHomeCollection.useQuery(
-    { ...sortFilter, contract_id: contract_id },
+  const { data: NFTCollection } = trpc.clientNFT.getNFTHomeCollection.useQuery(
+    { ...sortFilter, contract_id: contract_id, store_id:process.env.NEXT_PUBLIC_STORE_ID },
     {
       refetchOnWindowFocus: false,
     }
   );
 
   console.log(contract_id, "contract_id ");
+  console.log(contract_id, "NFTCollection ");
 
   const { data: NFTCollectionDetail } =
-    api.storeCollection.getStoreCollection.useQuery(
-      { id: contract_id },
+    trpc.clientCollection.getStoreCollection.useQuery(
+      { id: contract_id ,store_id:process.env.NEXT_PUBLIC_STORE_ID },
       {
         refetchOnWindowFocus: false,
       }

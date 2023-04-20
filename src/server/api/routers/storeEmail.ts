@@ -11,7 +11,7 @@ export const storeEmailRouter = router({
       try {
         const userData: any = await ctx.prisma.user.findFirst({
           where: {
-            id: process.env.STORE_ID,
+            id: process.env.NEXT_PUBLIC_STORE_ID,
           },
         });
         if (userData?.email) await sendLoginEmail(userData?.email, input);

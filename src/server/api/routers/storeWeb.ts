@@ -10,7 +10,7 @@ export const storeWebRouter = router({
       try {
         const navbar = await ctx.prisma.storeWebPages.findMany({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
             visibility: true,
 
           }
@@ -32,7 +32,7 @@ export const storeWebRouter = router({
       try {
         const website = await ctx.prisma.storeWeb.findFirst({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
           },
           select: {
             theme: true
@@ -54,7 +54,7 @@ export const storeWebRouter = router({
       try {
         const website = await ctx.prisma.storeWeb.findFirst({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
           },
           select: {
             name: true,
@@ -76,7 +76,7 @@ export const storeWebRouter = router({
       try {
         const website = await ctx.prisma.storeWeb.findFirst({
           where: {
-            store_id: process.env.STORE_ID,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
           },
           select: {
             banner_image: true,
