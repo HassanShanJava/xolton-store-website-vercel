@@ -72,15 +72,14 @@ const Navbar = () => {
     });
   }
 
-  
-  const details = trpc.clientWeb.getStoreDetails.useQuery(
+  const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
     { store_id: process.env.NEXT_PUBLIC_STORE_ID },
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  console.log(details, "navbar details clinet");
+  console.log(details, " details clinet");
 
   const { data: NFTStoreNavbar, isFetched } =
     trpc.clientWeb.getStoreNavbar.useQuery(

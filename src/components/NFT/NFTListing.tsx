@@ -37,13 +37,18 @@ const NFTListing = () => {
     }));
   };
 
-  const { data: storeNFTData } = trpc.clientNFT.getStoreNFTS.useQuery(
+  const storeNFTValues = trpc.clientNFT.getStoreNFTS.useQuery(
     { ...sortFilter, store_id:process.env.NEXT_PUBLIC_STORE_ID },
     {
       refetchOnWindowFocus: false,
+      
     }
   );
-  console.log(storeNFTData,"storeNFTDatastoreNFTData")
+
+  const storeNFTData =storeNFTValues.data 
+
+  console.log(storeNFTValues,"storeNFTValues")
+  console.log({storeNFTData},"storeNFTDatastoreNFTData")
 
   console.log(sortFilter, "sortFilter front");
   const { data: NFTCollection } = trpc.clientNFT.getNFTHomeCollection.useQuery(

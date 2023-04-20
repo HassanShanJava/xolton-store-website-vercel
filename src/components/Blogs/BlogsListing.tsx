@@ -9,24 +9,26 @@ import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 import { trpc } from "~/utils/trpc";
 
-const BlogsListing = () => {
+const BlogsListing = ({storeBlogsData}:any) => {
   const router = useRouter();
   const { asPath } = useRouter();
   const { pageData } = useSelector((state: RootState) => state.page);
   const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
   // let storeBlogsData: any;
-  if (pageContent !== undefined && pageContent?.visibility) {
-    console.log("i am here");
-  } else {
-    router.push("/");
-  }
-  const { data: storeBlogsData, isFetched } =
-  trpc.clientBlogs.getStoreBlogs.useQuery(
-      {store_id:process.env.NEXT_PUBLIC_STORE_ID},
-      {
-        refetchOnWindowFocus: false,
-      }
-    );
+  // if (pageContent !== undefined && pageContent?.visibility) {
+  //   console.log("i am here");
+  // } else {
+  //   router.push("/");
+  // }
+
+  // const dateCreated=displayDate(store?.created_at)
+  // const { data: storeBlogsData, isFetched } =
+  // trpc.clientBlogs.getStoreBlogs.useQuery(
+  //     {store_id:process.env.NEXT_PUBLIC_STORE_ID},
+  //     {
+  //       refetchOnWindowFocus: false,
+  //     }
+  //   );
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8">
@@ -50,8 +52,12 @@ const BlogsListing = () => {
               </div>
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {isFetched &&
-                storeBlogsData?.map((store: any, i: number) => (
+              {
+                storeBlogsData?.map((store: any, i: number) =>{ 
+                  // const dateBlogCreated=displayDate(store?.created_at)
+                  
+                  // console.log(dateBlogCreated,"dateBlogCreated",typeof dateBlogCreated)
+                  return (
                   <Link
                     href={`/blogs/${store?.meta}`}
                     key={i}
@@ -82,12 +88,12 @@ const BlogsListing = () => {
                           {customTruncateHandler(store?.description, 20)}
                         </p>
                         <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
-                          {displayDate(store?.created_at)}
+                          {store?.created_at}
                         </span>
                       </div>
                     </div>
                   </Link>
-                ))}
+                )})}
             </div>
           </div>
         </section>

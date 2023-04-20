@@ -25,7 +25,6 @@ export default function Document({ details }: any) {
   return (
     <Html>
       <Head>
-        <title>{details && details.name}</title>
         <meta name="description" content={`${details && details.name} Store`} />
         <meta property="og:title" content={details && details.name} key="title" />
         <link rel="icon" href={renderNFTIcon(details)} />

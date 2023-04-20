@@ -18,16 +18,16 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       links: [
         httpBatchLink({
           url: `http://192.168.10.107:3000/api/trpc`,
-          fetch(url, options) {
-            return fetch(url, {
-              ...options,
-              mode:"no-cors",
-              // credentials: 'include',
-              headers:{
-                'Content-Type': 'application/json'
-              }
-            })
-          },
+          // fetch(url, options) {
+          //   return fetch(url, {
+          //     ...options,
+          //     mode:"no-cors",
+          //     credentials: 'include',
+          //     // headers:{
+          //     //   'Content-Type': 'application/json'
+          //     // }
+          //   })
+          // },
           
         }),
       ],
