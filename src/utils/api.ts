@@ -15,7 +15,7 @@ const getBaseUrl = () => {
   let url = "";
   if (typeof window === "undefined") { // browser should use relative url
   if (process.env.VERCEL_URL) url = `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-    url =`http://192.168.10.107:3000` 
+    url =`http://192.168.10.75:3000` 
 }
 console.log(url);
   return url; // dev SSR should use localhost
