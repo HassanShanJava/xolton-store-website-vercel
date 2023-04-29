@@ -1,4 +1,5 @@
 import { useToast } from "@chakra-ui/react";
+import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
@@ -6,24 +7,29 @@ import { trpc } from "~/utils/trpc";
 
 const ContactUs = () => {
   const { handleSubmit, register } = useForm<any>();
-
-  const emailSend = trpc.clientEmail.sendEmail.useMutation({
-    onSuccess: () => {
-      console.log("success");
-    },
-    onError(error: any) {
-      console.log({ error });
+  const emailSend = useMutation({
+    mutationFn: (newTodo) => {
+      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/email`, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }, // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
+      });
     },
   });
+
   const toast = useToast();
 
   const onSubmit = async (values: any) => {
     try {
       console.log(values, "values::");
-      const payload={
+      const payload = {
         ...values,
-        store_id:process.env.NEXT_PUBLIC_STORE_ID,
-      }
+        store_id: process.env.NEXT_PUBLIC_STORE_ID,
+      };
       const response: any = await emailSend.mutateAsync(payload);
 
       toast({

@@ -16,6 +16,7 @@ import { api } from "~/utils/api";
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
 import { trpc } from "~/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -72,52 +73,45 @@ const Navbar = () => {
     });
   }
 
-  const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
-    { store_id: process.env.NEXT_PUBLIC_STORE_ID },
+  // const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
+  //   { store_id: process.env.NEXT_PUBLIC_STORE_ID },
+  //   {
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
+  const { data: details, isFetched } = useQuery(
+    ["nftNavbar"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  console.log(details, " details clinet");
-
-  const { data: NFTStoreNavbar, isFetched } =
-    trpc.clientWeb.getStoreNavbar.useQuery(
-      { store_id: process.env.NEXT_PUBLIC_STORE_ID },
-      {
-        refetchOnWindowFocus: false,
-      }
-    );
-  console.log(NFTStoreNavbar, "NFTStoreNavbar");
-  const { data: themes, isFetched: fetchesTheme } =
-    trpc.clientWeb.getStoreTheme.useQuery(
-      { store_id: process.env.NEXT_PUBLIC_STORE_ID },
-      {
-        refetchOnWindowFocus: false,
-      }
-    );
-
-  console.log(themes, "themes");
-
   useEffect(() => {
     if (isFetched) {
-      dispatch(storeWebPageData(NFTStoreNavbar));
-      dispatch(storeWebThemeData(themes));
+      dispatch(storeWebPageData(details?.data?.navbar));
+      dispatch(storeWebThemeData(details?.data?.website?.theme));
     }
-  }, [NFTStoreNavbar, themes, isFetched, fetchesTheme]);
-
-  console.log(NFTStoreNavbar, "NFTStoreNavbar");
+  }, [isFetched, details?.data]);
 
   const navData =
     isFetched &&
-    NFTStoreNavbar?.filter((nav: any) => nav.link != "/nft-detail");
+    details?.data?.navbar?.filter((nav: any) => nav.link != "/nft-detail");
 
   console.log(navData, "navData");
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
       {/* for mobile menu state */}
-      {/* <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
             ""
@@ -158,13 +152,19 @@ const Navbar = () => {
 
         <div className="relative ml-4 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
-            {details&&<Image src={renderNFTIcon(details)} alt="/logo" fill />}
+            {details?.data && (
+              <Image
+                src={renderNFTIcon(details?.data?.website)}
+                alt="/logo"
+                fill
+              />
+            )}
           </Link>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
-          {navData &&
-            navData.map((list: any, i: number) => (
+          {details?.data &&
+            navData?.map((list: any, i: number) => (
               <Link href={list.link} key={i}>
                 <li className="mx-4">{list.page_name}</li>
               </Link>
@@ -189,7 +189,7 @@ const Navbar = () => {
             </button>
           )}
         </div>
-      </div> */}
+      </div>
     </>
   );
 };

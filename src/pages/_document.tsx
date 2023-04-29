@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
 import { api } from "~/utils/api";
@@ -5,29 +6,16 @@ import { renderNFTIcon } from "~/utils/helper";
 import { trpc } from "~/utils/trpc";
 
 
-// This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
-    {},
-    {
-      refetchOnWindowFocus: true,
-    }
-  );
-
-  console.log(details,"static details")
-  // Pass data to the page via props
-  return { props: { details } };
-}
 
 
-export default function Document({ details }: any) {
+export default function Document() {
+ 
   return (
     <Html>
       <Head>
-        <meta name="description" content={`${details && details.name} Store`} />
-        <meta property="og:title" content={details && details.name} key="title" />
-        <link rel="icon" href={renderNFTIcon(details)} />
+        <meta name="description" content={` Store`} />
+        <meta property="og:title" content={'store detail'} key="title" />
+        {/* <link rel="icon" href={renderNFTIcon(details?.data?.web)} /> */}
 
         <link
           rel="stylesheet"

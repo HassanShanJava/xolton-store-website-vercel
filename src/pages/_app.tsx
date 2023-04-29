@@ -10,67 +10,19 @@ import { useState } from "react";
 import { trpc } from "~/utils/trpc";
 import superjson from "superjson";
 // import { httpRequest } from "@trpc/client/dist/links/internals/httpUtils";
+// This gets called on every request
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      transformer: superjson,
-      links: [
-        httpBatchLink({
-          url: `https://xoltanmarketplace.com/api/trpc`,
-          fetch(url, options) {
-            console.log({ options }, "options");
-
-            // const { promise, cancel } = httpRequest({
-            //   options,
-
-            // });
-
-            // return{
-            //   promise: fetch(url, {
-            //     ...options,
-            //     mode: "no-cors",
-            //   }).then((head: any, res: any) => res).then((resJSON: any) => {
-            //         console.log("response", resJSON);
-
-            //         const result = resJSON.map((item : any) => ({
-            //           meta: {},
-            //           json: item,
-            //         }));
-
-            //         return result;
-            //       }),
-            //     cancel: (res) => console.log(res)
-            // } ;
-            return fetch(url, {
-              ...options,
-              mode: "no-cors",
-            }).then((resJSON: any) => {
-              console.log("response", resJSON);
-              return resJSON.json();
-            });
-          },
-          async headers() {
-            return {
-              mode: "no-cors",
-            };
-          },
-        }),
-      ],
-    })
-  );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <ChakraProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ChakraProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ChakraProvider>
+    </QueryClientProvider>
   );
 };
 

@@ -4,15 +4,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useRouter } from "next/router";
 
-const AboutUs = () => {
+const AboutUs = ({ storeFaqData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();
-  const { pageData } = useSelector((state: RootState) => state.page);
-  const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
   let storeBlogsData: any;
-  if (pageContent !== undefined && pageContent?.visibility) {
+  if (storeFaqData?.page_content !== "" && storeFaqData?.visibility) {
     storeBlogsData = {
-      data: pageContent?.page_content,
+      data: storeFaqData?.page_content,
     };
   } else {
     router.push("/");

@@ -9,11 +9,12 @@ import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 import { trpc } from "~/utils/trpc";
 
-const BlogsListing = ({storeBlogsData}:any) => {
+const BlogsListing = ({ storeBlogsData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();
   const { pageData } = useSelector((state: RootState) => state.page);
   const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
+
   // let storeBlogsData: any;
   // if (pageContent !== undefined && pageContent?.visibility) {
   //   console.log("i am here");
@@ -52,12 +53,11 @@ const BlogsListing = ({storeBlogsData}:any) => {
               </div>
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {
-                storeBlogsData?.map((store: any, i: number) =>{ 
-                  // const dateBlogCreated=displayDate(store?.created_at)
-                  
-                  // console.log(dateBlogCreated,"dateBlogCreated",typeof dateBlogCreated)
-                  return (
+              {storeBlogsData?.map((store: any, i: number) => {
+                // const dateBlogCreated=displayDate(store?.created_at)
+
+                // console.log(dateBlogCreated,"dateBlogCreated",typeof dateBlogCreated)
+                return (
                   <Link
                     href={`/blogs/${store?.meta}`}
                     key={i}
@@ -93,7 +93,8 @@ const BlogsListing = ({storeBlogsData}:any) => {
                       </div>
                     </div>
                   </Link>
-                )})}
+                );
+              })}
             </div>
           </div>
         </section>

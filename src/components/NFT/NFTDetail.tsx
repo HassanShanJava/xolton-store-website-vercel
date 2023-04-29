@@ -18,27 +18,53 @@ import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 import { trpc } from "~/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 
 const NFTDetail = () => {
   const router = useRouter();
 
   const { id } = router.query;
 
-  const { data: NFTDetail }: any = trpc.clientNFT.getNFTDetail.useQuery(
-    { id: id, store_id:process.env.NEXT_PUBLIC_STORE_ID},
+  const {
+    isLoading,
+    isError,
+    isFetched,
+    data: nftApiDetail,
+    error,
+  } = useQuery(
+    ["nftDetail"],
+    async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
     }
   );
+  const NFTDetail = nftApiDetail?.data[0];
 
-  console.log(NFTDetail, "NFTDetail");
-
-  const { data: NFTCollection } = trpc.clientNFT.getNFTCollection.useQuery(
-    { contract_id: NFTDetail?.contract_id, remove_nft_id: id , store_id:process.env.NEXT_PUBLIC_STORE_ID},
+  const { data: NFTCollection } = useQuery(
+    ["nftCollection"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${NFTDetail?.contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
+      enabled: NFTDetail?.contract_id ? true : false,
     }
   );
+  console.log(NFTCollection, "nftApiCollection");
 
   const [showPop, setShowPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
@@ -207,8 +233,8 @@ const NFTDetail = () => {
 
           {/* collection */}
           <CollectionList
-            contract_id={NFTDetail?.store_id}
-            NFTCollection={NFTCollection}
+            contract_id={NFTDetail?.contract_id}
+            NFTCollection={NFTCollection?.data}
           />
         </div>
       )}
@@ -237,7 +263,7 @@ const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
         </div>
         <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
           {NFTCollection &&
-            NFTCollection.map((collectionNFT: any, i: any) => (
+            NFTCollection?.map((collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
             ))}
         </div>

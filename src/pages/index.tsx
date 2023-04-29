@@ -3,12 +3,9 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 // import Homepage from "~/components/Homepage/Homepage";
 
-
-
 const Homepage = dynamic(() => import("~/components/Homepage/Homepage"), {
   ssr: true,
 });
-
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -32,4 +29,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-

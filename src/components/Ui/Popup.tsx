@@ -10,7 +10,8 @@ import { useRouter } from "next/router";
 import { Spinner } from "@chakra-ui/react";
 import { checkTargetForNewValues } from "framer-motion";
 import { trpc } from "~/utils/trpc";
-
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -28,34 +29,42 @@ const Popup = ({
   tax,
   accountBalance,
 }: PopUpType) => {
-
   const router = useRouter();
 
   const [isPurchase, setIsPurchase] = useState<any>("");
   const toast = useToast();
 
-  const { account }:any = useSelector((state: RootState) => state.web3);
+  const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
   console.log("NFT Tax L: ", tax);
   console.log("Price :: ", price);
-  const total:any = Number((+price + +tax).toFixed(5));
+  const total: any = Number((+price + +tax).toFixed(5));
   console.log("Total :: ", total);
-
-  const nftUpdate = trpc.clientNFT.updateStoreNFT.useMutation({
-    onSuccess: () => {
-      console.log("Updated nft successfully");
-    },
-    onError(error: any) {
-      console.log({ error });
+  const nftUpdate = useMutation({
+    mutationFn: (newTodo) => {
+      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }, // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
+      });
     },
   });
-  const nftOrder = trpc.clientNFTOrder.updateStoreNFTOrder.useMutation({
-    onSuccess: () => {
-      console.log("Orderd nft successfully");
-    },
-    onError(error: any) {
-      console.log({ error });
+  const nftOrder = useMutation({
+    mutationFn: (newTodo) => {
+      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        }, // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
+      });
     },
   });
 
@@ -84,27 +93,26 @@ const Popup = ({
         console.log("BUY DATA :: ", buyData);
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
-        const payload = {
+        const payload: any = {
           id: nft.id,
           owner: buyData.owner,
           transaction_id: buyData.transaction_id,
           is_listed: false,
           status: "Purchase",
-          store_id:process.env.NEXT_PUBLIC_STORE_ID,
+          store_id: process.env.NEXT_PUBLIC_STORE_ID,
         };
 
-        const payloadOrder = {
+        const payloadOrder: any = {
           store_id: nft.store_id,
           nft_id: nft.id,
           owner_address: buyData?.owner,
           transaction_id: buyData?.transaction_id,
           nft_name: nft.name,
           total_amount: total, // 2.04
-          net_amount: total -  (2 * +nft.tax),  // 1.96
-          total_tax: (2 * +nft.tax), // 0.08
-          sell_type: "",
+          net_amount: total - 2 * +nft.tax, // 1.96
+          total_tax: 2 * +nft.tax, // 0.08
+          sell_type: "fixed",
           previous_owner_address: buyData?.previous_owner,
-          is_deleted: false,
         };
 
         console.log(payloadOrder, "payloadOrder");
@@ -120,7 +128,7 @@ const Popup = ({
 
         setIsPurchase(true);
         setBuy(false);
-        router.push("/")
+        router.push("/");
       } else {
         console.log("BUY Error :", buyData);
         toast({
