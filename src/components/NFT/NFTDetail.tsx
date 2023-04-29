@@ -158,7 +158,7 @@ const NFTDetail = () => {
                 <div className="mb-3">
                   <button
                     type="button"
-                    className="w-full rounded-3xl bg-black p-4 text-white"
+                    className="w-full rounded-3xl bg-bg-3 p-4 text-white"
                     onClick={(e) => {
                       e.preventDefault();
                       buyNFT();

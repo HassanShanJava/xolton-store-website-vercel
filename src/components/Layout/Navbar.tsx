@@ -111,7 +111,7 @@ const Navbar = () => {
   return (
     <>
       {/* for mobile menu state */}
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-bg-2 p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
             ""

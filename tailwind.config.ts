@@ -3,11 +3,7 @@ import { type Config } from "tailwindcss";
 export default {
   darkMode: "class",
   content: [
-    // './app/**/*.{js,ts,jsx,tsx}',
-    // './pages/**/*.{js,ts,jsx,tsx}',
-    // './components/**/*.{js,ts,jsx,tsx}',
-
-    // Or if using `src` directory:
+    
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
@@ -27,6 +23,8 @@ export default {
         "ct-1": "#090F1B",
         "ct-2": "#030607",
         "bg-1": "#F1F3F5",
+        "bg-2": "#8c3b3b",
+        "bg-3": "#162fac",
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",
