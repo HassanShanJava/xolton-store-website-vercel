@@ -140,23 +140,23 @@ const NFTListing = () => {
               : "hidden"
           }
         >
+          <div>
           {contract_id !== undefined && (
-            <div>
               <h1 className="text-2xl">{NFTCollectionDetail?.data?.name}</h1>
-            </div>
-          )}
+              )}
+              </div>
           <div
             className={`flex  flex-col ${
               NFTCollectionDetail?.data ? "" : "w-full"
-            } items-center gap-1 xs:flex-row-reverse`}
+            } items-center gap-2 xs:flex-row-reverse`}
           >
             <button
               onClick={clearFilter}
-              className="color group h-full w-12  rounded-full  ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-ac-2 hover:ring-ac-2"
+              className="color group h-8 w-8 bg-white rounded-full ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
             >
               <i className="fa fa-undo scale-x-[-1] p-2 text-pm-12 group-hover:text-white"></i>
             </button>
-            <div className="w-full xs:w-60   ">
+            <div className="w-full xs:w-60">
               <input
                 type="text"
                 placeholder="Search by NFT Name"
@@ -165,7 +165,7 @@ const NFTListing = () => {
               />
             </div>
 
-            <div className="mx-2 my-2 w-full xs:w-56 md:my-0">
+            <div className="my-2 w-full xs:w-56 md:my-0">
               <select
                 data-te-select-init
                 className="w-full rounded-lg bg-white p-2 font-storeFont text-sm text-tx-3 focus:outline-none"

@@ -30,6 +30,7 @@ const NFTDetail = () => {
     isError,
     isFetched,
     data: nftApiDetail,
+    refetch,
     error,
   } = useQuery(
     ["nftDetail"],
@@ -101,15 +102,17 @@ const NFTDetail = () => {
         try {
           const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
           const maitccprice = await maticToUSD(nftPrice);
-          // console.log(usdMatic,"usdMatic")
+          console.log(nftPrice,"usdMatic")
           setUsdMatic(maitccprice);
         } catch (e) {
           console.log(e, "consvertion error front-end");
         }
       }
     })();
-  }, [NFTDetail?.price]);
-
+  }, [nftApiDetail?.data[0]?.price]);
+  useEffect(()=>{
+    refetch()
+  },[id])
   return (
     <div>
       {NFTDetail && (
@@ -158,7 +161,7 @@ const NFTDetail = () => {
                 <div className="mb-3">
                   <button
                     type="button"
-                    className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/60"
+                    className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
                     onClick={(e) => {
                       e.preventDefault();
                       buyNFT();

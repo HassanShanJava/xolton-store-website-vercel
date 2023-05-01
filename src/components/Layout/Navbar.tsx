@@ -182,14 +182,14 @@ const Navbar = () => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/60"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75"
             >
               {customTruncateHandler(account, 8)}
             </button>
           ) : (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/60 sm:px-3"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
               onClick={() => connectMetamask()}
             >
               Connect Wallet
