@@ -7,7 +7,13 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 
 export async function getStaticProps() {
   const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/blog?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+    `${process.env.NEXT_PUBLIC_API_URL}/blog?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");

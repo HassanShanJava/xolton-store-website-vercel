@@ -1,3 +1,5 @@
+import Banner from "~/public/images/banner.png";
+
 export function generateOTP(otp_length = 0) {
   const digits = "0123456789";
   let OTP = "";

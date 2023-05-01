@@ -11,7 +11,7 @@ const NFTListing = () => {
   const router = useRouter();
   const { contract_id } = router.query;
   const [nfts, setNfts] = useState<any>([]);
-  const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
+  const [sortFilter, setSortFilter] = useState<any>({ rows: 4, first: 0 });
 
   const {
     isLoading,
@@ -35,7 +35,7 @@ const NFTListing = () => {
       return response.json();
     },
     {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
     }
   );
 
@@ -65,6 +65,7 @@ const NFTListing = () => {
       first: 0,
     }));
   };
+  console.log(nfts, "nfts:::");
   function handleKeyPress(e: any) {
     if (contract_id == undefined) {
       setTimeout(() => {
@@ -100,11 +101,13 @@ const NFTListing = () => {
           setNfts([...storeNFTValues?.data]);
         }
       }
+    }else{
+
     }
   }, [storeNFTValues?.data]);
   useEffect(() => {
     refetch();
-  }, [sortFilter]);
+  }, [, sortFilter]);
   useEffect(() => {
     if (contract_id != undefined) {
       setSortFilter((prevFilters: any) => ({

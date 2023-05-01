@@ -158,7 +158,7 @@ const NFTDetail = () => {
                 <div className="mb-3">
                   <button
                     type="button"
-                    className="w-full rounded-3xl bg-bg-3 p-4 text-white"
+                    className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/60"
                     onClick={(e) => {
                       e.preventDefault();
                       buyNFT();
@@ -233,6 +233,7 @@ const NFTDetail = () => {
 
           {/* collection */}
           <CollectionList
+            id={NFTDetail?.id}
             contract_id={NFTDetail?.contract_id}
             NFTCollection={NFTCollection?.data}
           />
@@ -242,7 +243,7 @@ const NFTDetail = () => {
   );
 };
 
-const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
+const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
     NFTCollection?.length != 0 && (
@@ -263,9 +264,11 @@ const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
         </div>
         <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
           {NFTCollection &&
-            NFTCollection?.map((collectionNFT: any, i: any) => (
-              <NFTCard nft={collectionNFT} key={i} />
-            ))}
+            NFTCollection.filter((list: any) => list?.id !== id)?.map(
+              (collectionNFT: any, i: any) => (
+                <NFTCard nft={collectionNFT} key={i} />
+              )
+            )}
         </div>
       </div>
     )

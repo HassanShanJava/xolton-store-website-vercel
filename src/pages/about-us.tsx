@@ -2,7 +2,13 @@ import dynamic from "next/dynamic";
 import React from "react";
 export async function getStaticProps() {
   const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/about-us`
+    `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/about-us`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");

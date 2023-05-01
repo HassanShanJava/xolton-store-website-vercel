@@ -8,28 +8,12 @@ import { RootState } from "~/store/store";
 import { api } from "~/utils/api";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 import { trpc } from "~/utils/trpc";
-
 const BlogsListing = ({ storeBlogsData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();
   const { pageData } = useSelector((state: RootState) => state.page);
   const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
 
-  // let storeBlogsData: any;
-  // if (pageContent !== undefined && pageContent?.visibility) {
-  //   console.log("i am here");
-  // } else {
-  //   router.push("/");
-  // }
-
-  // const dateCreated=displayDate(store?.created_at)
-  // const { data: storeBlogsData, isFetched } =
-  // trpc.clientBlogs.getStoreBlogs.useQuery(
-  //     {store_id:process.env.NEXT_PUBLIC_STORE_ID},
-  //     {
-  //       refetchOnWindowFocus: false,
-  //     }
-  //   );
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8">

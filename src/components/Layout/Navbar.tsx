@@ -104,7 +104,14 @@ const Navbar = () => {
 
   const navData =
     isFetched &&
-    details?.data?.navbar?.filter((nav: any) => nav.link != "/nft-detail");
+    details?.data?.navbar?.filter(
+      (nav: any) =>
+        nav.link !== "/nft-detail" &&
+        (nav.page_name === "Home" ||
+          nav.page_name === "Contact" ||
+          nav.page_name === "Blogs" ||
+          nav.page_content !== "")
+    );
 
   console.log(navData, "navData");
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
@@ -175,14 +182,14 @@ const Navbar = () => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/60"
             >
               {customTruncateHandler(account, 8)}
             </button>
           ) : (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2 sm:px-3"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/60 sm:px-3"
               onClick={() => connectMetamask()}
             >
               Connect Wallet

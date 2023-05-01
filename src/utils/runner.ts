@@ -1,11 +1,17 @@
 const fs = require("fs");
-const loadEnvConfig = require("@next/env"); 
+const loadEnvConfig = require("@next/env");
 loadEnvConfig.loadEnvConfig(process.cwd());
 
 const runAsync = async () => {
   // find all scripts in subfolder
-  const response= await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");
