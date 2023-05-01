@@ -11,7 +11,7 @@ const NFTListing = () => {
   const router = useRouter();
   const { contract_id } = router.query;
   const [nfts, setNfts] = useState<any>([]);
-  const [sortFilter, setSortFilter] = useState<any>({ rows: 4, first: 0 });
+  const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
 
   const {
     isLoading,
@@ -101,8 +101,7 @@ const NFTListing = () => {
           setNfts([...storeNFTValues?.data]);
         }
       }
-    }else{
-
+    } else {
     }
   }, [storeNFTValues?.data]);
   useEffect(() => {
