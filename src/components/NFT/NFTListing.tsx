@@ -58,14 +58,13 @@ const NFTListing = () => {
     }
   );
   const sorNFT = (value: string) => {
-    console.log({ value }, "value");
+
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       orderBy: value,
       first: 0,
     }));
   };
-  console.log(nfts, "nfts:::");
   function handleKeyPress(e: any) {
     if (contract_id == undefined) {
       setTimeout(() => {

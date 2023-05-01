@@ -13,11 +13,7 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 const Homepage = () => {
-  // const { data: storeWeb } = api.website.get.useQuery(
-  //   { store_id: user?.id as string },
-  //   { enabled: user?.id ? true : false, refetchOnWindowFocus: false },
-  // );
-
+  
   const router = useRouter();
   const { contract_id } = router.query;
 
@@ -32,13 +28,7 @@ const Homepage = () => {
 };
 
 const Banner = ({ collection_id }: any) => {
-  // const { data: NFTCollection } =
-  //   trpc.clientCollection.getStoreCollection.useQuery(
-  //     { id: collection_id, store_id: process.env.NEXT_PUBLIC_STORE_ID },
-  //     {
-  //       refetchOnWindowFocus: false,
-  //     }
-  //   );
+  
   const { data: NFTCollection, isFetched } = useQuery(
     ["nftCollectionBanner"],
     async () => {
@@ -70,7 +60,7 @@ const Banner = ({ collection_id }: any) => {
       refetchOnWindowFocus: false,
     }
   );
-  console.log(NFTCollection, "NFTCollection:::");
+
 
   if (collection_id !== undefined) {
     return (

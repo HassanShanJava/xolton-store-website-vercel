@@ -65,7 +65,7 @@ const NFTDetail = () => {
       enabled: NFTDetail?.contract_id ? true : false,
     }
   );
-  console.log(NFTCollection, "nftApiCollection");
+
 
   const [showPop, setShowPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
@@ -102,7 +102,6 @@ const NFTDetail = () => {
         try {
           const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
           const maitccprice = await maticToUSD(nftPrice);
-          console.log(nftPrice,"usdMatic")
           setUsdMatic(maitccprice);
         } catch (e) {
           console.log(e, "consvertion error front-end");
@@ -187,21 +186,7 @@ const NFTDetail = () => {
                 <div className=" group rounded-xl border border-tx-2 bg-white">
                   <summary className="flex cursor-pointer list-none items-center justify-between p-3 font-medium">
                     <span>NFT Detail</span>
-                    {/* <span className="transition group-open:rotate-180">
-                      <svg
-                        fill="none"
-                        height="24"
-                        shape-rendering="geometricPrecision"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        viewBox="0 0 24 24"
-                        width="24"
-                      >
-                        <path d="M6 9l6 6 6-6"></path>
-                      </svg>
-                    </span> */}
+                 
                   </summary>
                   {/*divider  */}
                   <div className=" border-t border-tx-2 " />
