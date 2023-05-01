@@ -221,7 +221,7 @@ const NFTListing = () => {
           </div>
         )}
 
-        {isError && (
+        {(nfts.length == 0 || isError) && (
           <div className="flex min-h-[40vh] items-center justify-center">
             <h1 className="text-2xl ">No NFT's available yet</h1>
           </div>
