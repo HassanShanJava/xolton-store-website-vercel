@@ -12,9 +12,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 import { setAccount } from "~/store/slices/web3Slice";
-import { api } from "~/utils/api";
+
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
+
+import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -71,50 +73,52 @@ const Navbar = () => {
     });
   }
 
-  const { data: details } = api.storeWeb.getStoreDetails.useQuery(
-    {},
+  // const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
+  //   { store_id: process.env.NEXT_PUBLIC_STORE_ID },
+  //   {
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
+  const { data: details, isFetched } = useQuery(
+    ["nftNavbar"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  const { data: NFTStoreNavbar, isFetched } =
-    api.storeWeb.getStoreNavbar.useQuery(
-      {},
-      {
-        refetchOnWindowFocus: false,
-      }
-    );
-  console.log(NFTStoreNavbar, "NFTStoreNavbar");
-  const { data: themes, isFetched: fetchesTheme } =
-    api.storeWeb.getStoreTheme.useQuery(
-      {},
-      {
-        refetchOnWindowFocus: false,
-      }
-    );
-
-  console.log(themes, "themes");
-
   useEffect(() => {
     if (isFetched) {
-      dispatch(storeWebPageData(NFTStoreNavbar));
-      dispatch(storeWebThemeData(themes));
+      dispatch(storeWebPageData(details?.data?.navbar));
+      dispatch(storeWebThemeData(details?.data?.website?.theme));
     }
-  }, [NFTStoreNavbar, themes, isFetched, fetchesTheme]);
-
-  console.log(NFTStoreNavbar, "NFTStoreNavbar");
+  }, [isFetched, details?.data]);
 
   const navData =
     isFetched &&
-    NFTStoreNavbar?.filter((nav: any) => nav.link != "/nft-detail");
+    details?.data?.navbar?.filter(
+      (nav: any) =>
+        nav.link !== "/nft-detail" &&
+        (nav.page_name === "Home" ||
+          nav.page_name === "Contact" ||
+          nav.page_name === "Blogs" ||
+          nav.page_content !== "")
+    );
 
   console.log(navData, "navData");
   // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
-      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-white p-2 shadow-md">
-        {/* for mobile menu state */}
+      {/* for mobile menu state */}
+      <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-bg-2 p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
             ""
@@ -155,13 +159,19 @@ const Navbar = () => {
 
         <div className="relative ml-4 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
-            {details&&<Image src={renderNFTIcon(details)} alt="/logo" fill />}
+            {details?.data && (
+              <Image
+                src={renderNFTIcon(details?.data?.website)}
+                alt="/logo"
+                fill
+              />
+            )}
           </Link>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
-          {navData &&
-            navData.map((list: any, i: number) => (
+          {details?.data &&
+            navData?.map((list: any, i: number) => (
               <Link href={list.link} key={i}>
                 <li className="mx-4">{list.page_name}</li>
               </Link>
@@ -172,14 +182,14 @@ const Navbar = () => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75"
             >
               {customTruncateHandler(account, 8)}
             </button>
           ) : (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-accentLinear-1 p-1.5 font-storeFont text-sm text-white hover:bg-ac-2 sm:px-3"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
               onClick={() => connectMetamask()}
             >
               Connect Wallet
@@ -194,7 +204,6 @@ const Navbar = () => {
 // // This gets called on every request
 // export async function getServerSideProps() {
 //   // Fetch data from external API
-  
 
 //   // Pass data to the page via props
 //   return { props: { details } };

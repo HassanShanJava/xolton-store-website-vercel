@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { api } from "~/utils/api";
+
 import Image from "next/image";
 import {
   renderNFTImage,
@@ -18,24 +18,51 @@ import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 
+import { useQuery } from "@tanstack/react-query";
+
 const NFTDetail = () => {
   const router = useRouter();
 
   const { id } = router.query;
 
-  const { data: NFTDetail }: any = api.storeNFT.getNFTDetail.useQuery(
-    { id: id },
+  const {
+    isLoading,
+    isError,
+    isFetched,
+    data: nftApiDetail,
+    refetch,
+    error,
+  } = useQuery(
+    ["nftDetail"],
+    async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
     }
   );
+  const NFTDetail = nftApiDetail?.data[0];
 
-  console.log(NFTDetail, "NFTDetail");
-
-  const { data: NFTCollection } = api.storeNFT.getNFTCollection.useQuery(
-    { contract_id: NFTDetail?.contract_id, remove_nft_id: id },
+  const { data: NFTCollection } = useQuery(
+    ["nftCollection"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${NFTDetail?.contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
+      enabled: NFTDetail?.contract_id ? true : false,
     }
   );
 
@@ -74,15 +101,16 @@ const NFTDetail = () => {
         try {
           const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
           const maitccprice = await maticToUSD(nftPrice);
-          // console.log(usdMatic,"usdMatic")
           setUsdMatic(maitccprice);
         } catch (e) {
           console.log(e, "consvertion error front-end");
         }
       }
     })();
-  }, [NFTDetail?.price]);
-
+  }, [nftApiDetail?.data[0]?.price]);
+  useEffect(() => {
+    refetch();
+  }, [id]);
   return (
     <div>
       {NFTDetail && (
@@ -131,7 +159,7 @@ const NFTDetail = () => {
                 <div className="mb-3">
                   <button
                     type="button"
-                    className="w-full rounded-3xl bg-black p-4 text-white"
+                    className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
                     onClick={(e) => {
                       e.preventDefault();
                       buyNFT();
@@ -157,21 +185,6 @@ const NFTDetail = () => {
                 <div className=" group rounded-xl border border-tx-2 bg-white">
                   <summary className="flex cursor-pointer list-none items-center justify-between p-3 font-medium">
                     <span>NFT Detail</span>
-                    {/* <span className="transition group-open:rotate-180">
-                      <svg
-                        fill="none"
-                        height="24"
-                        shape-rendering="geometricPrecision"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        viewBox="0 0 24 24"
-                        width="24"
-                      >
-                        <path d="M6 9l6 6 6-6"></path>
-                      </svg>
-                    </span> */}
                   </summary>
                   {/*divider  */}
                   <div className=" border-t border-tx-2 " />
@@ -206,8 +219,9 @@ const NFTDetail = () => {
 
           {/* collection */}
           <CollectionList
+            id={NFTDetail?.id}
             contract_id={NFTDetail?.contract_id}
-            NFTCollection={NFTCollection}
+            NFTCollection={NFTCollection?.data}
           />
         </div>
       )}
@@ -215,7 +229,7 @@ const NFTDetail = () => {
   );
 };
 
-const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
+const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
     NFTCollection?.length != 0 && (
@@ -236,9 +250,11 @@ const CollectionList: any = ({ contract_id, NFTCollection }: any) => {
         </div>
         <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
           {NFTCollection &&
-            NFTCollection.map((collectionNFT: any, i: any) => (
-              <NFTCard nft={collectionNFT} key={i} />
-            ))}
+            NFTCollection.filter((list: any) => list?.id !== id)?.map(
+              (collectionNFT: any, i: any) => (
+                <NFTCard nft={collectionNFT} key={i} />
+              )
+            )}
         </div>
       </div>
     )

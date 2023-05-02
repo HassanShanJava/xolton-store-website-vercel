@@ -1,3 +1,5 @@
+import Banner from "~/public/images/banner.png";
+
 export function generateOTP(otp_length = 0) {
   const digits = "0123456789";
   let OTP = "";
@@ -58,6 +60,7 @@ export async function maticToUSD(price = 0 as number) {
     );
 
     const response = await data.json();
+    console.log('response',response)
     const maticPrice = +response.Data[1].open * Number(price);
     // console.log(maticPrice.toFixed(3), price, "Data");
     return `${maticPrice.toFixed(3)}`;

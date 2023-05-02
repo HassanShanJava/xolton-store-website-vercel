@@ -1,11 +1,11 @@
 import dynamic from "next/dynamic";
 import React from "react";
 import { prisma } from "~/server/db";
-import { api } from "~/utils/api";
+
 export async function getStaticPaths() {
   const data = await prisma.storeBlogs.findMany({
     where: {
-      store_id: process.env.STORE_ID,
+      store_id: process.env.NEXT_PUBLIC_STORE_ID,
     },
   });
 

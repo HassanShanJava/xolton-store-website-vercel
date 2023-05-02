@@ -20,19 +20,10 @@ const NFTCard = ({ nft }: any) => {
 
   const toast = useToast();
 
-  // console.log(initWeb3,"web3Init")
 
-  console.log(nft, "nft");
 
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
-  console.log(account, "account");
-  // const [isConnected, setConnect] = useState(
-  //   account && account != "" ? true : false
-  // );
-
-  // console.log(web3.MATIC.getBalance())
-
   const buyNFT = async () => {
     account == ""
       ? toast({
@@ -51,9 +42,7 @@ const NFTCard = ({ nft }: any) => {
       : setShowPop(true);
 
     const balance = await web3?.eth.getBalance(account);
-    // console.log(balance, "balance");
     const accountBalance = web3?.utils.fromWei(balance, "ether");
-    console.log(accountBalance, "accountBalance");
     setAccountBalance(accountBalance);
   };
   return (
@@ -66,7 +55,6 @@ const NFTCard = ({ nft }: any) => {
               alt="/nft"
               fill
               priority
-
               quality={100}
               className="mx-auto rounded-xl  object-cover "
             />
@@ -88,7 +76,7 @@ const NFTCard = ({ nft }: any) => {
                 e.preventDefault();
                 buyNFT();
               }}
-              className="w-full  rounded-[6px] bg-black py-3 text-center font-storeFont text-white hover:bg-accentLinear-1 "
+              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
             >
               Buy
             </button>

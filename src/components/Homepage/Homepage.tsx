@@ -2,45 +2,67 @@ import React from "react";
 
 import NFTCard from "../NFT/NFTCard";
 
-
 import { renderBanner, renderNFTIcon, renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
 import BannerImage from "../../public/images/banner.png";
 import NFTListing from "../NFT/NFTListing";
 
-import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
 
 const Homepage = () => {
   const router = useRouter();
   const { contract_id } = router.query;
 
-  
   return (
     <div>
       <div className="h-full  min-h-screen w-full bg-bg-1 px-4 pt-4">
         <Banner collection_id={contract_id} />
         <NFTListing />
-
       </div>
     </div>
   );
 };
 
-const Banner = ({ collection_id }:any) => {
-  const { data: NFTCollection } = api.storeCollection.getStoreCollection.useQuery(
-    {  id: collection_id },
+const Banner = ({ collection_id }: any) => {
+  const { data: NFTCollection, isFetched } = useQuery(
+    ["nftCollectionBanner"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/collection?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&id=${collection_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: collection_id ? true : false,
+    }
+  );
+  const { data: details } = useQuery(
+    ["nftNavbarData"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  if (collection_id !==undefined) {
+  if (collection_id !== undefined) {
     return (
       <>
-        <div className=" relative h-[150px] sm:h-[250px]  w-full  object-cover  py-2 md:h-[500px] xl:h-[400px] 2xl:h-[450px]">
+        <div className=" relative h-[150px] w-full  object-cover  py-2  sm:h-[250px] md:h-[500px] xl:h-[400px] 2xl:h-[450px]">
           <Image
-            src={renderNFTImage(NFTCollection)}
+            src={renderNFTImage(NFTCollection?.data)}
             alt="/collection banner"
             fill
             quality={100}
@@ -51,18 +73,11 @@ const Banner = ({ collection_id }:any) => {
       </>
     );
   } else {
-    const { data: details, isFetched } = api.storeWeb.getStoreBanner.useQuery(
-      {},
-      {
-        refetchOnWindowFocus: false,
-      }
-    );    
-
     return (
       <>
-        <div className=" relative h-[150px] sm:h-[200px] w-full  object-cover  py-2 md:h-[350px] xl:h-[400px] 2xl:h-[450px] ">
+        <div className=" relative h-[150px] w-full object-cover  py-2  sm:h-[200px] md:h-[350px] xl:h-[400px] 2xl:h-[450px] ">
           <Image
-            src={renderBanner(details)}
+            src={renderBanner(details?.data?.website)}
             alt="/banner"
             fill
             priority

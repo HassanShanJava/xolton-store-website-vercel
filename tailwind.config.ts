@@ -3,16 +3,12 @@ import { type Config } from "tailwindcss";
 export default {
   darkMode: "class",
   content: [
-    // './app/**/*.{js,ts,jsx,tsx}',
-    // './pages/**/*.{js,ts,jsx,tsx}',
-    // './components/**/*.{js,ts,jsx,tsx}',
-
-    // Or if using `src` directory:
+    
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     fontFamily: {
-      storeFont: ['Inter', 'sans-serif'],
+      storeFont: ['inter', 'sans-serif'],
     },
     extend: {
       colors: {
@@ -26,7 +22,9 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": "#F1F3F5",
+        "bg-1": "#62508b",
+        "bg-2": "#ea6cc8",
+        "bg-3": "#952097",
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",

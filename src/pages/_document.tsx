@@ -1,16 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
 import { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
-import { api } from "~/utils/api";
+
 import { renderNFTIcon } from "~/utils/helper";
 
-export default function Document({ details, isFetched }: any) {
+export default function Document() {
   return (
     <Html>
       <Head>
-        <title>{details && details.name}</title>
-        <meta name="description" content={`${details && details.name} Store`} />
-        <meta property="og:title" content={details && details.name} key="title" />
-        <link rel="icon" href={renderNFTIcon(details)} />
+        <meta name="description" content={` Store`} />
+        <meta property="og:title" content={"store detail"} key="title" />
+        {/* <link rel="icon" href={renderNFTIcon(details?.data?.web)} /> */}
 
         <link
           rel="stylesheet"
@@ -32,17 +32,4 @@ export default function Document({ details, isFetched }: any) {
       </body>
     </Html>
   );
-}
-
-// This gets called on every request
-export async function getServerSideProps() {
-  // Fetch data from external API
-  const { data: details, isFetched } = api.storeWeb.getStoreDetails.useQuery(
-    {},
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-  // Pass data to the page via props
-  return { props: { details, isFetched } };
 }

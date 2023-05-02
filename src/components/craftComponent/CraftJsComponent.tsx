@@ -20,7 +20,7 @@ export default function CraftJsComponent(props: any) {
   return (
     <div
       className={`   w-full
-         bg-white`}
+         `}
     >
       {blogData && (
         <Editor
