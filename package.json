@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "node ./src/utils/runner.ts && next build",
+    "build": "node ./src/utils/runner.ts && next build && next export",
     "dev": "node ./src/utils/runner.ts && next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "serve out"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
@@ -29,6 +29,7 @@
     "react-hook-form": "^7.43.9",
     "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "8.0.5",
+    "serve": "^14.2.0",
     "sharp": "^0.32.1",
     "web3": "^1.9.0",
     "zod": "^3.21.4"
