@@ -5,9 +5,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { customTruncateHandler } from "~/store/helper";
 import { RootState } from "~/store/store";
-import { api } from "~/utils/api";
+
 import { displayDate, renderNFTImage } from "~/utils/helper";
-import { trpc } from "~/utils/trpc";
+
 const BlogsListing = ({ storeBlogsData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();

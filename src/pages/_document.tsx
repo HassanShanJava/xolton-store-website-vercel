@@ -1,20 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { Html, Head, Main, NextScript } from "next/document";
 import React from "react";
-import { api } from "~/utils/api";
+
 import { renderNFTIcon } from "~/utils/helper";
-import { trpc } from "~/utils/trpc";
-
-
-
 
 export default function Document() {
- 
   return (
     <Html>
       <Head>
         <meta name="description" content={` Store`} />
-        <meta property="og:title" content={'store detail'} key="title" />
+        <meta property="og:title" content={"store detail"} key="title" />
         {/* <link rel="icon" href={renderNFTIcon(details?.data?.web)} /> */}
 
         <link
@@ -38,4 +33,3 @@ export default function Document() {
     </Html>
   );
 }
-

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import NFTCard from "./NFTCard";
 
-import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { trpc } from "~/utils/trpc";
+
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -58,7 +57,6 @@ const NFTListing = () => {
     }
   );
   const sorNFT = (value: string) => {
-
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       orderBy: value,
@@ -140,10 +138,10 @@ const NFTListing = () => {
           }
         >
           <div>
-          {contract_id !== undefined && (
+            {contract_id !== undefined && (
               <h1 className="text-2xl">{NFTCollectionDetail?.data?.name}</h1>
-              )}
-              </div>
+            )}
+          </div>
           <div
             className={`flex  flex-col ${
               NFTCollectionDetail?.data ? "" : "w-full"
@@ -151,7 +149,7 @@ const NFTListing = () => {
           >
             <button
               onClick={clearFilter}
-              className="color group h-8 w-8 bg-white rounded-full ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
+              className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
             >
               <i className="fa fa-undo scale-x-[-1] p-2 text-pm-12 group-hover:text-white"></i>
             </button>

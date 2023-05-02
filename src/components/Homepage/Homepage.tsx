@@ -7,13 +7,10 @@ import Image from "next/image";
 import BannerImage from "../../public/images/banner.png";
 import NFTListing from "../NFT/NFTListing";
 
-import { api } from "~/utils/api";
-import { trpc } from "~/utils/trpc";
 import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 
 const Homepage = () => {
-  
   const router = useRouter();
   const { contract_id } = router.query;
 
@@ -28,7 +25,6 @@ const Homepage = () => {
 };
 
 const Banner = ({ collection_id }: any) => {
-  
   const { data: NFTCollection, isFetched } = useQuery(
     ["nftCollectionBanner"],
     async () => {
@@ -60,7 +56,6 @@ const Banner = ({ collection_id }: any) => {
       refetchOnWindowFocus: false,
     }
   );
-
 
   if (collection_id !== undefined) {
     return (

@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import React from "react";
-import { api } from "~/utils/api";
 
 import { prisma } from "~/server/db";
 import { QueryClient, useQuery } from "@tanstack/react-query";

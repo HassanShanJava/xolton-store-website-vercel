@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
-import { api } from "~/utils/api";
+
 export async function getStaticProps() {
   const response: any = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/privacy`,

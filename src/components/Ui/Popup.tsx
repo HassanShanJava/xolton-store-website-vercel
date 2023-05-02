@@ -5,13 +5,12 @@ import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
-import { api } from "~/utils/api";
+
 import { useRouter } from "next/router";
 import { Spinner } from "@chakra-ui/react";
 import { checkTargetForNewValues } from "framer-motion";
-import { trpc } from "~/utils/trpc";
+
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 interface PopUpType {
   open: boolean;
   setBuy: Function;

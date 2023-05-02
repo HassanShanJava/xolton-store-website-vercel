@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { customTruncateHandler } from "~/store/helper";
-import { api } from "~/utils/api";
+
 import { displayDate, renderNFTImage } from "~/utils/helper";
 import CraftJsComponent from "../craftComponent/CraftJsComponent";
 import { prisma } from "~/server/db";
@@ -12,7 +12,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
   const router = useRouter();
   const { id } = router.query;
   console.log("id:::", id);
- 
+
   console.log("storeBlogsData:::", storeBlogsData);
 
   return (

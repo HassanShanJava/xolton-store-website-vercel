@@ -2,8 +2,6 @@ import { useToast } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { api } from "~/utils/api";
-import { trpc } from "~/utils/trpc";
 
 const ContactUs = () => {
   const { handleSubmit, register } = useForm<any>();

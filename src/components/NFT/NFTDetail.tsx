@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { api } from "~/utils/api";
+
 import Image from "next/image";
 import {
   renderNFTImage,
@@ -17,7 +17,7 @@ import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
-import { trpc } from "~/utils/trpc";
+
 import { useQuery } from "@tanstack/react-query";
 
 const NFTDetail = () => {
@@ -66,7 +66,6 @@ const NFTDetail = () => {
     }
   );
 
-
   const [showPop, setShowPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
   const [usdMatic, setUsdMatic] = useState<any>("");
@@ -109,9 +108,9 @@ const NFTDetail = () => {
       }
     })();
   }, [nftApiDetail?.data[0]?.price]);
-  useEffect(()=>{
-    refetch()
-  },[id])
+  useEffect(() => {
+    refetch();
+  }, [id]);
   return (
     <div>
       {NFTDetail && (
@@ -186,7 +185,6 @@ const NFTDetail = () => {
                 <div className=" group rounded-xl border border-tx-2 bg-white">
                   <summary className="flex cursor-pointer list-none items-center justify-between p-3 font-medium">
                     <span>NFT Detail</span>
-                 
                   </summary>
                   {/*divider  */}
                   <div className=" border-t border-tx-2 " />

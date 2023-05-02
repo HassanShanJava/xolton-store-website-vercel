@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import fs from "fs";
+import Homepage from "~/components/Homepage/Homepage";
 
 // import Homepage from "~/components/Homepage/Homepage";
 // export async function getStaticProps() {
@@ -20,7 +21,7 @@ import fs from "fs";
 // export default {
 //   darkMode: "class",
 //   content: [
-    
+
 //     "./src/**/*.{js,ts,jsx,tsx}",
 //   ],
 //   theme: {
@@ -96,9 +97,6 @@ import fs from "fs";
 //   });
 //   return { props: { storeThemeData } };
 // }
-const Homepage = dynamic(() => import("~/components/Homepage/Homepage"), {
-  ssr: true,
-});
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });

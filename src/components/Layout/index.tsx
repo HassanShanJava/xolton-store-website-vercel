@@ -4,9 +4,9 @@ import Navbar from "./Navbar";
 import Head from "next/head";
 import { store } from "~/store/store";
 import { Provider } from "react-redux";
-import { api } from "~/utils/api";
+
 import { renderNFTIcon } from "~/utils/helper";
-import { trpc } from "~/utils/trpc";
+
 import { useQuery } from "@tanstack/react-query";
 
 const Layout = ({ children }: { children: ReactNode }) => {

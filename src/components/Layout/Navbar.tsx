@@ -12,10 +12,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 import { setAccount } from "~/store/slices/web3Slice";
-import { api } from "~/utils/api";
+
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
-import { trpc } from "~/utils/trpc";
+
 import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
