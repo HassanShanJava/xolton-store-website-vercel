@@ -16,7 +16,7 @@ export default function CraftJsComponent(props: any) {
   const blogData: any = lz.decompress(
     lz.decodeBase64(props.storeBlogsData?.data)
   );
-  //  actions.deserialize(json);
+
   return (
     <div
       className={`   w-full

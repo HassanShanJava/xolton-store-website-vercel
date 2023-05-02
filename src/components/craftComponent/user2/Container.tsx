@@ -32,7 +32,7 @@ export const Container = ({
   return (
     <Flex
       {...props}
-      // templateColumns={`repeat(${+box}, 1fr)`}
+
       ref={(ref: any) => connect(drag(ref))}
       border={"none !important"}
       style={{
@@ -42,7 +42,6 @@ export const Container = ({
         width: `${width}%`,
         display: `flex`,
 
-        // flexDirection: `${box ? box : 'column'}`,
       }}
       className={` gap-2 !border-0 xs:flex-col  sm:flex-col  md:${
         box ? box : "flex-col"

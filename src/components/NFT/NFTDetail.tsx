@@ -132,7 +132,7 @@ const NFTDetail = () => {
 
             <div className="mx-auto w-full max-w-xl md:px-4">
               {/* intial details */}
-              <p className="text-5xl ">
+              <p className="text-5xl capitalize">
                 {NFTDetail.name}{" "}
                 <span className="text-[20px] text-ac-2">
                   #{NFTDetail.token_id}

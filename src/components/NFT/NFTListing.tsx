@@ -62,6 +62,7 @@ const NFTListing = () => {
       orderBy: value,
       first: 0,
     }));
+
   };
   function handleKeyPress(e: any) {
     if (contract_id == undefined) {
@@ -127,13 +128,14 @@ const NFTListing = () => {
     }));
     refetch();
   }
+
   return (
     <>
       <div className=" h-full  w-full ">
         <div
           className={
             nfts?.length > 0
-              ? "m-4 flex flex-col items-center justify-between xs:flex-row"
+              ? "my-4 flex flex-col items-center justify-between md:flex-row"
               : "hidden"
           }
         >
@@ -142,6 +144,7 @@ const NFTListing = () => {
               <h1 className="text-2xl">{NFTCollectionDetail?.data?.name}</h1>
             )}
           </div>
+
           <div
             className={`flex  flex-col ${
               NFTCollectionDetail?.data ? "" : "w-full"
@@ -151,30 +154,26 @@ const NFTListing = () => {
               onClick={clearFilter}
               className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
             >
-              <i className="fa fa-undo scale-x-[-1] p-2 text-pm-12 group-hover:text-white"></i>
+              <i className="fa fa-undo scale-x-[-1] p-2  text-pm-12 group-hover:text-white"></i>
             </button>
-            <div className="w-full xs:w-60">
+
+            <div className="w-full ">
               <input
                 type="text"
+
                 placeholder="Search by NFT Name"
-                className=" w-full rounded-lg bg-white p-2 font-storeFont text-sm focus:outline-none "
+                className=" w-full rounded-lg bg-white p-2 font-storeFont text-xs sm:text-sm focus:outline-none "
                 onChange={handleKeyPress}
               />
             </div>
 
-            <div className="my-2 w-full xs:w-56 md:my-0">
+            <div className="m-2 w-full xs:w-56 md:my-0">
               <select
                 data-te-select-init
-                className="w-full rounded-lg bg-white p-2 font-storeFont text-sm text-tx-3 focus:outline-none"
+                className="w-full rounded-lg bg-white p-2 font-storeFont text-xs sm:text-sm text-tx-3 focus:outline-none"
                 onChange={(e) => sorNFT(e.target.value)}
-                value={"select"}
               >
-                <option
-                  value="select"
-                  disabled
-                  hidden
-                  className="bg-white font-storeFont"
-                >
+                <option value="" className="bg-white font-storeFont ">
                   Sort By
                 </option>
                 <option value="name-asc" className="font-storeFont">
@@ -208,13 +207,12 @@ const NFTListing = () => {
                 )
               }
               className={
-                "grid w-full grid-cols-1 gap-x-2 gap-y-4 sx:grid-cols-2 mdx:grid-cols-3 xlg:grid-cols-4"
+                "grid w-full grid-cols-1 gap-5 sm:grid-cols-2 mdx:grid-cols-3 xlg:grid-cols-4"
               }
             >
               {nfts?.map((nft: any, i: number) => (
-                <span key={i}>
-                  <NFTCard nft={nft} />
-                </span>
+                
+                  <NFTCard nft={nft} key={i}/>
               ))}
             </InfiniteScroll>
           </div>

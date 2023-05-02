@@ -8,7 +8,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ['inter', 'sans-serif'],
+      storeFont: ["ubuntu", "roboto"],
     },
     extend: {
       colors: {

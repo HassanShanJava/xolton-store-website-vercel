@@ -32,7 +32,6 @@ export function isValidImageType(type: any) {
   return isImage;
 }
 export function renderNFTImage(nft: any) {
-  console.log("nft:::::", nft);
   return nft?.media_type === "audio/mp3" || nft?.thumb === ""
     ? ""
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.thumb}`;
@@ -60,9 +59,9 @@ export async function maticToUSD(price = 0 as number) {
     );
 
     const response = await data.json();
-    console.log('response',response)
+    
     const maticPrice = +response.Data[1].open * Number(price);
-    // console.log(maticPrice.toFixed(3), price, "Data");
+    
     return `${maticPrice.toFixed(3)}`;
   } catch (error: any) {
     console.log(error, "convertor matic to usd error");

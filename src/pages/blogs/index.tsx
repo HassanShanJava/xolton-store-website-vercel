@@ -20,19 +20,7 @@ export async function getStaticProps() {
   const result: any = await response.json();
 
   const storeBlogsData = result?.data;
-  // const storeBlogsData = await prisma.storeBlogs.findMany({
-  //   where: {
-  //     store_id: process.env.NEXT_PUBLIC_STORE_ID,
-  //   },
-  // });
-  // storeBlogsData.forEach((listing: any) => {
-  //   Object.entries(listing).forEach(([key, prop]) => {
-  //     if (prop instanceof Date) {
-  //       listing[key] = prop.toString();
-  //     }
-  //   });
-  // });
-
+  
   return { props: { storeBlogsData } };
 }
 

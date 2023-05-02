@@ -47,7 +47,7 @@ const NFTCard = ({ nft }: any) => {
   };
   return (
     <>
-      <div className=" mx-auto h-auto w-72 rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" h-auto w-full    rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
           <div className="relative h-80 max-h-[290px]  w-full  ">
             <Image
@@ -63,7 +63,7 @@ const NFTCard = ({ nft }: any) => {
 
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">
-            <p>{nft?.name}</p>
+            <p className="capitalize">{nft?.name}</p>
             <p>
               {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>

@@ -20,7 +20,7 @@ export const Button = ({ size, variant, color, text, src, ...props }: any) => {
   } = useNode();
   const handleClick = (src: any) => {
     if (src) {
-      // router.push(src);
+
       const newWindow = window.open(src, "_blank", "noopener,noreferrer");
       if (newWindow) newWindow.opener = null;
     }

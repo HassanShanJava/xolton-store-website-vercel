@@ -16,7 +16,7 @@ const Homepage = () => {
 
   return (
     <div>
-      <div className="h-full  min-h-screen w-full bg-bg-1 px-4 pt-4">
+      <div className="h-full  min-h-screen w-full  bg-bg-1 px-4 py-8">
         <Banner collection_id={contract_id} />
         <NFTListing />
       </div>
@@ -60,14 +60,14 @@ const Banner = ({ collection_id }: any) => {
   if (collection_id !== undefined) {
     return (
       <>
-        <div className=" relative h-[150px] w-full  object-cover  py-2  sm:h-[250px] md:h-[500px] xl:h-[400px] 2xl:h-[450px]">
+        <div className=" relative h-[150px] w-full  object-cover  py-2  sm:h-[250px] md:h-[350px] xl:h-[400px] 2xl:h-[450px]">
           <Image
             src={renderNFTImage(NFTCollection?.data)}
             alt="/collection banner"
             fill
             quality={100}
             priority
-            className="rounded-[20px] object-cover px-2 "
+            className="rounded-[20px] object-cover "
           />
         </div>
       </>
@@ -82,7 +82,7 @@ const Banner = ({ collection_id }: any) => {
             fill
             priority
             quality={100}
-            className={`rounded-[20px]  object-cover px-2`}
+            className={`rounded-[20px]  object-cover `}
           />
         </div>
       </>

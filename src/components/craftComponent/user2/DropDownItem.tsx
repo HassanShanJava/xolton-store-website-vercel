@@ -93,46 +93,7 @@ export const DropDownItem = ({
         />
       </Collapse>
     </div>
-    // <div
-    // {...props}
-    // ref={(ref: any) => connect(drag(ref))}
-    //   onClick={() => selected && setEditable(true)}
-    //   className="w-full"
-    // >
-    //   <AccordionItem className="w-full">
-    //     <AccordionButton>
-    // <ContentEditable
-    //   html={text}
-    //   disabled={!editable}
-    //   onChange={(e) =>
-    //     setProp((props:any) => (props.text = e.target.value), 500)
-    //   }
-    //   style={{
-    //     fontSize: `${fontSize}px`,
-    //     fontStyle: `${fontStyle}`,
-    //     fontWeight: `${fontWeight}`,
-    //   }}
-    //   className="flex flex-1 text-left"
-    // />
-    //       <AccordionIcon />
-    //     </AccordionButton>
-
-    //     <AccordionPanel pb={4}>
-    //       <ContentEditable
-    //         html={text2}
-    //         disabled={!editable}
-    //         onChange={(e) =>
-    //           setProp((props:any) => (props.text2 = e.target.value), 500)
-    //         }
-    //         style={{
-    //           fontSize: `${fontSize}px`,
-    //           fontStyle: `${fontStyle}`,
-    //           fontWeight: `${fontWeight}`,
-    //         }}
-    //       />
-    //     </AccordionPanel>
-    //   </AccordionItem>
-    // </div>
+    
   );
 };
 
