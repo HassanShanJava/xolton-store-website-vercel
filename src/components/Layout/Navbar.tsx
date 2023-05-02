@@ -115,7 +115,7 @@ const Navbar = () => {
           {nav ? (
             ""
           ) : (
-            <div className="relative ml-4 flex h-8 w-8">
+            <div className="relative  flex h-8 w-8">
               <Image src={MenuIcon} alt="/logo" fill priority />
             </div>
           )}
@@ -164,7 +164,7 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="relative ml-4 hidden h-8 w-8 sm:flex">
+        <div className="relative ml-2 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
             {details?.data && (
               <Image
@@ -185,7 +185,7 @@ const Navbar = () => {
             ))}
         </ul>
 
-        <div className="mr-4">
+        <div className="mr-2">
           {account != "" ? (
             <button
               type="button"

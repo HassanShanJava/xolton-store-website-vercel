@@ -62,7 +62,6 @@ const NFTListing = () => {
       orderBy: value,
       first: 0,
     }));
-
   };
   function handleKeyPress(e: any) {
     if (contract_id == undefined) {
@@ -72,7 +71,7 @@ const NFTListing = () => {
           searchQuery: e.target.value,
           first: 0,
         }));
-      }, 800);
+      }, 600);
     } else {
       setTimeout(() => {
         setSortFilter((prevFilters: any) => ({
@@ -125,6 +124,8 @@ const NFTListing = () => {
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       first: 0,
+      orderBy: "",
+      searchQuery: "",
     }));
     refetch();
   }
@@ -147,48 +148,52 @@ const NFTListing = () => {
 
           <div
             className={`flex  flex-col ${
-              NFTCollectionDetail?.data ? "" : "w-full"
+              NFTCollectionDetail?.data ? "w-full md:w-[50%]" : "w-full"
             } items-center gap-2 xs:flex-row-reverse`}
           >
-            <button
-              onClick={clearFilter}
-              className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
-            >
-              <i className="fa fa-undo scale-x-[-1] p-2  text-pm-12 group-hover:text-white"></i>
-            </button>
-
-            <div className="w-full ">
-              <input
-                type="text"
-
-                placeholder="Search by NFT Name"
-                className=" w-full rounded-lg bg-white p-2 font-storeFont text-xs sm:text-sm focus:outline-none "
-                onChange={handleKeyPress}
-              />
-            </div>
-
-            <div className="m-2 w-full xs:w-56 md:my-0">
-              <select
-                data-te-select-init
-                className="w-full rounded-lg bg-white p-2 font-storeFont text-xs sm:text-sm text-tx-3 focus:outline-none"
-                onChange={(e) => sorNFT(e.target.value)}
+            <div className=" flex w-full xs:w-fit flex-row-reverse items-center justify-between">
+              <button
+                onClick={clearFilter}
+                className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
               >
-                <option value="" className="bg-white font-storeFont ">
-                  Sort By
-                </option>
-                <option value="name-asc" className="font-storeFont">
-                  A to Z
-                </option>
-                <option value="name-desc" className="font-storeFont">
-                  Z to A
-                </option>
-                <option value="price-desc" className="font-storeFont">
-                  Price Highest to Lowest
-                </option>
-                <option value="price-asc" className="font-storeFont">
-                  Price Lowest to Highest
-                </option>
-              </select>
+                <i className="fa fa-undo scale-x-[-1] p-2  text-pm-12 group-hover:text-white"></i>
+              </button>
+              <div className="mr-2 flex w-full flex-col items-center justify-between xs:mr-0 xs:flex-row">
+                <div className="md:w-68 w-full ">
+                  <input
+                    type="text"
+                    defaultValue={sortFilter.searchQuery}
+                    placeholder="Search by NFT Name"
+                    className=" md:w-68 w-full rounded-lg bg-white p-2 font-storeFont text-xs focus:outline-none sm:text-sm "
+                    onChange={handleKeyPress}
+                  />
+                </div>
+
+                <div className="m-2 w-full xs:w-56 md:my-0">
+                  <select
+                    data-te-select-init
+                    className="w-full rounded-lg bg-white p-2 font-storeFont text-xs text-tx-3 focus:outline-none sm:text-sm"
+                    onChange={(e) => sorNFT(e.target.value)}
+                    value={sortFilter.orderBy}
+                  >
+                    <option value="" className="bg-white font-storeFont ">
+                      Sort By
+                    </option>
+                    <option value="name-asc" className="font-storeFont">
+                      A to Z
+                    </option>
+                    <option value="name-desc" className="font-storeFont">
+                      Z to A
+                    </option>
+                    <option value="price-desc" className="font-storeFont">
+                      Price Highest to Lowest
+                    </option>
+                    <option value="price-asc" className="font-storeFont">
+                      Price Lowest to Highest
+                    </option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -207,12 +212,11 @@ const NFTListing = () => {
                 )
               }
               className={
-                "grid w-full grid-cols-1 gap-5 sm:grid-cols-2 mdx:grid-cols-3 xlg:grid-cols-4"
+                "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
               }
             >
               {nfts?.map((nft: any, i: number) => (
-                
-                  <NFTCard nft={nft} key={i}/>
+                <NFTCard nft={nft} key={i} />
               ))}
             </InfiniteScroll>
           </div>

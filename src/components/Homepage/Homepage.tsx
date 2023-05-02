@@ -15,8 +15,8 @@ const Homepage = () => {
   const { contract_id } = router.query;
 
   return (
-    <div>
-      <div className="h-full  min-h-screen w-full  bg-bg-1 px-4 py-8">
+    <div className="bg-bg-1">
+      <div className="h-full max-w-[1800px] mx-auto min-h-screen w-full px-4 py-8">
         <Banner collection_id={contract_id} />
         <NFTListing />
       </div>

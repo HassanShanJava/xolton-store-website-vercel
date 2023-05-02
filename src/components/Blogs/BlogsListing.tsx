@@ -38,7 +38,9 @@ const BlogsListing = ({ storeBlogsData }: any) => {
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {storeBlogsData?.map((store: any, i: number) => {
-
+                console.log({store}, typeof store?.created_at)
+                let date:any =  new Date(store?.created_at)
+                console.log({date} , typeof date)
                 return (
                   <Link
                     href={`/blogs/${store?.meta}`}
@@ -70,7 +72,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                           {customTruncateHandler(store?.description, 20)}
                         </p>
                         <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
-                          {store?.created_at}
+                          {date.toDateString()}
                         </span>
                       </div>
                     </div>
