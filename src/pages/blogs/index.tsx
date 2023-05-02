@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
 
-import { prisma } from "~/server/db";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 
 export async function getStaticProps() {
@@ -20,7 +19,8 @@ export async function getStaticProps() {
   const result: any = await response.json();
 
   const storeBlogsData = result?.data;
-  
+
+
   return { props: { storeBlogsData } };
 }
 
