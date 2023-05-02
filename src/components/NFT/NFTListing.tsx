@@ -151,7 +151,7 @@ const NFTListing = () => {
               NFTCollectionDetail?.data ? "w-full md:w-[50%]" : "w-full"
             } items-center gap-2 xs:flex-row-reverse`}
           >
-            <div className=" flex w-full xs:w-fit flex-row-reverse items-center justify-between">
+            <div className=" flex w-full flex-row-reverse items-center justify-between xs:w-fit">
               <button
                 onClick={clearFilter}
                 className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
@@ -162,7 +162,6 @@ const NFTListing = () => {
                 <div className="md:w-68 w-full ">
                   <input
                     type="text"
-                    defaultValue={sortFilter.searchQuery}
                     placeholder="Search by NFT Name"
                     className=" md:w-68 w-full rounded-lg bg-white p-2 font-storeFont text-xs focus:outline-none sm:text-sm "
                     onChange={handleKeyPress}
@@ -227,9 +226,47 @@ const NFTListing = () => {
             <h1 className="text-2xl ">No NFT's available yet</h1>
           </div>
         )}
-        {isLoading && (
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <i className="fa-solid fa-spinner fa-spin text-3xl "></i>
+
+        {/* loading skeletion */}
+        {isLoading&& (
+          <div className="grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+            {nfts.map((nft, i) => (
+              <div
+                key={i}
+                className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white"
+              >
+                {/* loading nft image */}
+                <div
+                  className={
+                    "relative h-80 max-h-[290px] w-full animate-[pulse_1s_ease-in-out_infinite] rounded-[20px] bg-gray-300"
+                  }
+                ></div>
+
+                {/* loading name and prices */}
+                <div className="">
+                  <div className="flex items-center justify-between px-2.5 py-4">
+                    <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
+                    <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
+                  </div>
+
+                  <div className="px-2">
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full  rounded-[6px]  bg-bg-3/75 py-3 text-center font-storeFont text-white "
+                    >
+                      <div className="flex items-center justify-center">
+                        <div className="progress"></div>
+                        <div className="progress"></div>
+                        <div className="progress"></div>
+                        <div className="progress"></div>
+
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -11,6 +11,7 @@ export default {
       storeFont: ["ubuntu", "roboto"],
     },
     extend: {
+
       colors: {
         "ac-1": "#FB74B5",
         "ac-2": "#BF1065",
@@ -59,5 +60,11 @@ export default {
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
     },
+
+    
   },
+
+  
 } satisfies Config;
+
+

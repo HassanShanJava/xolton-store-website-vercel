@@ -20,8 +20,6 @@ const NFTCard = ({ nft }: any) => {
 
   const toast = useToast();
 
-
-
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
   const buyNFT = async () => {
@@ -47,9 +45,9 @@ const NFTCard = ({ nft }: any) => {
   };
   return (
     <>
-      <div className=" h-auto w-full max-w-[350px]  mx-auto   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <Link href={`/nft-details/${nft.id}`}>
-          <div className="relative h-80 max-h-[290px]  w-full  ">
+          <div className={" relative h-80 max-h-[290px]  w-full"}>
             <Image
               src={renderNFTImage(nft)}
               alt="/nft"
@@ -64,8 +62,8 @@ const NFTCard = ({ nft }: any) => {
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">
             <p className="capitalize">{nft?.name}</p>
-            <p>0
-              {nft?.price} <span className="text-xs lowercase">MATIC</span>
+            <p>
+              0{nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 
