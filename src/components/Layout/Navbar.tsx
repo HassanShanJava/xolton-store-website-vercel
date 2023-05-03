@@ -115,8 +115,8 @@ const Navbar = () => {
           {nav ? (
             ""
           ) : (
-            <div className="relative  flex h-8 w-8">
-              <Image src={MenuIcon} alt="/logo" fill priority />
+            <div className="relative  flex h-8 w-8 ">
+              <Image src={MenuIcon} alt="/logo" fill priority className="bg-white rounded-xl" />
             </div>
           )}
         </div>
@@ -124,8 +124,8 @@ const Navbar = () => {
         <div
           className={
             nav
-              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[300px] bg-bg-2 duration-300"
-              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[300px] bg-bg-2 duration-300"
+              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[250px] bg-bg-2 duration-300"
+              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[250px] bg-bg-2 duration-300"
           }
         >
           <div className="flex justify-between items-center mt-4 mr-4">

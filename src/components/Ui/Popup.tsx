@@ -7,7 +7,7 @@ import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
 
 import { useRouter } from "next/router";
-import { Spinner } from "@chakra-ui/react";
+
 import { checkTargetForNewValues } from "framer-motion";
 
 import { useMutation } from "@tanstack/react-query";
@@ -36,10 +36,8 @@ const Popup = ({
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  console.log("NFT Tax L: ", tax);
-  console.log("Price :: ", price);
-  const total: any = Number((+price + +tax).toFixed(5));
-  console.log("Total :: ", total);
+  const total: any = Number(+price + +tax);
+
   const nftUpdate = useMutation({
     mutationFn: (newTodo) => {
       return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
@@ -47,7 +45,7 @@ const Popup = ({
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
-        }, 
+        },
         body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
       });
     },
@@ -200,19 +198,31 @@ const Popup = ({
                       You will pay
                     </p>
                     <p className=" text-md leading-relaxed text-slate-500">
-                      {total} <span className="text-xs lowercase">MATIC</span>
+                      {total.toFixed(5)}{" "}
+                      <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                   <button
-                    className="mb-1 mr-1 w-full rounded bg-accentLinear-1 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+                    className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
                     onClick={purchaseNFT}
                     disabled={isPurchase}
                   >
-                    {isPurchase !== false ? "Purchase" : <Spinner />}
+                    {isPurchase !== false ? (
+                      "Purchase"
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-center py-1.5">
+                          <div className="progress"></div>
+                          <div className="progress"></div>
+                          <div className="progress"></div>
+                          <div className="progress"></div>
+                        </div>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

@@ -63,7 +63,7 @@ const NFTCard = ({ nft }: any) => {
           <div className="flex items-center justify-between px-2.5 py-4">
             <p className="capitalize">{nft?.name}</p>
             <p>
-              0{nft?.price} <span className="text-xs lowercase">MATIC</span>
+              {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 

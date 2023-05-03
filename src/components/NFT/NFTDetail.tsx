@@ -115,7 +115,7 @@ const NFTDetail = () => {
     <div>
       {NFTDetail && (
         <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 pt-12 font-storeFont md:px-7">
-          <div className=" max-w-6.5xl mx-auto flex w-full flex-col gap-4  items-start justify-between sm:flex-row">
+          <div className=" max-w-6.5xl mx-auto flex w-full flex-col items-start  justify-between gap-4 sm:flex-row">
             <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
               <div className="h-[400px] w-full px-4 sm:px-0">
                 <Image
@@ -233,7 +233,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
     NFTCollection?.length != 0 && (
-      <div className="mx-auto h-full min-h-screen w-full   bg-bg-1 py-6 px-6 ">
+      <div className="mx-auto h-full min-h-screen w-full   bg-bg-1 px-6 py-6 ">
         <div className=" flex items-center justify-between py-3 ">
           <p className="md:text-md text-sm lg:text-lg">
             From the same collection
