@@ -19,6 +19,7 @@ import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 const NFTDetail = () => {
   const router = useRouter();
@@ -191,7 +192,14 @@ const NFTDetail = () => {
                   <div className="md:text-md   text-xs text-slate-500  sm:text-sm">
                     <div className="flex justify-between p-3">
                       <p>Contract Address</p>
-                      <p>{customTruncateHandler(NFTDetail.contract_address)}</p>
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
+                        target="_blank"
+                      >
+                        <p>
+                          {customTruncateHandler(NFTDetail?.contract_address)}
+                        </p>
+                      </Link>
                     </div>
                     {/*divider  */}
                     <div className=" border-t border-tx-2" />

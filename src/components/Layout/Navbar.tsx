@@ -154,8 +154,8 @@ const Navbar = () => {
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navData &&
                 navData.map((list: any, i: number) => (
-                  <Link href={list.link} key={i}>
-                    <li className="flex items-center py-4 text-xl">
+                  <Link href={list.link} key={i} onClick={handleNav}>
+                    <li className="flex items-center py-4 text-xl" >
                       {list.page_name}
                     </li>
                   </Link>

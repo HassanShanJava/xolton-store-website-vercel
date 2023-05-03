@@ -9,7 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
   const [nfts, setNfts] = useState<any>([]);
-  const [sortFilter, setSortFilter] = useState<any>({ rows: 2, first: 0 });
+  const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
   useEffect(() => {
     console.log({ contract_id });
     setSortFilter((prevFilters: any) => ({
@@ -215,18 +215,14 @@ const NFTListing = ({ contract_id }: any) => {
           </div>
         )}
 
-        {/* loading skeletion */}
-        {isFetching && (
-          <div className="grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-            {/* only showing 5 nfts as loading in all screens */}
-          </div>
-        )}
+        
       </div>
     </>
   );
 };
 
 export default NFTListing;
+
 const loadingSkeleton = (data: any) => {
   console.log({ data });
   return (
