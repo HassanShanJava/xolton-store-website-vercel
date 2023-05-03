@@ -6,7 +6,6 @@ specifiers:
   '@emotion/react': ^11.10.6
   '@emotion/styled': ^11.10.6
   '@next/env': ^13.3.2
-  '@prisma/client': ^4.11.0
   '@reduxjs/toolkit': 1.9.3
   '@tanstack/react-query': ^4.28.0
   '@types/eslint': ^8.21.3
@@ -26,7 +25,6 @@ specifiers:
   postcss: ^8.4.21
   prettier: ^2.8.6
   prettier-plugin-tailwindcss: ^0.2.6
-  prisma: ^4.11.0
   prop-types: ^15.8.1
   react: 18.2.0
   react-contenteditable: ^3.3.7
@@ -39,7 +37,6 @@ specifiers:
   tailwindcss: ^3.3.0
   typescript: ^5.0.2
   web3: ^1.9.0
-  zod: ^3.21.4
 
 dependencies:
   '@chakra-ui/react': 2.5.5_pfs5rh5nwbp5uwsugja2ndezqu
@@ -47,7 +44,6 @@ dependencies:
   '@emotion/react': 11.10.6_pofolu2o2erjq4lhyzl3hqovzq
   '@emotion/styled': 11.10.6_wk7udrqmfetfur7bcmggr6k6fm
   '@next/env': 13.3.2
-  '@prisma/client': 4.12.0_prisma@4.12.0
   '@reduxjs/toolkit': 1.9.3_k4ae6lp43ej6mezo3ztvx6pykq
   '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
   browser-image-compression: 2.0.2
@@ -64,7 +60,6 @@ dependencies:
   serve: 14.2.0
   sharp: 0.32.1
   web3: 1.9.0
-  zod: 3.21.4
 
 devDependencies:
   '@types/eslint': 8.37.0
@@ -80,7 +75,6 @@ devDependencies:
   postcss: 8.4.21
   prettier: 2.8.7
   prettier-plugin-tailwindcss: 0.2.6_prettier@2.8.7
-  prisma: 4.12.0
   tailwindcss: 3.3.1_postcss@8.4.21
   typescript: 5.0.3
 
@@ -1746,28 +1740,6 @@ packages:
   /@popperjs/core/2.11.7:
     resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
     dev: false
-
-  /@prisma/client/4.12.0_prisma@4.12.0:
-    resolution: {integrity: sha512-j9/ighfWwux97J2dS15nqhl60tYoH8V0IuSsgZDb6bCFcQD3fXbXmxjYC8GHhIgOk3lB7Pq+8CwElz2MiDpsSg==}
-    engines: {node: '>=14.17'}
-    requiresBuild: true
-    peerDependencies:
-      prisma: '*'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-    dependencies:
-      '@prisma/engines-version': 4.12.0-67.659ef412370fa3b41cd7bf6e94587c1dfb7f67e7
-      prisma: 4.12.0
-    dev: false
-
-  /@prisma/engines-version/4.12.0-67.659ef412370fa3b41cd7bf6e94587c1dfb7f67e7:
-    resolution: {integrity: sha512-JIHNj5jlXb9mcaJwakM0vpgRYJIAurxTUqM0iX0tfEQA5XLZ9ONkIckkhuAKdAzocZ+80GYg7QSsfpjg7OxbOA==}
-    dev: false
-
-  /@prisma/engines/4.12.0:
-    resolution: {integrity: sha512-0alKtnxhNB5hYU+ymESBlGI4b9XrGGSdv7Ud+8TE/fBNOEhIud0XQsAR+TrvUZgS4na5czubiMsODw0TUrgkIA==}
-    requiresBuild: true
 
   /@reduxjs/toolkit/1.9.3_k4ae6lp43ej6mezo3ztvx6pykq:
     resolution: {integrity: sha512-GU2TNBQVofL09VGmuSioNPQIu6Ml0YLf4EJhgj0AvBadRlCGzUWet8372LjvO4fqKZF2vH1xU0htAa7BrK9pZg==}
@@ -5476,14 +5448,6 @@ packages:
     hasBin: true
     dev: true
 
-  /prisma/4.12.0:
-    resolution: {integrity: sha512-xqVper4mbwl32BWzLpdznHAYvYDWQQWK2tBfXjdUD397XaveRyAP7SkBZ6kFlIg8kKayF4hvuaVtYwXd9BodAg==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      '@prisma/engines': 4.12.0
-
   /process/0.11.10:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
@@ -7217,7 +7181,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  /zod/3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-    dev: false

@@ -1,33 +1,43 @@
 import dynamic from "next/dynamic";
 import React from "react";
-import { prisma } from "~/server/db";
 
 export async function getStaticPaths() {
-  const data = await prisma.storeBlogs.findMany({
-    where: {
-      store_id: process.env.NEXT_PUBLIC_STORE_ID,
-    },
-  });
+  const response: any = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/blog?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const result: any = await response.json();
 
-  const paths = data?.map((post: any) => ({
+  const paths = result?.data?.map((post: any) => ({
     params: { id: post.meta },
   }));
 
   return { paths, fallback: false };
 }
 export async function getStaticProps({ params }: any) {
-  const storeBlogsData = await prisma.storeBlogs.findFirst({
-    where: {
-      meta: params?.id,
-    },
-    select: {
-      title: true,
-      meta: true,
-      data: true,
-      thumb: true,
-    },
-  });
-  return { props: { storeBlogsData } };
+  const response: any = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/blog?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&meta=${params?.id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const result: any = await response.json();
+
+  return { props: { storeBlogsData: result?.data[0] } };
 }
 const AboutDetailFunc = dynamic(
   () => import("~/components/Blogs/BlogsDetail"),

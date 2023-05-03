@@ -73,12 +73,6 @@ const Navbar = () => {
     });
   }
 
-  // const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
-  //   { store_id: process.env.NEXT_PUBLIC_STORE_ID },
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
   const { data: details, isFetched } = useQuery(
     ["nftNavbar"],
     async () => {
@@ -113,18 +107,22 @@ const Navbar = () => {
           nav.page_content !== "")
     );
 
-  console.log(navData, "navData");
-  // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
       {/* for mobile menu state */}
       <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-bg-2 p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
-            ""
+            <div className="fixed left-0 top-0 z-10 h-screen w-full bg-black/80"></div>
           ) : (
-            <div className="relative ml-4 flex h-8 w-8">
-              <Image src={MenuIcon} alt="/logo" fill priority />
+            <div className="relative  flex h-8 w-8 ">
+              <Image
+                src={MenuIcon}
+                alt="/logo"
+                fill
+                priority
+                className="rounded-xl bg-white"
+              />
             </div>
           )}
         </div>
@@ -132,22 +130,36 @@ const Navbar = () => {
         <div
           className={
             nav
-              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
-              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
+              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[250px] bg-bg-2 duration-300"
+              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[250px] bg-bg-2 duration-300"
           }
         >
-          <div
-            className="absolute right-4 top-4 cursor-pointer text-xl"
-            onClick={handleNav}
-          >
-            X
+          <div className="mr-4 mt-4 flex items-center justify-between">
+            <div className="relative ml-4  h-8 w-8 sm:flex">
+              <Link href={"/"}>
+                {details?.data && (
+                  <Image
+                    src={renderNFTIcon(details?.data?.website)}
+                    alt="/logo"
+                    fill
+                  />
+                )}
+              </Link>
+            </div>
+
+            <div
+              className="right-4 top-4 cursor-pointer text-xl"
+              onClick={handleNav}
+            >
+              X
+            </div>
           </div>
 
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navData &&
                 navData.map((list: any, i: number) => (
-                  <Link href={list.link} key={i}>
+                  <Link href={list.link} key={i} onClick={handleNav}>
                     <li className="flex items-center py-4 text-xl">
                       {list.page_name}
                     </li>
@@ -157,7 +169,7 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="relative ml-4 hidden h-8 w-8 sm:flex">
+        <div className="relative ml-2 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
             {details?.data && (
               <Image
@@ -178,7 +190,7 @@ const Navbar = () => {
             ))}
         </ul>
 
-        <div className="mr-4">
+        <div className="mr-2">
           {account != "" ? (
             <button
               type="button"
@@ -200,13 +212,5 @@ const Navbar = () => {
     </>
   );
 };
-
-// // This gets called on every request
-// export async function getServerSideProps() {
-//   // Fetch data from external API
-
-//   // Pass data to the page via props
-//   return { props: { details } };
-// }
 
 export default Navbar;

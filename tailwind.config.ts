@@ -8,7 +8,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ['inter', 'sans-serif'],
+      storeFont: ["poppins", "ubuntu"],
     },
     extend: {
       colors: {
@@ -22,9 +22,9 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": "#62508b",
-        "bg-2": "#ea6cc8",
-        "bg-3": "#952097",
+        "bg-1": "#8a334d",
+        "bg-2": "#e02d00",
+        "bg-3": "#b0030b",
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",
@@ -39,8 +39,11 @@ export default {
     screens: {
       xss: "300px",
       xs: "340px",
+      xxs: "540px",
       sx:"580px",
       sm: "640px",
+
+
       // => @media (min-width: 640px) { ... }
 
       md: "768px",

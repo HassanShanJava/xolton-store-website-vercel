@@ -19,7 +19,8 @@ const runAsync = async () => {
   const result = await response.json();
 
   const storeThemeData = result?.data;
-  console.log(storeThemeData?.website?.theme?.colors.header, "storeThemeData");
+  const primaryFont = storeThemeData?.website?.theme?.fonts?.primary ?? "inter"
+  const secondaryFont = storeThemeData?.website?.theme?.fonts?.secondary ?? "san-serif"
   const tailwindData = `import { type Config } from "tailwindcss";
 
 export default {
@@ -30,7 +31,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ['inter', 'sans-serif'],
+      storeFont: ["${primaryFont}", "${secondaryFont}"],
     },
     extend: {
       colors: {
@@ -73,8 +74,11 @@ export default {
     screens: {
       xss: "300px",
       xs: "340px",
+      xxs: "540px",
       sx:"580px",
       sm: "640px",
+
+
       // => @media (min-width: 640px) { ... }
 
       md: "768px",

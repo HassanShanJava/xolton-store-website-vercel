@@ -19,6 +19,7 @@ import { RootState } from "~/store/store";
 import { useToast } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 const NFTDetail = () => {
   const router = useRouter();
@@ -115,9 +116,9 @@ const NFTDetail = () => {
     <div>
       {NFTDetail && (
         <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 pt-12 font-storeFont md:px-7">
-          <div className=" max-w-6.5xl mx-auto flex w-full flex-col   items-start justify-between md:flex-row">
-            <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-[450px] md:sticky">
-              <div className="h-[400px] w-full">
+          <div className=" max-w-6.5xl mx-auto flex w-full flex-col items-start  justify-between gap-4 sm:flex-row">
+            <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
+              <div className="h-[400px] w-full px-4 sm:px-0">
                 <Image
                   src={renderNFTImage(NFTDetail)}
                   alt="/nft"
@@ -125,14 +126,14 @@ const NFTDetail = () => {
                   height={500}
                   priority
                   quality={100}
-                  className="relative h-full max-h-[500px] w-full  max-w-[680px] rounded-xl object-cover"
+                  className="relative h-full  max-h-[500px] w-full  max-w-[680px] rounded-xl object-cover"
                 />
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-xl md:px-4">
+            <div className="mx-auto w-full max-w-xl px-4 md:px-0">
               {/* intial details */}
-              <p className="text-5xl ">
+              <p className="text-5xl capitalize">
                 {NFTDetail.name}{" "}
                 <span className="text-[20px] text-ac-2">
                   #{NFTDetail.token_id}
@@ -191,7 +192,14 @@ const NFTDetail = () => {
                   <div className="md:text-md   text-xs text-slate-500  sm:text-sm">
                     <div className="flex justify-between p-3">
                       <p>Contract Address</p>
-                      <p>{customTruncateHandler(NFTDetail.contract_address)}</p>
+                      <Link
+                        href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
+                        target="_blank"
+                      >
+                        <p>
+                          {customTruncateHandler(NFTDetail?.contract_address)}
+                        </p>
+                      </Link>
                     </div>
                     {/*divider  */}
                     <div className=" border-t border-tx-2" />
@@ -233,8 +241,8 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
     NFTCollection?.length != 0 && (
-      <div className="mx-auto h-full min-h-screen w-full max-w-7xl  bg-bg-1 py-6 sm:px-10">
-        <div className="mx-auto flex items-center justify-between py-3 sm:px-5">
+      <div className="mx-auto h-full min-h-screen w-full   bg-bg-1 px-6 py-6 ">
+        <div className=" flex items-center justify-between py-3 ">
           <p className="md:text-md text-sm lg:text-lg">
             From the same collection
           </p>
@@ -248,7 +256,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
             View More
           </button>
         </div>
-        <div className="  grid  h-full w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+        <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
           {NFTCollection &&
             NFTCollection.filter((list: any) => list?.id !== id)?.map(
               (collectionNFT: any, i: any) => (
