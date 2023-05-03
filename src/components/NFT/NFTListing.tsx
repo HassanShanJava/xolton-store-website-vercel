@@ -60,7 +60,7 @@ const NFTListing = ({ contract_id }: any) => {
   const {
     isLoading,
     isError,
-    data: storeNFTValues,
+    data: storeNfts,
     refetch,
     isFetching,
     error,
@@ -97,41 +97,46 @@ const NFTListing = ({ contract_id }: any) => {
       refetchOnWindowFocus: false,
       enabled: contract_id ? true : false,
     }
-  );
-
-  useEffect(() => {
+    );
+    
+    useEffect(() => {
+    console.log(storeNfts,"storeNfts")
     console.log(sortFilter, "sortFilter");
-    if (storeNFTValues?.data.length > 0) {
-      console.log(storeNFTValues?.data, "storeNFTValues?.data");
+    if (storeNfts?.data.length > 0) {
+      console.log(storeNfts?.data, "storeNFTValues?.data");
       if (sortFilter.searchQuery?.length || sortFilter?.orderBy?.length) {
         if (sortFilter?.first > 0) {
-          setNfts([...nfts, ...storeNFTValues?.data]);
+          setNfts([...nfts, ...storeNfts?.data]);
         } else {
-          setNfts([...storeNFTValues?.data]);
+          setNfts([...storeNfts?.data]);
         }
       } else {
         if (sortFilter?.first > 0) {
-          setNfts([...nfts, ...storeNFTValues?.data]);
+          setNfts([...nfts, ...storeNfts?.data]);
         } else {
-          setNfts([...storeNFTValues?.data]);
+          setNfts([...storeNfts?.data]);
         }
       }
+    } else {
+      console.log(storeNfts)
+      if(sortFilter.first === 0){
+        setNfts([]);
+      }
     }
-  }, [storeNFTValues]);
+  }, [storeNfts]);
   useEffect(() => {
     refetch();
   }, [sortFilter]);
 
-  console.log({ isLoading });
+  console.log( isLoading, sortFilter );
 
   return (
     <>
       <div className=" h-full  w-full ">
         <div
           className={
-            nfts?.length > 0
-              ? "my-4 flex flex-col items-center justify-between md:flex-row"
-              : "hidden"
+             "my-4 flex flex-col items-center justify-between md:flex-row"
+              
           }
         >
           <div>
@@ -142,10 +147,10 @@ const NFTListing = ({ contract_id }: any) => {
 
           <div
             className={`flex  flex-col ${
-              NFTCollectionDetail?.data ? "w-full md:w-[50%]" : "w-full"
+              NFTCollectionDetail?.data || nfts? "w-full md:w-[50%]" : "w-full"
             } items-center gap-2 xs:flex-row-reverse`}
           >
-            <div className=" flex w-full flex-row-reverse items-center justify-between xs:w-fit">
+            <div className=" flex w-full flex-row-reverse mx-auto md:mx-0 items-center justify-between xs:w-fit">
               <button
                 onClick={clearFilter}
                 className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
@@ -191,7 +196,7 @@ const NFTListing = ({ contract_id }: any) => {
           </div>
         </div>
 
-        {nfts && (
+        {nfts?.length ? (
           <div className="w-full">
             <InfiniteScroll
               dataLength={nfts.length > 0 && nfts.length}
@@ -207,7 +212,11 @@ const NFTListing = ({ contract_id }: any) => {
               ))}
             </InfiniteScroll>
           </div>
-        )}
+        ):<div className="flex justify-center items-center min-h-[60vh]">
+          <p className="text-center text-4xl">
+          No data found
+          </p>
+          </div>}
 
         {isError && nfts.length == 0 && (
           <div className="flex min-h-[40vh] items-center justify-center">
