@@ -6,56 +6,17 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const NFTListing = () => {
+const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
-  const { contract_id } = router.query;
   const [nfts, setNfts] = useState<any>([]);
-  const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
-
-  const {
-    isLoading,
-    isError,
-    data: storeNFTValues,
-    refetch,
-    error,
-  } = useQuery(
-    ["nfts"],
-    async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?${
-          contract_id != undefined ? "contract_id=" + contract_id + "&" : ""
-        }store_id=${process.env.NEXT_PUBLIC_STORE_ID}&${new URLSearchParams(
-          sortFilter
-        ).toString()}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    {
-      refetchOnWindowFocus: true,
-    }
-  );
-
-  const storeNFTData = storeNFTValues?.data;
-
-  const { data: NFTCollectionDetail } = useQuery(
-    ["nftsCollectionDetail"],
-    async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/collection?id=${contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: contract_id ? true : false,
-    }
-  );
+  const [sortFilter, setSortFilter] = useState<any>({ rows: 2, first: 0 });
+  useEffect(() => {
+    console.log({ contract_id });
+    setSortFilter((prevFilters: any) => ({
+      ...prevFilters,
+      contract_id: contract_id ?? "",
+    }));
+  }, [contract_id]);
   const sorNFT = (value: string) => {
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
@@ -77,14 +38,71 @@ const NFTListing = () => {
         setSortFilter((prevFilters: any) => ({
           ...prevFilters,
           searchQuery: e.target.value,
-
           first: 0,
         }));
       }, 400);
     }
   }
+  function onFilter() {
+    setSortFilter((prevFilters: any) => ({
+      ...prevFilters,
+      first: prevFilters?.first + 1,
+    }));
+  }
+  function clearFilter() {
+    setSortFilter((prevFilters: any) => ({
+      ...prevFilters,
+      first: 0,
+      orderBy: "",
+      searchQuery: "",
+    }));
+  }
+  const {
+    isLoading,
+    isError,
+    data: storeNFTValues,
+    refetch,
+    isFetching,
+    error,
+  } = useQuery(
+    ["nfts"],
+    async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }&${new URLSearchParams(sortFilter).toString()}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: NFTCollectionDetail } = useQuery(
+    ["nftsCollectionDetail"],
+    async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/collection?id=${contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: contract_id ? true : false,
+    }
+  );
+
   useEffect(() => {
+    console.log(sortFilter, "sortFilter");
     if (storeNFTValues?.data.length > 0) {
+      console.log(storeNFTValues?.data, "storeNFTValues?.data");
       if (sortFilter.searchQuery?.length || sortFilter?.orderBy?.length) {
         if (sortFilter?.first > 0) {
           setNfts([...nfts, ...storeNFTValues?.data]);
@@ -98,37 +116,13 @@ const NFTListing = () => {
           setNfts([...storeNFTValues?.data]);
         }
       }
-    } else {
     }
-  }, [storeNFTValues?.data]);
+  }, [storeNFTValues]);
   useEffect(() => {
     refetch();
-  }, [, sortFilter]);
-  useEffect(() => {
-    if (contract_id != undefined) {
-      setSortFilter((prevFilters: any) => ({
-        ...prevFilters,
-        first: 0,
-        searchQuery: "",
-      }));
-    }
-  }, [contract_id]);
-  function onFilter() {
-    setSortFilter((prevFilters: any) => ({
-      ...prevFilters,
-      first: prevFilters?.first + 1,
-    }));
-  }
-  function clearFilter() {
-    router.push("/");
-    setSortFilter((prevFilters: any) => ({
-      ...prevFilters,
-      first: 0,
-      orderBy: "",
-      searchQuery: "",
-    }));
-    refetch();
-  }
+  }, [sortFilter]);
+
+  console.log({ isLoading });
 
   return (
     <>
@@ -203,13 +197,7 @@ const NFTListing = () => {
               dataLength={nfts.length > 0 && nfts.length}
               next={onFilter}
               hasMore={true}
-              loader={
-                isLoading ? (
-                  <i className="fa-solid fa-spinner fa-spin text-1xl text-center "></i>
-                ) : (
-                  <></>
-                )
-              }
+              loader={isFetching ? <>{loadingSkeleton(4)}</> : <></>}
               className={
                 "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
               }
@@ -221,53 +209,16 @@ const NFTListing = () => {
           </div>
         )}
 
-        {(nfts.length == 0 || isError) && (
+        {isError && nfts.length == 0 && (
           <div className="flex min-h-[40vh] items-center justify-center">
             <h1 className="text-2xl ">No NFT's available yet</h1>
           </div>
         )}
 
         {/* loading skeletion */}
-        {isLoading && (
+        {isFetching && (
           <div className="grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
             {/* only showing 5 nfts as loading in all screens */}
-            {["","","","",""].map((nft, i) => (
-              <div
-                key={i}
-                className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white"
-              >
-                {/* loading nft image */}
-                <div
-                  className={
-                    "relative h-80 max-h-[290px] w-full animate-[pulse_1s_ease-in-out_infinite] rounded-[20px] bg-gray-300"
-                  }
-                ></div>
-
-                {/* loading name and prices */}
-                <div className="">
-                  <div className="flex items-center justify-between px-2.5 py-4">
-                    <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
-                    <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
-                  </div>
-
-                  <div className="px-2">
-                    <button
-                      type="button"
-                      disabled
-                      className="w-full  rounded-[6px]  bg-bg-3/75 py-3 text-center font-storeFont text-white "
-                    >
-                      <div className="flex items-center justify-center">
-                        <div className="progress"></div>
-                        <div className="progress"></div>
-                        <div className="progress"></div>
-                        <div className="progress"></div>
-
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         )}
       </div>
@@ -276,3 +227,46 @@ const NFTListing = () => {
 };
 
 export default NFTListing;
+const loadingSkeleton = (data: any) => {
+  console.log({ data });
+  return (
+    <>
+      {Array.from(Array(data).keys()).map((nft, i) => (
+        <div
+          key={i}
+          className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white"
+        >
+          {/* loading nft image */}
+          <div
+            className={
+              "relative h-80 max-h-[290px] w-full animate-[pulse_1s_ease-in-out_infinite] rounded-[20px] bg-gray-300"
+            }
+          ></div>
+
+          {/* loading name and prices */}
+          <div className="">
+            <div className="flex items-center justify-between px-2.5 py-4">
+              <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
+              <div className="h-2 w-20 animate-[pulse_1s_ease-in-out_infinite] rounded bg-gray-300"></div>
+            </div>
+
+            <div className="px-2">
+              <button
+                type="button"
+                disabled
+                className="w-full  rounded-[6px]  bg-bg-3/75 py-3 text-center font-storeFont text-white "
+              >
+                <div className="flex items-center justify-center">
+                  <div className="progress"></div>
+                  <div className="progress"></div>
+                  <div className="progress"></div>
+                  <div className="progress"></div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+};
