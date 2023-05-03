@@ -7,7 +7,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
-// import { httpRequest } from "@trpc/client/dist/links/internals/httpUtils";
 // This gets called on every request
 const queryClient = new QueryClient();
 const MyApp: AppType = ({ Component, pageProps }) => {

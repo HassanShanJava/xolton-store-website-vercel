@@ -49,7 +49,7 @@ const ContactUs = () => {
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8 py-4">
-        <div className="mx-auto mt-4 grid max-w-screen-xl grid-cols-1 gap-8 rounded-lg  px-8 py-16 text-gray-900 shadow-md md:grid-cols-2 md:px-12 lg:px-16 xl:px-32">
+        <div className="mx-auto mt-4 grid max-w-screen-xl grid-cols-1 gap-8 rounded-lg bg-bg-2/30  px-8 py-16 text-gray-900 shadow-md md:grid-cols-2 md:px-12 lg:px-16 xl:px-32">
           <div className="flex flex-col justify-between">
             <div>
               <h2 className="bg-accentLinear-1 bg-clip-text text-4xl font-bold leading-tight text-transparent lg:text-5xl">

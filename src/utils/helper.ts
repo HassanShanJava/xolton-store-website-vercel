@@ -59,9 +59,9 @@ export async function maticToUSD(price = 0 as number) {
     );
 
     const response = await data.json();
-    console.log('response',response)
+    
     const maticPrice = +response.Data[1].open * Number(price);
-    // console.log(maticPrice.toFixed(3), price, "Data");
+    
     return `${maticPrice.toFixed(3)}`;
   } catch (error: any) {
     console.log(error, "convertor matic to usd error");

@@ -47,8 +47,7 @@ const Popup = ({
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        }, // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        }, 
         body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
       });
     },
@@ -60,8 +59,7 @@ const Popup = ({
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
-          // 'Content-Type': 'application/x-www-form-urlencoded',
-        }, // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        },
         body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
       });
     },

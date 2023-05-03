@@ -73,12 +73,6 @@ const Navbar = () => {
     });
   }
 
-  // const { data: details } = trpc.clientWeb.getStoreDetails.useQuery(
-  //   { store_id: process.env.NEXT_PUBLIC_STORE_ID },
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
   const { data: details, isFetched } = useQuery(
     ["nftNavbar"],
     async () => {
@@ -113,8 +107,6 @@ const Navbar = () => {
           nav.page_content !== "")
     );
 
-  console.log(navData, "navData");
-  // window?.ethereum?.on("networkChanged", handleNetworkChange);
   return (
     <>
       {/* for mobile menu state */}
@@ -123,7 +115,7 @@ const Navbar = () => {
           {nav ? (
             ""
           ) : (
-            <div className="relative ml-4 flex h-8 w-8">
+            <div className="relative  flex h-8 w-8">
               <Image src={MenuIcon} alt="/logo" fill priority />
             </div>
           )}
@@ -132,15 +124,30 @@ const Navbar = () => {
         <div
           className={
             nav
-              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
-              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[300px] bg-white duration-300"
+              ? "fixed left-0 top-0 z-10 h-screen w-full max-w-[300px] bg-bg-2 duration-300"
+              : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[300px] bg-bg-2 duration-300"
           }
         >
-          <div
-            className="absolute right-4 top-4 cursor-pointer text-xl"
-            onClick={handleNav}
-          >
-            X
+          <div className="flex justify-between items-center mt-4 mr-4">
+            
+            <div className="relative ml-4  h-8 w-8 sm:flex">
+              <Link href={"/"}>
+                {details?.data && (
+                  <Image
+                    src={renderNFTIcon(details?.data?.website)}
+                    alt="/logo"
+                    fill
+                  />
+                )}
+              </Link>
+            </div>
+
+            <div
+              className="right-4 top-4 cursor-pointer text-xl"
+              onClick={handleNav}
+            >
+              X
+            </div>
           </div>
 
           <nav className="mt-6">
@@ -157,7 +164,7 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="relative ml-4 hidden h-8 w-8 sm:flex">
+        <div className="relative ml-2 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
             {details?.data && (
               <Image
@@ -178,7 +185,7 @@ const Navbar = () => {
             ))}
         </ul>
 
-        <div className="mr-4">
+        <div className="mr-2">
           {account != "" ? (
             <button
               type="button"
@@ -200,13 +207,5 @@ const Navbar = () => {
     </>
   );
 };
-
-// // This gets called on every request
-// export async function getServerSideProps() {
-//   // Fetch data from external API
-
-//   // Pass data to the page via props
-//   return { props: { details } };
-// }
 
 export default Navbar;

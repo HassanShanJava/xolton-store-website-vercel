@@ -14,7 +14,6 @@ export const pageSlice = createSlice({
   initialState,
   reducers: {
     storeWebPageData: (state, action: PayloadAction<any>) => {
-      console.log("ACTION ... : ", action.payload);
       state.pageData = action.payload;
     },
   },

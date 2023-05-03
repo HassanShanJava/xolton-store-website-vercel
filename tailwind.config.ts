@@ -8,7 +8,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ['inter', 'sans-serif'],
+      storeFont: ["ubuntu", "roboto"],
     },
     extend: {
       colors: {
@@ -39,8 +39,11 @@ export default {
     screens: {
       xss: "300px",
       xs: "340px",
+      xxs: "540px",
       sx:"580px",
       sm: "640px",
+
+
       // => @media (min-width: 640px) { ... }
 
       md: "768px",
