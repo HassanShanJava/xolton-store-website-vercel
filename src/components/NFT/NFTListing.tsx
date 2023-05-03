@@ -228,9 +228,10 @@ const NFTListing = () => {
         )}
 
         {/* loading skeletion */}
-        {isLoading&& (
+        {isLoading && (
           <div className="grid w-full grid-cols-1 gap-5 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-            {nfts.map((nft, i) => (
+            {/* only showing 5 nfts as loading in all screens */}
+            {["","","","",""].map((nft, i) => (
               <div
                 key={i}
                 className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white"
