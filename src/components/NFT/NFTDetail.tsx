@@ -113,9 +113,9 @@ const NFTDetail = () => {
     refetch();
   }, [id]);
   return (
-    <div>
+    <div className="bg-bg-1">
       {NFTDetail && (
-        <div className="max-h-full min-h-screen w-full  bg-bg-1 px-2 pt-12 font-storeFont md:px-7">
+        <div className="max-w-[1800px] mx-auto max-h-full min-h-screen w-full   px-2 pt-12 font-storeFont md:px-7">
           <div className=" max-w-6.5xl mx-auto flex w-full flex-col items-start  justify-between gap-4 sm:flex-row">
             <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
               <div className="h-[400px] w-full px-4 sm:px-0">
