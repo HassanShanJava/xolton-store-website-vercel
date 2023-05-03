@@ -113,10 +113,16 @@ const Navbar = () => {
       <div className="sticky top-0 z-10 flex w-full items-center justify-between bg-bg-2 p-2 shadow-md">
         <div className=" sm:hidden" onClick={handleNav}>
           {nav ? (
-            ""
+            <div className="fixed left-0 top-0 z-10 h-screen w-full bg-black/80"></div>
           ) : (
             <div className="relative  flex h-8 w-8 ">
-              <Image src={MenuIcon} alt="/logo" fill priority className="bg-white rounded-xl" />
+              <Image
+                src={MenuIcon}
+                alt="/logo"
+                fill
+                priority
+                className="rounded-xl bg-white"
+              />
             </div>
           )}
         </div>
@@ -128,8 +134,7 @@ const Navbar = () => {
               : "fixed left-[-100%] top-0 z-10 h-screen w-full max-w-[250px] bg-bg-2 duration-300"
           }
         >
-          <div className="flex justify-between items-center mt-4 mr-4">
-            
+          <div className="mr-4 mt-4 flex items-center justify-between">
             <div className="relative ml-4  h-8 w-8 sm:flex">
               <Link href={"/"}>
                 {details?.data && (
@@ -155,7 +160,7 @@ const Navbar = () => {
               {navData &&
                 navData.map((list: any, i: number) => (
                   <Link href={list.link} key={i} onClick={handleNav}>
-                    <li className="flex items-center py-4 text-xl" >
+                    <li className="flex items-center py-4 text-xl">
                       {list.page_name}
                     </li>
                   </Link>
