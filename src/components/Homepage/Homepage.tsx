@@ -18,7 +18,7 @@ const Homepage = () => {
     <div>
       <div className="h-full  min-h-screen w-full bg-bg-1 px-4 pt-4">
         <Banner collection_id={contract_id} />
-        <NFTListing />
+        <NFTListing contract_id={contract_id} />
       </div>
     </div>
   );

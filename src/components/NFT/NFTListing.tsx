@@ -6,11 +6,10 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const NFTListing = () => {
+const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
-  const { contract_id } = router.query;
   const [nfts, setNfts] = useState<any>([]);
-  const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
+  const [sortFilter, setSortFilter] = useState<any>({ rows: 4, first: 0 });
 
   const {
     isLoading,
@@ -22,11 +21,9 @@ const NFTListing = () => {
     ["nfts"],
     async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?${
-          contract_id != undefined ? "contract_id=" + contract_id + "&" : ""
-        }store_id=${process.env.NEXT_PUBLIC_STORE_ID}&${new URLSearchParams(
-          sortFilter
-        ).toString()}`
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }&${new URLSearchParams(sortFilter).toString()}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -34,11 +31,9 @@ const NFTListing = () => {
       return response.json();
     },
     {
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
     }
   );
-
-  const storeNFTData = storeNFTValues?.data;
 
   const { data: NFTCollectionDetail } = useQuery(
     ["nftsCollectionDetail"],
@@ -56,6 +51,37 @@ const NFTListing = () => {
       enabled: contract_id ? true : false,
     }
   );
+
+  useEffect(() => {
+    console.log(sortFilter, "sortFilter");
+    if (storeNFTValues?.data.length > 0) {
+      console.log(storeNFTValues?.data, "storeNFTValues?.data");
+      if (sortFilter.searchQuery?.length || sortFilter?.orderBy?.length) {
+        if (sortFilter?.first > 0) {
+          setNfts([...nfts, ...storeNFTValues?.data]);
+        } else {
+          setNfts([...storeNFTValues?.data]);
+        }
+      } else {
+        if (sortFilter?.first > 0) {
+          setNfts([...nfts, ...storeNFTValues?.data]);
+        } else {
+          setNfts([...storeNFTValues?.data]);
+        }
+      }
+    }
+  }, [storeNFTValues]);
+  useEffect(() => {
+    refetch();
+  }, [sortFilter]);
+  useEffect(() => {
+    console.log({ contract_id });
+    setSortFilter((prevFilters: any) => ({
+      ...prevFilters,
+      contract_id: contract_id ?? "",
+    }));
+  }, [contract_id]);
+
   const sorNFT = (value: string) => {
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
@@ -77,42 +103,11 @@ const NFTListing = () => {
         setSortFilter((prevFilters: any) => ({
           ...prevFilters,
           searchQuery: e.target.value,
-
           first: 0,
         }));
       }, 400);
     }
   }
-  useEffect(() => {
-    if (storeNFTValues?.data.length > 0) {
-      if (sortFilter.searchQuery?.length || sortFilter?.orderBy?.length) {
-        if (sortFilter?.first > 0) {
-          setNfts([...nfts, ...storeNFTValues?.data]);
-        } else {
-          setNfts([...storeNFTValues?.data]);
-        }
-      } else {
-        if (sortFilter?.first > 0) {
-          setNfts([...nfts, ...storeNFTValues?.data]);
-        } else {
-          setNfts([...storeNFTValues?.data]);
-        }
-      }
-    } else {
-    }
-  }, [storeNFTValues?.data]);
-  useEffect(() => {
-    refetch();
-  }, [, sortFilter]);
-  useEffect(() => {
-    if (contract_id != undefined) {
-      setSortFilter((prevFilters: any) => ({
-        ...prevFilters,
-        first: 0,
-        searchQuery: "",
-      }));
-    }
-  }, [contract_id]);
   function onFilter() {
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
@@ -120,13 +115,15 @@ const NFTListing = () => {
     }));
   }
   function clearFilter() {
-    router.push("/");
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       first: 0,
+      searchQuery: "",
     }));
-    refetch();
   }
+
+  // console.log({ nfts });
+
   return (
     <>
       <div className=" h-full  w-full ">

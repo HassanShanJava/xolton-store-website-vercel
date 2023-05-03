@@ -32,7 +32,6 @@ export function isValidImageType(type: any) {
   return isImage;
 }
 export function renderNFTImage(nft: any) {
-  console.log("nft:::::", nft);
   return nft?.media_type === "audio/mp3" || nft?.thumb === ""
     ? ""
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.thumb}`;
