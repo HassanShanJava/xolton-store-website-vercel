@@ -38,9 +38,8 @@ const BlogsListing = ({ storeBlogsData }: any) => {
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {storeBlogsData?.map((store: any, i: number) => {
-                console.log({store}, typeof store?.created_at)
                 let date:any =  new Date(store?.created_at)
-                console.log({date} , typeof date)
+                
                 return (
                   <Link
                     href={`/blogs/${store?.meta}`}

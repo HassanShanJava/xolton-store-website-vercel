@@ -10,18 +10,37 @@ export async function getStaticProps() {
       },
     }
   );
-  if (!response.ok) {
+  const responseWeb: any = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+
+  if (!response.ok ) {
     throw new Error("Network response was not ok");
   }
+  if (!responseWeb.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const resultWeb: any = await responseWeb.json();
+
+  const navData = resultWeb?.data?.navbar || [];
+  const webData = resultWeb?.data?.website || {};
+
+
   const result: any = await response.json();
 
   const storeAboutData = result?.data;
 
-  return { props: { storeAboutData } };
+  return { props: { storeAboutData,navData,webData } };
 }
 const AboutFunc = dynamic(() => import("../components/About/AboutUs"), {
   ssr: true,
 });
-export default function AboutPage({ storeAboutData }: any) {
-  return <AboutFunc storeAboutData={storeAboutData} />;
+export default function AboutPage({ storeAboutData, navData, webData }: any) {
+  return <AboutFunc storeAboutData={storeAboutData} navData={navData} webData={webData}/>;
 }

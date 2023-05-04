@@ -12,10 +12,12 @@ const queryClient = new QueryClient();
 const MyApp: AppType = ({ Component, pageProps }) => {
   // const [queryClient] = useState(() => new QueryClient());
 
+  console.log({pageProps})
+
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider>
-        <Layout>
+        <Layout {...pageProps}>
           <Component {...pageProps} />
         </Layout>
       </ChakraProvider>

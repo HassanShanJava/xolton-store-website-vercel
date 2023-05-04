@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useRouter } from "next/router";
 
-const AboutUs = ({ storeAboutData }: any) => {
+const AboutUs = ({ storeAboutData, navData, webData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();
   let storeBlogsData: any;

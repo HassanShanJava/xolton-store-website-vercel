@@ -196,7 +196,7 @@ const NFTDetail = () => {
                         href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
                         target="_blank"
                       >
-                        <p>
+                        <p className="hover:text-bg-2/80">
                           {customTruncateHandler(NFTDetail?.contract_address)}
                         </p>
                       </Link>

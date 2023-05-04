@@ -1,11 +1,9 @@
 import { type NextPage } from "next";
-import dynamic from "next/dynamic";
 import Head from "next/head";
-import fs from "fs";
 import Homepage from "~/components/Homepage/Homepage";
 
 
-const Home: NextPage = () => {
+const Home: NextPage = ({webData}:any) => {
 
   return (
     <>
@@ -19,10 +17,34 @@ const Home: NextPage = () => {
         />
       </Head>
       <main>
-        <Homepage />
+        <Homepage webData={webData} />
       </main>
     </>
   );
 };
 
 export default Home;
+
+
+export async function getStaticProps() {
+  const response: any = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const result: any = await response.json();
+  
+  const navData = result?.data?.navbar || [];
+  const webData = result?.data?.website || {};
+
+  return { props: { navData,webData } };
+}
