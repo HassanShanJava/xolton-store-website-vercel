@@ -66,6 +66,16 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
         console.log("account :: ", accounts[0]);
         dispatch(setAccount(accounts[0]));
       }
+
+      // else{
+        // if no extension found?
+        // toast({
+        //   title: "Please Install Metamask",
+        //   status: "error",
+        //   isClosable: true,
+        //   position: "top-left",
+        // });
+      // }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -130,7 +140,7 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
               {navprops &&
                 navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
                   <Link href={list.link} key={i} onClick={handleNav}>
-                    <li className="flex items-center py-4 text-xl">
+                    <li className="flex items-center py-4 text-xl hover:text-white">
                       {list.page_name}
                     </li>
                   </Link>
@@ -155,7 +165,7 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
           {navprops &&
             navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
               <Link href={list.link} key={i}>
-                <li className="mx-4">{list.page_name}</li>
+                <li className="mx-4 hover:text-white">{list.page_name}</li>
               </Link>
             ))}
         </ul>

@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import { websiteInfo } from "~/utils/helper";
 
 export async function getStaticPaths() {
   const response: any = await fetch(
@@ -32,12 +33,22 @@ export async function getStaticProps({ params }: any) {
       },
     }
   );
+
+  const responseWeb = await websiteInfo();
+
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+  if (!responseWeb.ok) {
+    throw new Error("Network response was not ok");
+  }
+
   const result: any = await response.json();
 
-  return { props: { storeBlogsData: result?.data[0] } };
+  const resultWeb: any = await responseWeb.json();
+  const navData = resultWeb?.data?.navbar || [];
+  const webData = resultWeb?.data?.website || {};
+  return { props: { storeBlogsData: result?.data[0], navData, webData } };
 }
 const AboutDetailFunc = dynamic(
   () => import("~/components/Blogs/BlogsDetail"),
@@ -46,6 +57,12 @@ const AboutDetailFunc = dynamic(
   }
 );
 
-export default function BlogsPage({ storeBlogsData }: any) {
-  return <AboutDetailFunc storeBlogsData={storeBlogsData} />;
+export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
+  return (
+    <AboutDetailFunc
+      storeBlogsData={storeBlogsData}
+      navData={navData}
+      webData={webData}
+    />
+  );
 }

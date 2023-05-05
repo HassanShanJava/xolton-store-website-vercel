@@ -1,28 +1,10 @@
 import dynamic from "next/dynamic";
 import React from "react";
-export async function getStaticProps() {
-  const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/about-us`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
-      },
-    }
-  );
-  const responseWeb: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
-      },
-    }
-  );
+import { websiteInfo } from "~/utils/helper";
 
-  if (!response.ok ) {
-    throw new Error("Network response was not ok");
-  }
+export async function getStaticProps() {
+  const responseWeb: any = await websiteInfo();
+
   if (!responseWeb.ok) {
     throw new Error("Network response was not ok");
   }
@@ -31,16 +13,12 @@ export async function getStaticProps() {
   const navData = resultWeb?.data?.navbar || [];
   const webData = resultWeb?.data?.website || {};
 
-
-  const result: any = await response.json();
-
-  const storeAboutData = result?.data;
-
-  return { props: { storeAboutData,navData,webData } };
+  return { props: { navData, webData } };
 }
 const AboutFunc = dynamic(() => import("../components/About/AboutUs"), {
   ssr: true,
 });
-export default function AboutPage({ storeAboutData, navData, webData }: any) {
-  return <AboutFunc storeAboutData={storeAboutData} navData={navData} webData={webData}/>;
+
+export default function AboutPage({ navData, webData }: any) {
+  return <AboutFunc navData={navData} webData={webData} />;
 }

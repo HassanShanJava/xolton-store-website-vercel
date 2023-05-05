@@ -11,6 +11,7 @@ const NFTListing = ({ contract_id }: any) => {
   const [nfts, setNfts] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
+  
   const {
     isLoading,
     isError,
@@ -134,6 +135,7 @@ const NFTListing = ({ contract_id }: any) => {
   return (
     <>
       <div className=" h-full  w-full ">
+        {/* search and sort */}
         <div
           className={
             "my-4 flex flex-col items-center justify-between md:flex-row"
@@ -197,6 +199,7 @@ const NFTListing = ({ contract_id }: any) => {
           </div>
         </div>
 
+        {/* nfts list */}
         {nfts?.length ? (
           <div className="w-full">
             <InfiniteScroll
@@ -220,8 +223,8 @@ const NFTListing = ({ contract_id }: any) => {
             </InfiniteScroll>
           </div>
         ) : (
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <p className="text-center text-4xl">No data found</p>
+          <div className="flex min-h-[40vh] items-center justify-center">
+            <p className="text-center text-4xl">No NFT's found</p>
           </div>
         )}
 

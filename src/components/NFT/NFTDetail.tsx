@@ -21,11 +21,12 @@ import { useToast } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-const NFTDetail = () => {
+const NFTDetail = ({}:any) => {
   const router = useRouter();
 
-  const { id } = router.query;
+  const { id } = id
 
+  // nft detail api
   const {
     isLoading,
     isError,
@@ -50,6 +51,7 @@ const NFTDetail = () => {
   );
   const NFTDetail = nftApiDetail?.data[0];
 
+  // nft collection api
   const { data: NFTCollection } = useQuery(
     ["nftCollection"],
     async () => {
@@ -73,7 +75,7 @@ const NFTDetail = () => {
 
   const toast = useToast();
 
-  const { account } = useSelector((state: RootState) => state.web3);
+  const { account }:any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
   // buy nft

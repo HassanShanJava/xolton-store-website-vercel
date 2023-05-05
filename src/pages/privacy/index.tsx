@@ -1,24 +1,20 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import { websiteInfo } from "~/utils/helper";
 
 export async function getStaticProps() {
-  const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/privacy`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
-      },
-    }
-  );
+  const response: any = await websiteInfo();
+
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+
   const result: any = await response.json();
 
-  const storePrivacyData = result?.data;
+  const navData = result?.data?.navbar || [];
+  const webData = result?.data?.website || {};
 
-  return { props: { storePrivacyData } };
+  return { props: { navData, webData } };
 }
 const PrivacyFunc = dynamic(
   () => import("~/components/Privacy/PrivacyPolicy"),
@@ -26,6 +22,6 @@ const PrivacyFunc = dynamic(
     ssr: true,
   }
 );
-export default function FaqPage({ storePrivacyData }: any) {
-  return <PrivacyFunc storePrivacyData={storePrivacyData} />;
+export default function FaqPage({ navData, webData }: any) {
+  return <PrivacyFunc navData={navData} webData={webData} />;
 }

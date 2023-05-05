@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Homepage from "~/components/Homepage/Homepage";
+import { websiteInfo } from "~/utils/helper";
 
 
 const Home: NextPage = ({webData}:any) => {
@@ -27,15 +28,7 @@ export default Home;
 
 
 export async function getStaticProps() {
-  const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
-      },
-    }
-  );
+  const response: any = await websiteInfo()
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
