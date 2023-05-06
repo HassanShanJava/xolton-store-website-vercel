@@ -4,7 +4,7 @@ import Homepage from "~/components/Homepage/Homepage";
 import { websiteInfo } from "~/utils/helper";
 
 
-const Home: NextPage = ({webData}:any) => {
+const Home: NextPage = ({navData,webData}:any) => {
 
   return (
     <>
@@ -18,7 +18,7 @@ const Home: NextPage = ({webData}:any) => {
         />
       </Head>
       <main>
-        <Homepage webData={webData} />
+        <Homepage webData={webData} navData={navData}/>
       </main>
     </>
   );

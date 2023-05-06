@@ -19,8 +19,7 @@ import { storeWebThemeData } from "~/store/slices/themeSlice";
 import { useQuery } from "@tanstack/react-query";
 
 const Navbar = ({navData:navprops, webData:webprops}:any) => {
-  console.log({navprops},"navprops")
-  console.log({webprops},"webprops")
+  
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
@@ -50,13 +49,21 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
         })
       );
     } else {
-      data &&
+      data &&data.message.message?
         toast({
           title: data.message.message,
           status: "error",
           isClosable: true,
           position: "top-left",
-        });
+        }):
+        (
+          toast({
+            title: data.message,
+            status: "error",
+            isClosable: true,
+            position: "top-left",
+          })
+        );
     }
   };
 
@@ -101,7 +108,7 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
                 alt="/logo"
                 fill
                 priority
-                className="rounded-xl bg-white"
+                className="rounded-xl bg-white cursor-pointer"
               />
             </div>
           )}

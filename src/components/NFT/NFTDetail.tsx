@@ -1,3 +1,4 @@
+// "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
@@ -6,6 +7,7 @@ import {
   renderNFTImage,
   customTruncateHandler,
   maticToUSD,
+  websiteInfo,
 } from "~/utils/helper";
 import { useSelector } from "react-redux";
 import NFTCard from "./NFTCard";
@@ -21,11 +23,9 @@ import { useToast } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-const NFTDetail = ({}:any) => {
-  const router = useRouter();
-
-  const { id } = id
-
+const NFTDetail = ({query}: any) => {
+  const router =useRouter()
+  const {id}=router.query
   // nft detail api
   const {
     isLoading,
@@ -49,6 +49,7 @@ const NFTDetail = ({}:any) => {
       refetchOnWindowFocus: false,
     }
   );
+
   const NFTDetail = nftApiDetail?.data[0];
 
   // nft collection api
@@ -75,7 +76,7 @@ const NFTDetail = ({}:any) => {
 
   const toast = useToast();
 
-  const { account }:any = useSelector((state: RootState) => state.web3);
+  const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
   // buy nft
@@ -114,26 +115,29 @@ const NFTDetail = ({}:any) => {
   useEffect(() => {
     refetch();
   }, [id]);
+
   return (
     <div className="bg-bg-1">
       {NFTDetail && (
-        <div className="max-w-[1800px] mx-auto max-h-full min-h-screen w-full   px-2 pt-12 font-storeFont md:px-7">
-          <div className=" max-w-6.5xl mx-auto flex w-full flex-col items-start  justify-between gap-4 sm:flex-row">
-            <div className="[min-w-[840px]]:mb-0  top-20 mx-auto mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
-              <div className="h-[400px] w-full px-4 sm:px-0">
+        <div className="mx-auto max-h-full min-h-screen w-full max-w-[1400px]   px-2 pt-12 font-storeFont md:px-0">
+          <div className=" mx-auto flex w-full max-w-7xl flex-col items-start  justify-between gap-4 sm:flex-row">
+            {/* full nft image */}
+            <div className="[min-w-[840px]]:mb-0  top-20  mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
+              <div className="h-[450px] w-full  sm:px-0">
                 <Image
                   src={renderNFTImage(NFTDetail)}
                   alt="/nft"
-                  width={700}
-                  height={500}
+                  width={500}
+                  height={400}
                   priority
                   quality={100}
-                  className="relative h-full  max-h-[500px] w-full  max-w-[680px] rounded-xl object-cover"
+                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover"
                 />
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-xl px-4 md:px-0">
+            {/* nft full details */}
+            <div className="w-full max-w-xl md:px-0">
               {/* intial details */}
               <p className="text-5xl capitalize">
                 {NFTDetail.name}{" "}
@@ -242,8 +246,9 @@ const NFTDetail = ({}:any) => {
 const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   const router = useRouter();
   return (
-    NFTCollection?.length != 0 && (
-      <div className="mx-auto h-full min-h-screen w-full   bg-bg-1 px-6 py-6 ">
+    NFTCollection && (
+      <div className=" mx-auto h-full min-h-screen w-full max-w-7xl   bg-bg-1  py-6 ">
+        {/* view more and collection label */}
         <div className=" flex items-center justify-between py-3 ">
           <p className="md:text-md text-sm lg:text-lg">
             From the same collection
@@ -258,17 +263,26 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
             View More
           </button>
         </div>
+
+        {/* collection nfts */}
         <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
-          {NFTCollection &&
-            NFTCollection.filter((list: any) => list?.id !== id)?.map(
-              (collectionNFT: any, i: any) => (
-                <NFTCard nft={collectionNFT} key={i} />
-              )
-            )}
+          {NFTCollection.filter((list: any) => list?.id !== id)?.map(
+            (collectionNFT: any, i: any) => (
+              <NFTCard nft={collectionNFT} key={i} />
+            )
+          )}
         </div>
       </div>
     )
   );
 };
 
+
+NFTDetail.getIntialProps =async ()=>{
+  const res = await websiteInfo();
+
+  const json = await res.json();
+  console.log({json},"json")
+  return { navData:json.navData, webData:json.webData };
+}
 export default NFTDetail;

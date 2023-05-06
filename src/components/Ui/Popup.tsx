@@ -134,6 +134,7 @@ const Popup = ({
         });
 
         setBuy(false);
+        router.push("/");
       }
     }
   };
