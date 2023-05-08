@@ -9,12 +9,13 @@ const NFTDetails = dynamic(() => import("../../components/NFT/NFTDetail"), {
 
 export async function getStaticPaths() {
   const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&rows=50`,
     {
       headers: {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+
     }
   );
   if (!response.ok) {
