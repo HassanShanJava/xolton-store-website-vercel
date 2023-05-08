@@ -67,3 +67,18 @@ export async function maticToUSD(price = 0 as number) {
     console.log(error, "convertor matic to usd error");
   }
 }
+
+
+export  async function websiteInfo() {
+  const response=await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+
+  return response;
+} 

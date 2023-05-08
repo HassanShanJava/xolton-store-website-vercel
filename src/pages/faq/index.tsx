@@ -1,28 +1,22 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import { websiteInfo } from "~/utils/helper";
 
 export async function getStaticProps() {
-  const response: any = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web/page?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&link=/faq`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
-      },
-    }
-  );
+  const response: any = await websiteInfo()
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
   const result: any = await response.json();
+  
+  const navData = result?.data?.navbar || [];
+  const webData = result?.data?.website || {};
 
-  const storeFaqData = result?.data;
-
-  return { props: { storeFaqData } };
+  return { props: { navData,webData } };
 }
 const FaqFunc = dynamic(() => import("~/components/Faq/Faqs"), {
   ssr: true,
 });
-export default function FaqPage({ storeFaqData }: any) {
-  return <FaqFunc storeFaqData={storeFaqData} />;
+export default function FaqPage({ navData, webData }: any) {
+  return <FaqFunc navData={navData} webData={webData} />;
 }

@@ -4,16 +4,18 @@ import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { useRouter } from "next/router";
 
-const PrivacyPolicy = ({ storePrivacyData }: any) => {
+const PrivacyPolicy = ({ navData, webData }: any) => {
   const router = useRouter();
   const { asPath } = useRouter();
   let storeBlogsData: any;
-  if (storePrivacyData?.page_content !== "" && storePrivacyData?.visibility) {
+  const privacyPage=navData.filter((page:any)=>page.page_name==="Privacy")
+  console.log({privacyPage},"privacyPage")
+  if (privacyPage[0]?.page_content !== "" && privacyPage[0]?.visibility) {
     storeBlogsData = {
-      data: storePrivacyData?.page_content,
+      data: privacyPage[0]?.page_content,
     };
   } else {
-    router.push("/");
+    // router.push("/");
   }
 
   return (

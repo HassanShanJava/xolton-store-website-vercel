@@ -1,11 +1,10 @@
 import { type NextPage } from "next";
-import dynamic from "next/dynamic";
 import Head from "next/head";
-import fs from "fs";
 import Homepage from "~/components/Homepage/Homepage";
+import { websiteInfo } from "~/utils/helper";
 
 
-const Home: NextPage = () => {
+const Home: NextPage = ({navData,webData}:any) => {
 
   return (
     <>
@@ -19,10 +18,26 @@ const Home: NextPage = () => {
         />
       </Head>
       <main>
-        <Homepage />
+        <Homepage webData={webData} navData={navData}/>
       </main>
     </>
   );
 };
 
 export default Home;
+
+
+export async function getStaticProps() {
+  const response: any = await websiteInfo()
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const result: any = await response.json();
+  
+  const navData = result?.data?.navbar || [];
+  const webData = result?.data?.website || {};
+
+  return { props: { navData,webData } };
+}

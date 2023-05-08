@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "node ./src/utils/runner.ts && next build && next export",
-    "dev": "node ./src/utils/runner.ts && next dev",
+    "dev": "next dev",
     "lint": "next lint",
     "start": "serve out"
   },

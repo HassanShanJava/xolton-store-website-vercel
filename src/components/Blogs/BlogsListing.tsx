@@ -9,11 +9,6 @@ import { RootState } from "~/store/store";
 import { displayDate, renderNFTImage } from "~/utils/helper";
 
 const BlogsListing = ({ storeBlogsData }: any) => {
-  const router = useRouter();
-  const { asPath } = useRouter();
-  const { pageData } = useSelector((state: RootState) => state.page);
-  const pageContent: any = pageData?.find((item: any) => item?.link == asPath);
-
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8">
@@ -38,45 +33,44 @@ const BlogsListing = ({ storeBlogsData }: any) => {
             </div>
             <div className="-mx-4 grid justify-items-center gap-4  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {storeBlogsData?.map((store: any, i: number) => {
-                console.log({store}, typeof store?.created_at)
-                let date:any =  new Date(store?.created_at)
-                console.log({date} , typeof date)
+                let date: any = new Date(store?.created_at);
+
                 return (
-                  <Link
-                    href={`/blogs/${store?.meta}`}
-                    key={i}
-                    className="group w-full max-w-lg px-4"
-                  >
-                    <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
-                      <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
-                        <Image
-                          src={renderNFTImage(store)}
-                          alt="image"
-                          width={5000}
-                          height={5000}
-                          quality={100}
-                          className="h-[240px] w-full object-cover"
-                          priority
-                        />
+                  <div key={i} className="group w-full max-w-lg px-4">
+                    
+                      <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
+                        <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
+                        <Link href={`/blogs/${store?.meta}`}>
+                          <Image
+                            src={renderNFTImage(store)}
+                            alt="image"
+                            width={5000}
+                            height={5000}
+                            quality={100}
+                            className="h-[240px] w-full object-cover"
+                            priority
+                          />
+                          </Link>
+                        </div>
+                        <div>
+                          <h3>
+                            <a
+                              href="javascript:void(0)"
+                              className="text-dark hover:text-primary mb-1 inline-block text-xl font-semibold capitalize sm:text-2xl lg:text-xl xl:text-2xl"
+                            >
+                              {customTruncateHandler(store?.title, 20)}
+                            </a>
+                          </h3>
+                          <p className="text-body-color text-base">
+                            {customTruncateHandler(store?.description, 20)}
+                          </p>
+                          <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
+                            {date.toDateString()}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3>
-                          <a
-                            href="javascript:void(0)"
-                            className="text-dark hover:text-primary mb-1 inline-block text-xl font-semibold capitalize sm:text-2xl lg:text-xl xl:text-2xl"
-                          >
-                            {customTruncateHandler(store?.title, 20)}
-                          </a>
-                        </h3>
-                        <p className="text-body-color text-base">
-                          {customTruncateHandler(store?.description, 20)}
-                        </p>
-                        <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
-                          {date.toDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
+                    
+                  </div>
                 );
               })}
             </div>

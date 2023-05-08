@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-const ContactUs = () => {
+const ContactUs = ({}:any) => {
   const { handleSubmit, register } = useForm<any>();
   const emailSend = useMutation({
     mutationFn: (newTodo) => {
@@ -52,7 +52,7 @@ const ContactUs = () => {
         <div className="mx-auto mt-4 grid max-w-screen-xl grid-cols-1 gap-8 rounded-lg bg-bg-2/30  px-8 py-16 text-gray-900 shadow-md md:grid-cols-2 md:px-12 lg:px-16 xl:px-32">
           <div className="flex flex-col justify-between">
             <div>
-              <h2 className="bg-black bg-clip-text text-4xl font-bold leading-tight text-transparent lg:text-5xl">
+              <h2 className="bg-black pb-3 bg-clip-text text-4xl font-bold leading-tight text-transparent lg:text-5xl">
                 Lets talk about everything!
               </h2>
               <div className="mt-6 text-gray-700">
