@@ -98,6 +98,8 @@ const NFTListing = ({ contract_id }: any) => {
       }
     } else {
       if (sortFilter.searchQuery?.length) {
+        setNfts([]);
+      }
     }
   }, [storeNfts, isError, error]);
 
@@ -119,6 +121,7 @@ const NFTListing = ({ contract_id }: any) => {
   }
 
   function clearFilter() {
+    setSearchQuery("");
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       first: 0,
