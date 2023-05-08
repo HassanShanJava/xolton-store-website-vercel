@@ -18,7 +18,8 @@ import { storeWebThemeData } from "~/store/slices/themeSlice";
 
 import { useQuery } from "@tanstack/react-query";
 
-const Navbar = () => {
+const Navbar = ({navData:navprops, webData:webprops}:any) => {
+  
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const Navbar = () => {
 
   const { account } = useSelector((state: RootState) => state.web3);
 
+  // connect wallet
   const connectMetamask = async () => {
     let data: any = await initWeb3();
     console.log("Data : ", data);
@@ -47,13 +49,21 @@ const Navbar = () => {
         })
       );
     } else {
-      data &&
+      data &&data.message.message?
         toast({
           title: data.message.message,
           status: "error",
           isClosable: true,
           position: "top-left",
-        });
+        }):
+        (
+          toast({
+            title: data.message,
+            status: "error",
+            isClosable: true,
+            position: "top-left",
+          })
+        );
     }
   };
 
@@ -63,6 +73,16 @@ const Navbar = () => {
         console.log("account :: ", accounts[0]);
         dispatch(setAccount(accounts[0]));
       }
+
+      // else{
+        // if no extension found?
+        // toast({
+        //   title: "Please Install Metamask",
+        //   status: "error",
+        //   isClosable: true,
+        //   position: "top-left",
+        // });
+      // }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -73,39 +93,6 @@ const Navbar = () => {
     });
   }
 
-  const { data: details, isFetched } = useQuery(
-    ["nftNavbar"],
-    async () => {
-      const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  useEffect(() => {
-    if (isFetched) {
-      dispatch(storeWebPageData(details?.data?.navbar));
-      dispatch(storeWebThemeData(details?.data?.website?.theme));
-    }
-  }, [isFetched, details?.data]);
-
-  const navData =
-    isFetched &&
-    details?.data?.navbar?.filter(
-      (nav: any) =>
-        nav.link !== "/nft-detail" &&
-        (nav.page_name === "Home" ||
-          nav.page_name === "Contact" ||
-          nav.page_name === "Blogs" ||
-          nav.page_content !== "")
-    );
 
   return (
     <>
@@ -121,7 +108,7 @@ const Navbar = () => {
                 alt="/logo"
                 fill
                 priority
-                className="rounded-xl bg-white"
+                className="rounded-xl bg-white cursor-pointer"
               />
             </div>
           )}
@@ -137,9 +124,9 @@ const Navbar = () => {
           <div className="mr-4 mt-4 flex items-center justify-between">
             <div className="relative ml-4  h-8 w-8 sm:flex">
               <Link href={"/"}>
-                {details?.data && (
+                {webprops && (
                   <Image
-                    src={renderNFTIcon(details?.data?.website)}
+                    src={renderNFTIcon(webprops)}
                     alt="/logo"
                     fill
                   />
@@ -157,10 +144,10 @@ const Navbar = () => {
 
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
-              {navData &&
-                navData.map((list: any, i: number) => (
+              {navprops &&
+                navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
                   <Link href={list.link} key={i} onClick={handleNav}>
-                    <li className="flex items-center py-4 text-xl">
+                    <li className="flex items-center py-4 text-xl hover:text-white">
                       {list.page_name}
                     </li>
                   </Link>
@@ -171,9 +158,9 @@ const Navbar = () => {
 
         <div className="relative ml-2 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
-            {details?.data && (
+            {webprops && (
               <Image
-                src={renderNFTIcon(details?.data?.website)}
+                src={renderNFTIcon(webprops)}
                 alt="/logo"
                 fill
               />
@@ -182,10 +169,10 @@ const Navbar = () => {
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
-          {details?.data &&
-            navData?.map((list: any, i: number) => (
+          {navprops &&
+            navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
               <Link href={list.link} key={i}>
-                <li className="mx-4">{list.page_name}</li>
+                <li className="mx-4 hover:text-white">{list.page_name}</li>
               </Link>
             ))}
         </ul>
