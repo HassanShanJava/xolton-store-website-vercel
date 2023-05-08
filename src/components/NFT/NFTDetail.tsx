@@ -23,7 +23,7 @@ import { useToast } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-const NFTDetail = ({query}: any) => {
+const NFTDetail = ({}: any) => {
   const router =useRouter()
   const {id}=router.query
   // nft detail api
@@ -119,7 +119,7 @@ const NFTDetail = ({query}: any) => {
   return (
     <div className="bg-bg-1">
       {NFTDetail && (
-        <div className="mx-auto max-h-full min-h-screen w-full max-w-[1400px]   px-2 pt-12 font-storeFont md:px-0">
+        <div className="mx-auto max-h-full min-h-screen w-full max-w-[1400px]   px-4 pt-12 font-storeFont ">
           <div className=" mx-auto flex w-full max-w-7xl flex-col items-start  justify-between gap-4 sm:flex-row">
             {/* full nft image */}
             <div className="[min-w-[840px]]:mb-0  top-20  mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
