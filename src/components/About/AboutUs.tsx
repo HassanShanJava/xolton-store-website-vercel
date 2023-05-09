@@ -12,14 +12,16 @@ const AboutUs = ({ navData, webData }: any) => {
   const aboutPage=navData.filter((page:any)=>page.page_name==="About")
   console.log({aboutPage},"about us")
   let storeBlogsData: any;
-  
-  if (aboutPage[0]?.page_content !== "" && aboutPage[0]?.visibility) {
-    storeBlogsData = {
-      data: aboutPage[0]?.page_content,
-    };
-  } else {
-    router.push("/");  //error, check later
-  }
+  useEffect(()=>{
+ if (aboutPage[0]?.page_content !== "" && aboutPage[0]?.visibility) {
+   storeBlogsData = {
+     data: aboutPage[0]?.page_content,
+   };
+ } else {
+   router.push("/"); //error, check later
+ }
+  },[])
+ 
   
   return (
     <>
