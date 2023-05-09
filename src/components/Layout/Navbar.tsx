@@ -18,8 +18,7 @@ import { storeWebThemeData } from "~/store/slices/themeSlice";
 
 import { useQuery } from "@tanstack/react-query";
 
-const Navbar = ({navData:navprops, webData:webprops}:any) => {
-  
+const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
@@ -49,21 +48,19 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
         })
       );
     } else {
-      data &&data.message.message?
-        toast({
-          title: data.message.message,
-          status: "error",
-          isClosable: true,
-          position: "top-left",
-        }):
-        (
-          toast({
-            title: data.message,
+      data && data.message.message
+        ? toast({
+            title: data.message.message,
             status: "error",
             isClosable: true,
             position: "top-left",
           })
-        );
+        : toast({
+            title: data.message,
+            status: "error",
+            isClosable: true,
+            position: "top-left",
+          });
     }
   };
 
@@ -75,13 +72,13 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
       }
 
       // else{
-        // if no extension found?
-        // toast({
-        //   title: "Please Install Metamask",
-        //   status: "error",
-        //   isClosable: true,
-        //   position: "top-left",
-        // });
+      // if no extension found?
+      // toast({
+      //   title: "Please Install Metamask",
+      //   status: "error",
+      //   isClosable: true,
+      //   position: "top-left",
+      // });
       // }
     });
 
@@ -92,7 +89,6 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
       }
     });
   }
-
 
   return (
     <>
@@ -108,7 +104,7 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
                 alt="/logo"
                 fill
                 priority
-                className="rounded-xl bg-white cursor-pointer"
+                className="cursor-pointer rounded-xl bg-white"
               />
             </div>
           )}
@@ -125,11 +121,7 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
             <div className="relative ml-4  h-8 w-8 sm:flex">
               <Link href={"/"}>
                 {webprops && (
-                  <Image
-                    src={renderNFTIcon(webprops)}
-                    alt="/logo"
-                    fill
-                  />
+                  <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
                 )}
               </Link>
             </div>
@@ -145,13 +137,19 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
           <nav className="mt-6">
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navprops &&
-                navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
-                  <Link href={list.link} key={i} onClick={handleNav}>
-                    <li className="flex items-center py-4 text-xl hover:text-white">
-                      {list.page_name}
-                    </li>
-                  </Link>
-                ))}
+                navprops
+                  ?.filter((list: any) => list.page_name !== "NFT Detail")
+                  .map((list: any, i: number) => (
+                    <a
+                      href={`${list.link}/index.html`}
+                      key={i}
+                      onClick={handleNav}
+                    >
+                      <li className="flex items-center py-4 text-xl hover:text-white">
+                        {list.page_name}
+                      </li>
+                    </a>
+                  ))}
             </ul>
           </nav>
         </div>
@@ -159,22 +157,25 @@ const Navbar = ({navData:navprops, webData:webprops}:any) => {
         <div className="relative ml-2 hidden h-8 w-8 sm:flex">
           <Link href={"/"}>
             {webprops && (
-              <Image
-                src={renderNFTIcon(webprops)}
-                alt="/logo"
-                fill
-              />
+              <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
             )}
           </Link>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
           {navprops &&
-            navprops?.filter((list:any)=>list.page_name!=="NFT Detail").map((list: any, i: number) => (
-              <Link href={list.link} key={i}>
-                <li className="mx-4 hover:text-white">{list.page_name}</li>
-              </Link>
-            ))}
+            navprops
+              ?.filter((list: any) => list.page_name !== "NFT Detail")
+              .map((list: any, i: number) => (
+                <a
+                  href={`${
+                    list.link === "/" ? list.link : list.link + "/index.html"
+                  }`}
+                  key={i}
+                >
+                  <li className="mx-4 hover:text-white">{list.page_name}</li>
+                </a>
+              ))}
         </ul>
 
         <div className="mr-2">

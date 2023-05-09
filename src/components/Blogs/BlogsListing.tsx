@@ -37,10 +37,9 @@ const BlogsListing = ({ storeBlogsData }: any) => {
 
                 return (
                   <div key={i} className="group w-full max-w-lg px-4">
-                    
-                      <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
-                        <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
-                        <Link href={`/blogs/${store?.meta}`}>
+                    <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
+                      <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
+                        <Link href={`/blogs/${store?.meta}/index.html`}>
                           <Image
                             src={renderNFTImage(store)}
                             alt="image"
@@ -50,26 +49,25 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                             className="h-[240px] w-full object-cover"
                             priority
                           />
-                          </Link>
-                        </div>
-                        <div>
-                          <h3>
-                            <a
-                              href="javascript:void(0)"
-                              className="text-dark hover:text-primary mb-1 inline-block text-xl font-semibold capitalize sm:text-2xl lg:text-xl xl:text-2xl"
-                            >
-                              {customTruncateHandler(store?.title, 20)}
-                            </a>
-                          </h3>
-                          <p className="text-body-color text-base">
-                            {customTruncateHandler(store?.description, 20)}
-                          </p>
-                          <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
-                            {date.toDateString()}
-                          </span>
-                        </div>
+                        </Link>
                       </div>
-                    
+                      <div>
+                        <h3>
+                          <a
+                            href="javascript:void(0)"
+                            className="text-dark hover:text-primary mb-1 inline-block text-xl font-semibold capitalize sm:text-2xl lg:text-xl xl:text-2xl"
+                          >
+                            {customTruncateHandler(store?.title, 20)}
+                          </a>
+                        </h3>
+                        <p className="text-body-color text-base">
+                          {customTruncateHandler(store?.description, 20)}
+                        </p>
+                        <span className="bg-primary mt-5 inline-block rounded  py-1 text-center text-xs font-semibold leading-loose text-gray-600">
+                          {date.toDateString()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
