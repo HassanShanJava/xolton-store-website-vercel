@@ -6,8 +6,7 @@
 /** @type {import("next").NextConfig} */
 const config = {
   output: "export",
-  trailingSlash: true,
-
+  // trailingSlash: true,
 
   reactStrictMode: true,
 
