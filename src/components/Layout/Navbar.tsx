@@ -140,7 +140,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                 navprops
                   ?.filter((list: any) => list.page_name !== "NFT Detail")
                   .map((list: any, i: number) => (
-                    <a
+                    <Link
                       href={`${list.link}/index.html`}
                       key={i}
                       onClick={handleNav}
@@ -148,7 +148,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                       <li className="flex items-center py-4 text-xl hover:text-white">
                         {list.page_name}
                       </li>
-                    </a>
+                    </Link>
                   ))}
             </ul>
           </nav>
@@ -167,14 +167,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             navprops
               ?.filter((list: any) => list.page_name !== "NFT Detail")
               .map((list: any, i: number) => (
-                <a
+                <Link
                   href={`${
-                    list.link === "/" ? list.link : list.link + "/index.html"
+                    list.link === "/" ? list.link : list.link + ".html"
                   }`}
                   key={i}
                 >
                   <li className="mx-4 hover:text-white">{list.page_name}</li>
-                </a>
+                </Link>
               ))}
         </ul>
 

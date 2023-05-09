@@ -39,7 +39,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                   <div key={i} className="group w-full max-w-lg px-4">
                     <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
                       <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
-                        <Link href={`/blogs/${store?.meta}/index.html`}>
+                        <Link href={`/blogs/${store?.meta}.html`}>
                           <Image
                             src={renderNFTImage(store)}
                             alt="image"
