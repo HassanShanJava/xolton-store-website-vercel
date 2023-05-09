@@ -140,7 +140,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                 navprops
                   ?.filter((list: any) => list.page_name !== "NFT Detail")
                   .map((list: any, i: number) => (
-                    <Link
+                    <a
                       href={`${list.link}/index.html`}
                       key={i}
                       onClick={handleNav}
@@ -148,18 +148,18 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                       <li className="flex items-center py-4 text-xl hover:text-white">
                         {list.page_name}
                       </li>
-                    </Link>
+                    </a>
                   ))}
             </ul>
           </nav>
         </div>
 
         <div className="relative ml-2 hidden h-8 w-8 sm:flex">
-          <Link href={"/"}>
+          <a href={"/"}>
             {webprops && (
               <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
             )}
-          </Link>
+          </a>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
@@ -167,14 +167,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             navprops
               ?.filter((list: any) => list.page_name !== "NFT Detail")
               .map((list: any, i: number) => (
-                <Link
+                <a
                   href={`${
                     list.link === "/" ? list.link : list.link + ".html"
                   }`}
                   key={i}
                 >
                   <li className="mx-4 hover:text-white">{list.page_name}</li>
-                </Link>
+                </a>
               ))}
         </ul>
 

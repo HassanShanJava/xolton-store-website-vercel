@@ -46,7 +46,7 @@ const NFTCard = ({ nft }: any) => {
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
-        <Link href={`/nft-details/${nft.id}.html`}>
+        <a href={`/nft-details/${nft.id}.html`}>
           <div className={" relative h-80 max-h-[290px]  w-full"}>
             <Image
               src={renderNFTImage(nft)}
@@ -57,7 +57,7 @@ const NFTCard = ({ nft }: any) => {
               className="mx-auto rounded-xl  object-cover "
             />
           </div>
-        </Link>
+        </a>
 
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">
