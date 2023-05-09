@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CraftJsComponent from "../craftComponent/CraftJsComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
@@ -10,13 +10,19 @@ const AboutUs = ({ navData, webData }: any) => {
   let storeBlogsData: any;
   const faqPage=navData.filter((page:any)=>page.page_name==="FAQs")
   console.log({faqPage},"faqPage")
-  if (faqPage[0]?.page_content !== "" && faqPage[0]?.visibility) {
-    storeBlogsData = {
-      data: faqPage[0]?.page_content,
-    };
-  } else {
-    router.push("/");
-  }
+
+  useEffect(() => {
+    if (faqPage[0]?.page_content !== "" && faqPage[0]?.visibility) {
+      storeBlogsData = {
+        data: faqPage[0]?.page_content,
+      };
+    } else {
+      router.push("/");
+    }
+  }, [])
+  
+
+
   return (
     <>
       <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8 py-4">
