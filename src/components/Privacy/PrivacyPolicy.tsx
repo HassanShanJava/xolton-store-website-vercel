@@ -11,6 +11,11 @@ const PrivacyPolicy = ({ navData, webData }: any) => {
   const privacyPage = navData.filter(
     (page: any) => page.page_name === "Privacy"
   );
+  if (privacyPage[0]?.page_content !== "" && privacyPage[0]?.visibility) {
+    storeBlogsData = {
+      data: privacyPage[0]?.page_content,
+    };
+  }
   useEffect(() => {
     if (privacyPage[0]?.page_content !== "" && privacyPage[0]?.visibility) {
       storeBlogsData = {
