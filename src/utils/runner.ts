@@ -99,6 +99,7 @@ export default {
 } satisfies Config;
 `;
   // fs.writeFileSync("../../tailwind.config.ts", tailwindData);
+  console.log(tailwindData, "tailwindData");
   await fs.writeFileSync("tailwind.config.ts", tailwindData, {
     encoding: "utf8",
     flag: "w",
