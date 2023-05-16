@@ -16,15 +16,6 @@ const PrivacyPolicy = ({ navData, webData }: any) => {
       data: privacyPage[0]?.page_content,
     };
   }
-  useEffect(() => {
-    if (privacyPage[0]?.page_content !== "" && privacyPage[0]?.visibility) {
-      storeBlogsData = {
-        data: privacyPage[0]?.page_content,
-      };
-    } else {
-      router.push("/");
-    }
-  }, []);
 
   return (
     <>

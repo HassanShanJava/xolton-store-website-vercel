@@ -19,8 +19,9 @@ const runAsync = async () => {
   const result = await response.json();
 
   const storeThemeData = result?.data;
-  const primaryFont = storeThemeData?.website?.theme?.fonts?.primary ?? "inter"
-  const secondaryFont = storeThemeData?.website?.theme?.fonts?.secondary ?? "san-serif"
+  const primaryFont = storeThemeData?.website?.theme?.fonts?.primary ?? "inter";
+  const secondaryFont =
+    storeThemeData?.website?.theme?.fonts?.secondary ?? "san-serif";
   const tailwindData = `import { type Config } from "tailwindcss";
 
 export default {
@@ -98,7 +99,6 @@ export default {
 } satisfies Config;
 `;
   // fs.writeFileSync("../../tailwind.config.ts", tailwindData);
-  console.log(tailwindData, "tailwindData");
   await fs.writeFileSync("tailwind.config.ts", tailwindData, {
     encoding: "utf8",
     flag: "w",

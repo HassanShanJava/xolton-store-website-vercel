@@ -29,9 +29,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   // connect wallet
   const connectMetamask = async () => {
     let data: any = await initWeb3();
-    console.log("Data : ", data);
     if (data?.success !== false) {
-      console.log("check");
       toast({
         title: "Wallet connected",
         status: "success",
@@ -67,7 +65,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   if (typeof window !== "undefined") {
     window?.ethereum?.on("accountsChanged", function (accounts: String) {
       if (account !== "") {
-        console.log("account :: ", accounts[0]);
         dispatch(setAccount(accounts[0]));
       }
 
@@ -83,7 +80,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
-      console.log("chainChanged", chainId);
       if (chainId != "0x13881") {
         dispatch(setAccount(""));
       }
@@ -138,7 +134,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             <ul className="flex flex-col p-4 text-gray-800 ">
               {navprops &&
                 navprops
-                  ?.filter((list: any) => list.page_name !== "NFT Detail")
+                  ?.filter(
+                    (nav: any) =>
+                      nav.link !== "/nft-detail" &&
+                      (nav.page_name === "Home" ||
+                        nav.page_name === "Contact" ||
+                        nav.page_name === "Blogs" ||
+                        nav.page_content !== "")
+                  )
                   .map((list: any, i: number) => (
                     <a
                       href={`${list.link}/index.html`}
@@ -165,7 +168,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         <ul className="hidden items-center justify-between text-sm sm:flex">
           {navprops &&
             navprops
-              ?.filter((list: any) => list.page_name !== "NFT Detail")
+              ?.filter(
+                (nav: any) =>
+                  nav.link !== "/nft-detail" &&
+                  (nav.page_name === "Home" ||
+                    nav.page_name === "Contact" ||
+                    nav.page_name === "Blogs" ||
+                    nav.page_content !== "")
+              )
               .map((list: any, i: number) => (
                 <a
                   href={`${

@@ -67,7 +67,6 @@ const NFTListing = ({ contract_id }: any) => {
   }, [searchQuery]);
 
   useEffect(() => {
-    console.log({ contract_id });
     setSortFilter((prevFilters: any) => ({
       ...prevFilters,
       contract_id: contract_id ?? "",
@@ -79,10 +78,7 @@ const NFTListing = ({ contract_id }: any) => {
   }, [sortFilter]);
 
   useEffect(() => {
-    console.log(storeNfts, "storeNfts");
-    console.log(sortFilter, "sortFilter");
     if (storeNfts?.data.length > 0) {
-      console.log(storeNfts?.data, "storeNFTValues?.data");
       if (sortFilter.searchQuery?.length || sortFilter?.orderBy?.length) {
         if (sortFilter?.first > 0) {
           setNfts([...nfts, ...storeNfts?.data]);
@@ -129,9 +125,7 @@ const NFTListing = ({ contract_id }: any) => {
       searchQuery: "",
     }));
   }
-
-  console.log(storeNfts, "storeNfts");
-
+ 
   return (
     <>
       <div className=" h-full  w-full ">
@@ -241,7 +235,7 @@ const NFTListing = ({ contract_id }: any) => {
 export default NFTListing;
 
 const LoadingSkeleton = ({ data, nft }: any) => {
-  console.log({ data });
+
   return (
     <>
       {nft.length > 0
