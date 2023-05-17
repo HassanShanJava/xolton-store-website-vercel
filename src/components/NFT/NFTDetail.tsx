@@ -282,7 +282,6 @@ NFTDetail.getIntialProps =async ()=>{
   const res = await websiteInfo();
 
   const json = await res.json();
-  console.log({json},"json")
   return { navData:json.navData, webData:json.webData };
 }
 export default NFTDetail;

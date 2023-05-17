@@ -87,7 +87,6 @@ const TextSettings = () => {
           min={1}
           max={55}
           onChange={(val: any) => {
-            console.log(val, "number");
             setProp((props: any) => (props.fontSize = val), 1000);
           }}
         >

@@ -10,7 +10,7 @@ import { websiteInfo } from "~/utils/helper";
 const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  console.log({ pageProps },"pageProps");
+  
 
   return (
     <QueryClientProvider client={queryClient}>

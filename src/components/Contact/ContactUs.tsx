@@ -23,7 +23,6 @@ const ContactUs = ({}:any) => {
 
   const onSubmit = async (values: any) => {
     try {
-      console.log(values, "values::");
       const payload = {
         ...values,
         store_id: process.env.NEXT_PUBLIC_STORE_ID,
@@ -37,7 +36,6 @@ const ContactUs = ({}:any) => {
         position: "top-left",
       });
     } catch (e) {
-      console.log(e);
       toast({
         title: "Something went wrong!",
         status: "error",

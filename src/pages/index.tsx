@@ -3,9 +3,7 @@ import Head from "next/head";
 import Homepage from "~/components/Homepage/Homepage";
 import { websiteInfo } from "~/utils/helper";
 
-
-const Home: NextPage = ({navData,webData}:any) => {
-
+const Home: NextPage = ({ navData, webData }: any) => {
   return (
     <>
       <Head>
@@ -18,7 +16,7 @@ const Home: NextPage = ({navData,webData}:any) => {
         />
       </Head>
       <main>
-        <Homepage webData={webData} navData={navData}/>
+        <Homepage webData={webData} navData={navData} />
       </main>
     </>
   );
@@ -26,18 +24,17 @@ const Home: NextPage = ({navData,webData}:any) => {
 
 export default Home;
 
-
 export async function getStaticProps() {
-  const response: any = await websiteInfo()
+  const response: any = await websiteInfo();
 
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
 
   const result: any = await response.json();
-  
+
   const navData = result?.data?.navbar || [];
   const webData = result?.data?.website || {};
 
-  return { props: { navData,webData } };
+  return { props: { navData, webData } };
 }

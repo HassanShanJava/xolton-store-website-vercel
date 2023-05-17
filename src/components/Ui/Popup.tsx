@@ -75,8 +75,6 @@ const Popup = ({
     } else {
       setIsPurchase(false);
 
-      console.log("NFT OO ", nft);
-      console.log("WEB3 NFT : ", nft?.store_makerorder[0]);
       const buyData = await buyNFT(
         web3,
         account,
@@ -85,7 +83,6 @@ const Popup = ({
       );
 
       if (buyData?.success) {
-        console.log("BUY DATA :: ", buyData);
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
         const payload: any = {
@@ -110,7 +107,6 @@ const Popup = ({
           previous_owner_address: buyData?.previous_owner,
         };
 
-        console.log(payloadOrder, "payloadOrder");
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
@@ -125,7 +121,6 @@ const Popup = ({
         setBuy(false);
         router.push("/");
       } else {
-        console.log("BUY Error :", buyData);
         toast({
           title: buyData.msg as string,
           status: "error",
