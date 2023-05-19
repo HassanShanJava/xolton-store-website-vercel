@@ -148,7 +148,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                       key={i}
                       onClick={handleNav}
                     >
-                      <li className="flex items-center py-4 text-xl hover:text-white">
+                      <li className="flex items-center py-4 text-xl hover:border-b-2">
                         {list.page_name}
                       </li>
                     </a>
@@ -183,7 +183,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                   }`}
                   key={i}
                 >
-                  <li className="mx-4 hover:text-white">{list.page_name}</li>
+                  <li className="mx-4 hover:border-b-2">{list.page_name}</li>
                 </a>
               ))}
         </ul>
