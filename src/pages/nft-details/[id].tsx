@@ -1,4 +1,3 @@
-
 import dynamic from "next/dynamic";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
@@ -6,7 +5,6 @@ import { websiteInfo } from "~/utils/helper";
 const NFTDetails = dynamic(() => import("../../components/NFT/NFTDetail"), {
   ssr: true,
 });
-
 
 export async function getStaticPaths() {
   const response: any = await fetch(
@@ -16,7 +14,6 @@ export async function getStaticPaths() {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
-
     }
   );
   if (!response.ok) {
@@ -58,8 +55,7 @@ export async function getStaticProps({ params }: any) {
   return { props: { storeBlogsData: result?.data[0], navData, webData } };
 }
 
-export default function detailPage({navData, webData}:any) {
-  
+export default function detailPage({ navData, webData, storeBlogsData }: any) {
   return (
     <>
       <SeoHead
@@ -70,10 +66,11 @@ export default function detailPage({navData, webData}:any) {
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
       />
-      <NFTDetails navData={navData} webData={webData} />
+      <NFTDetails
+        navData={navData}
+        webData={webData}
+        NFTDetail={storeBlogsData}
+      />
     </>
   );
 }
-
-
-
