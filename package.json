@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "node ./src/utils/runner.ts && next build && next export",
+    "build": "node ./src/utils/runner.ts  && next build && next export",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "serve out"
+    "start": "serve out",
+    "postbuild": "next-sitemap --config next-sitemap.config.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
@@ -42,6 +43,7 @@
     "autoprefixer": "^10.4.14",
     "eslint": "^8.36.0",
     "eslint-config-next": "^13.2.4",
+    "next-sitemap": "^4.1.3",
     "postcss": "^8.4.21",
     "prettier": "^2.8.6",
     "prettier-plugin-tailwindcss": "^0.2.6",
