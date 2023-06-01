@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "node ./src/utils/runner.ts  && next build && next export",
+    "postbuild": "next-sitemap --config next-sitemap.config.js",
+    "build": "node ./src/utils/runner.ts   && next build && pnpm run postbuild && next export",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "serve out",
-    "postbuild": "next-sitemap --config next-sitemap.config.js"
+    "start": "serve out"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
