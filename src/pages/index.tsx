@@ -4,7 +4,8 @@ import Homepage from "~/components/Homepage/Homepage";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
-const Home: NextPage = ({ navData, webData }: any) => {
+const Home: NextPage = ({ navData, webData, seoData }: any) => {
+  console.log({seoData},"seoData")
   return (
     <>
       <SeoHead
@@ -32,9 +33,11 @@ export async function getStaticProps() {
   }
 
   const result: any = await response.json();
+  console.log(result.data,"result")
 
   const navData = result?.data?.navbar || [];
   const webData = result?.data?.website || {};
+  const seoData = result?.data?.seo[0] || {};
 
-  return { props: { navData, webData } };
+  return { props: { navData, webData,seoData } };
 }

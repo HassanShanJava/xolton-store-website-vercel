@@ -1,8 +1,10 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl:process.env.NEXT_PUBLIC_BASE_URL || "https://ten.xoltanmarketplace.com",
+  siteUrl:"https://ten.xoltanmarketplace.com",
   generateRobotsTxt: true, // (optional)
-  
-  generateIndexSitemap: false,
-  // ...other options
-}; 
+  generateIndexSitemap: true,
+  robotsTxtOptions: {
+          transformRobotsTxt: async () => 
+          "# *\nUser-agent: *\nAllow: /\n\n# Host\nHost: https://ten.xoltanmarketplace.com/\n\n# Sitemaps\nSitemap: https://ten.xoltanmarketplace.com/sitemap.xml\n"
+      }
+};

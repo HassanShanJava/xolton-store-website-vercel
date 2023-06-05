@@ -123,23 +123,34 @@ const runSiteAsync = async () => {
   }
   const result = await response.json();
 
-
+  console.log({ result }, "result v")
   const storeDetail = result?.data;
   const domainName = storeDetail?.website?.domain_name;
 
-  const robotFlag=true;
-  const sitemapFlag=false;
+  // SEO
+  let robotFlag;
+  let robotContentFlag;
+  let sitemapFlag;
+  if (storeDetail?.seo[0]) {
+    robotFlag = storeDetail?.seo[0]?.robot?.robot
+    robotContentFlag = storeDetail?.seo[0]?.robot?.robot_content
+    sitemapFlag = storeDetail?.seo[0]?.sitemap
+  }
 
   const sitemapData = `/** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl:process.env.NEXT_PUBLIC_BASE_URL || "https://${domainName}.${process.env.NEXT_PUBLIC_LIVE_URL}",
+  siteUrl:"https://${domainName}.${process.env.NEXT_PUBLIC_LIVE_URL}",
   generateRobotsTxt: ${robotFlag}, // (optional)
-  
   generateIndexSitemap: ${sitemapFlag},
-  // ...other options
-}; `;
+  ${robotFlag ?
+      `robotsTxtOptions: {
+          transformRobotsTxt: async () => 
+          ${JSON.stringify(robotContentFlag)}
+      }`: ""
+    }
+};`
 
-// fs.writeFileSync("../../next-sitemap.config.js", sitemapData);
+  // fs.writeFileSync("../../next-sitemap.config.js", sitemapData);
   console.log(sitemapData, "sitemapData");
   await fs.writeFileSync("next-sitemap.config.js", sitemapData, {
     encoding: "utf8",
