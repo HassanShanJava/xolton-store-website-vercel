@@ -11,6 +11,7 @@ const SeoHead = ({ ...props }: any) => {
 
   return (
     <Head>
+      <link rel="canonical" href={`https://${props?.domain_name}.${process.env.NEXT_PUBLIC_LIVE_URL}/${props?.canonical_url}`} />
       <title>{props?.name}</title>
       <meta property="og:title" content={props?.title} key="title" />
       <meta name="description" content={`${props?.description} Store`} />

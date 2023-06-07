@@ -15,6 +15,8 @@ const Home: NextPage = ({ navData, webData, seoData }: any) => {
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
+        canonical_url={""}
+
       />
       <main>
         <Homepage webData={webData} navData={navData} />

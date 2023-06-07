@@ -30,6 +30,8 @@ export default function AboutPage({ navData, webData }: any) {
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
+        canonical_url={"about-us"}
+
       />
       <AboutFunc navData={navData} webData={webData} />;
     </>

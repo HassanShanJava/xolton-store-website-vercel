@@ -48,6 +48,8 @@ export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
+        canonical_url={"blogs"}
+
       />
       <BlogFunc
         storeBlogsData={storeBlogsData}
