@@ -17,49 +17,51 @@ import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
 
 import { useQuery } from "@tanstack/react-query";
+import { CustomToast } from "../globalToast";
+import NewUser from "../Ui/NewUser";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
+  const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
-  const toast = useToast();
+  const { addToast } = CustomToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
 
   // connect wallet
   const connectMetamask = async () => {
-    let data: any = await initWeb3();
-    if (data?.success !== false) {
-      toast({
-        title: "Wallet connected",
-        status: "success",
+    setShowPop(true);
+    // let data: any = await initWeb3();
+    // if (data?.success !== false) {
+    //   addToast({
+    //     id: "connect-wallet",
+    //     message: "Wallet connected",
+    //     type: "success",
+    //   });
 
-        isClosable: true,
-        position: "top-left",
-      });
-
-      dispatch(
-        web3Init({
-          web3: data?.web3,
-          account: data?.account,
-          chainId: data?.chainId,
-        })
-      );
-    } else {
-      data && data.message.message
-        ? toast({
-            title: data.message.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
-          })
-        : toast({
-            title: data.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
-          });
-    }
+    //   dispatch(
+    //     web3Init({
+    //       web3: data?.web3,
+    //       account: data?.account,
+    //       chainId: data?.chainId,
+    //     })
+    //   );
+    // } else {
+    //   data && data.message.message
+    //     ? addToast({
+    //         id: "connect-wallet",
+    //         message: data.message.message,
+    //         type: "error",
+    //         position: "top-right",
+    //       })
+    //     : addToast({
+    //         id: "connect-wallet",
+    //         message: data.message,
+    //         type: "error",
+    //         position: "top-right",
+    //       });
+    // }
   };
 
   if (typeof window !== "undefined") {
@@ -67,16 +69,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
       if (account !== "") {
         dispatch(setAccount(accounts[0]));
       }
-
-      // else{
-      // if no extension found?
-      // toast({
-      //   title: "Please Install Metamask",
-      //   status: "error",
-      //   isClosable: true,
-      //   position: "top-left",
-      // });
-      // }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -207,6 +199,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           )}
         </div>
       </div>
+      {showPop && <NewUser open={showPop} setOpen={setShowPop} />}
     </>
   );
 };
