@@ -39,6 +39,11 @@ yarn-error.log*
 robot.txt
 sitemap.xml
 
+/robot.txt
+/sitemap.xml
+
+next-sitemap.config.js
+
 # vercel
 .vercel
 
