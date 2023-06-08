@@ -37,7 +37,11 @@ yarn-error.log*
 
 # sitemap
 
-publi
+robot.txt
+sitemap.xml
+
+next-sitemap.config.js
+
 # vercel
 .vercel
 
