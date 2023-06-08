@@ -1,11 +1,10 @@
-
 import dynamic from "next/dynamic";
+import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
 const NFTDetails = dynamic(() => import("../../components/NFT/NFTDetail"), {
   ssr: true,
 });
-
 
 export async function getStaticPaths() {
   const response: any = await fetch(
@@ -15,7 +14,6 @@ export async function getStaticPaths() {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
-
     }
   );
   if (!response.ok) {
@@ -57,14 +55,22 @@ export async function getStaticProps({ params }: any) {
   return { props: { storeBlogsData: result?.data[0], navData, webData } };
 }
 
-export default function detailPage({navData, webData}:any) {
-  
+export default function detailPage({ navData, webData, storeBlogsData }: any) {
   return (
     <>
-      <NFTDetails  navData={navData} webData={webData}/>
+      <SeoHead
+        name={`NFT Detail | ${webData?.name}`}
+        title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
+        description="The one-stop NFT platform to turn your creative ideas into a full-blown NFT marketplace. Create your own NFT marketplace today for free."
+        domain_name={webData?.domain_name}
+        banner_image={webData?.banner_image}
+        icon={webData?.logo_image}
+      />
+      <NFTDetails
+        navData={navData}
+        webData={webData}
+        NFTDetail={storeBlogsData}
+      />
     </>
   );
 }
-
-
-

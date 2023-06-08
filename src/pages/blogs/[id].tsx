@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
 export async function getStaticPaths() {
@@ -59,10 +60,20 @@ const AboutDetailFunc = dynamic(
 
 export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
   return (
-    <AboutDetailFunc
-      storeBlogsData={storeBlogsData}
-      navData={navData}
-      webData={webData}
-    />
+    <>
+      <SeoHead
+        name={storeBlogsData?.title}
+        title={`${storeBlogsData?.title} `}
+        description={`${storeBlogsData?.description}`}
+        domain_name={storeBlogsData?.meta}
+        banner_image={storeBlogsData?.thumb || webData?.banner_image}
+        icon={webData?.logo_image}
+      />
+      <AboutDetailFunc
+        storeBlogsData={storeBlogsData}
+        navData={navData}
+        webData={webData}
+      />
+    </>
   );
 }

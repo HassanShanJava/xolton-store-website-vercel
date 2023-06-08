@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 
 import Popup from "../Ui/Popup";
 
-import { renderNFTImage } from "~/utils/helper";
+import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 
 import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
-import { useToast } from "@chakra-ui/react";
+import { Tooltip, useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
 
@@ -61,7 +61,16 @@ const NFTCard = ({ nft }: any) => {
 
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">
-            <p className="capitalize">{nft?.name}</p>
+            {nft?.name && (nft?.name).length > 15 ? (
+              <Tooltip label={nft?.name} placement="bottom-start">
+                <p className="capitalize">
+                  {customTruncateHandler(nft?.name, 15)}
+                </p>
+              </Tooltip>
+            ) : (
+              <p className="capitalize">{nft?.name}</p>
+            )}
+
             <p>
               {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>

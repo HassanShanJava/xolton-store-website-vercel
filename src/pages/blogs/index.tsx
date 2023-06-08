@@ -3,6 +3,7 @@ import React from "react";
 
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { websiteInfo } from "~/utils/helper";
+import SeoHead from "~/components/Layout/SeoHead";
 
 export async function getStaticProps() {
   const response: any = await fetch(
@@ -39,10 +40,22 @@ const BlogFunc = dynamic(() => import("~/components/Blogs/BlogsListing"), {
 });
 export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
   return (
-    <BlogFunc
-      storeBlogsData={storeBlogsData}
-      navData={navData}
-      webData={webData}
-    />
+    <>
+      <SeoHead
+        name={`Blogs | ${webData?.name}`}
+        title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
+        description="The one-stop NFT platform to turn your creative ideas into a full-blown NFT marketplace. Create your own NFT marketplace today for free."
+        domain_name={webData?.domain_name}
+        banner_image={webData?.banner_image}
+        icon={webData?.logo_image}
+        canonical_url={"blogs"}
+
+      />
+      <BlogFunc
+        storeBlogsData={storeBlogsData}
+        navData={navData}
+        webData={webData}
+      />
+    </>
   );
 }
