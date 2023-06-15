@@ -59,9 +59,9 @@ export async function maticToUSD(price = 0 as number) {
     );
 
     const response = await data.json();
-    
+
     const maticPrice = +response.Data[1].open * Number(price);
-    
+
     return `${maticPrice.toFixed(3)}`;
   } catch (error: any) {
     console.log(error, "convertor matic to usd error");
@@ -69,14 +69,71 @@ export async function maticToUSD(price = 0 as number) {
 }
 
 
-export  async function websiteInfo() {
-  const response=await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+export async function websiteInfo() {
+  try {
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // referer: "xoltanmarketplace.com",
+        },
+      }
+    );
+
+    return response;
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+export async function loginConnectInfo(payload: any) {
+
+  try {
+
+    payload = JSON.stringify(payload)
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          referer: "xoltanmarketplace.com",
+        },
+        method: "POST",
+        body: payload
+      }
+    );
+
+    // if (!response.ok) {
+    //   throw new Error("Network at fault!")
+    // }
+
+    // if(result.data){
+
+    // }
+    return response;
+
+  } catch (e) {
+    console.log(e)
+  }
+
+}
+
+
+export async function registerConnectInfo(payload: any) {
+  payload = JSON.stringify(payload)
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-customer/register`,
     {
       headers: {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      method: "POST",
+      body: payload
     }
   );
 

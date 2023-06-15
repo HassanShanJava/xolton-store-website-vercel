@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import Footer from "~/components/Layout/Footer";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
@@ -25,17 +26,20 @@ const PrivacyFunc = dynamic(
 );
 export default function FaqPage({ navData, webData }: any) {
   return (
-    <>
+    <div className="bg-bg-1">
       <SeoHead
         name={`Privacy | ${webData?.name}`}
         title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
-        description="The one-stop NFT platform to turn your creative ideas into a full-blown NFT marketplace. Create your own NFT marketplace today for free."
+        description={webData.description}
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
         canonical_url={"privacy"}
       />
-      <PrivacyFunc navData={navData} webData={webData} />;
-    </>
+      <div className="mx-auto max-w-[1600px]">
+        <PrivacyFunc navData={navData} webData={webData} />;
+      </div>
+      <Footer webData={webData}/>
+    </div>
   );
 }

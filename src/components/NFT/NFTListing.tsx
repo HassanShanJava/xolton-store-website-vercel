@@ -11,7 +11,7 @@ const NFTListing = ({ contract_id }: any) => {
   const [nfts, setNfts] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
-  
+
   const {
     isLoading,
     isError,
@@ -125,7 +125,7 @@ const NFTListing = ({ contract_id }: any) => {
       searchQuery: "",
     }));
   }
- 
+
   return (
     <>
       <div className=" h-full  w-full ">
@@ -194,7 +194,7 @@ const NFTListing = ({ contract_id }: any) => {
         </div>
 
         {/* nfts list */}
-        {nfts?.length ? (
+        {nfts?.length > 0 ? (
           <div className="w-full">
             <InfiniteScroll
               dataLength={nfts.length > 0 && nfts.length}
@@ -217,16 +217,17 @@ const NFTListing = ({ contract_id }: any) => {
             </InfiniteScroll>
           </div>
         ) : (
-          <div className="flex min-h-[40vh] items-center justify-center">
-            <p className="text-center text-4xl">No NFT's found</p>
-          </div>
+          <>
+            <LoadingSkeleton data={4} nft={nfts} />
+          </>
         )}
 
-        {isError && nfts.length == 0 && (
-          <div className="flex min-h-[40vh] items-center justify-center">
-            <h1 className="text-2xl ">No NFT's available yet</h1>
-          </div>
-        )}
+        {isError ||
+          (nfts.length == 0 && (
+            <div className="flex min-h-[40vh] items-center justify-center">
+              <h1 className="text-2xl ">No NFT's available yet</h1>
+            </div>
+          ))}
       </div>
     </>
   );
@@ -235,7 +236,6 @@ const NFTListing = ({ contract_id }: any) => {
 export default NFTListing;
 
 const LoadingSkeleton = ({ data, nft }: any) => {
-
   return (
     <>
       {nft.length > 0

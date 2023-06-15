@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
-import { customTruncateHandler, renderNFTIcon } from "~/utils/helper";
+import {
+  customTruncateHandler,
+  loginConnectInfo,
+  renderNFTIcon,
+} from "~/utils/helper";
 import { web3Init } from "~/store/slices/web3Slice";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
@@ -16,7 +20,7 @@ import { setAccount } from "~/store/slices/web3Slice";
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import NewUser from "../Ui/NewUser";
 
@@ -28,11 +32,58 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const { addToast } = CustomToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
+  const loginConnect = useMutation({
+    mutationFn: (payload) => {
+      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload), // body data type must match "Content-Type" header
+      });
+    },
+  });
 
   // connect wallet
   const connectMetamask = async () => {
-    setShowPop(true);
-    // let data: any = await initWeb3();
+    //
+
+    try {
+      let data: any = await initWeb3();
+
+      const payload: any = {
+        store_id: process.env.NEXT_PUBLIC_STORE_ID,
+        wallet_address: data?.account,
+      };
+      // const response =  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
+      //   method: "POST", // *GET, POST, PUT, DELETE, etc.
+      //   mode: "no-cors",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(payload), // body data type must match "Content-Type" header
+      // });
+
+      const response = await loginConnect.mutateAsync(payload);
+
+      console.log({ response });
+      if (response?.body === null) {
+        
+        setShowPop(true);
+      }else{
+        dispatch(
+          web3Init({
+            web3: data?.web3,
+            account: data?.account,
+            chainId: data?.chainId,
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
     // if (data?.success !== false) {
     //   addToast({
     //     id: "connect-wallet",
@@ -40,13 +91,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     //     type: "success",
     //   });
 
-    //   dispatch(
-    //     web3Init({
-    //       web3: data?.web3,
-    //       account: data?.account,
-    //       chainId: data?.chainId,
-    //     })
-    //   );
     // } else {
     //   data && data.message.message
     //     ? addToast({
@@ -184,9 +228,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
             >
               {customTruncateHandler(account, 8)}
+              {/* Connect Wallet */}
             </button>
           ) : (
             <button

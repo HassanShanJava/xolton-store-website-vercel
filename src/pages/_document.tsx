@@ -8,7 +8,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
-        <meta name="description" content={` Store`} />
+        <meta name="description" content={`Store`} />
         <meta property="og:title" content={"store detail"} key="title" />
         {/* <link rel="icon" href={renderNFTIcon(details?.data?.web)} /> */}
 

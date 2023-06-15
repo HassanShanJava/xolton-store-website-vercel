@@ -16,6 +16,7 @@ const SeoHead = ({ ...props }: any) => {
       <meta property="og:title" content={props?.title} key="title" />
       <meta name="description" content={`${props?.description} Store`} />
       <meta property="og:title" content={props?.title} />
+      <meta name="robots" content="noindex,nofollow" />
       <meta
         property="og:site_name"
         content={`${props?.domain_name} Store`}
