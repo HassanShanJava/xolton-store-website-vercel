@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { checkTargetForNewValues } from "framer-motion";
 
 import { useMutation } from "@tanstack/react-query";
+import { CustomToast } from "../globalToast";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -31,7 +32,7 @@ const Popup = ({
   const router = useRouter();
 
   const [isPurchase, setIsPurchase] = useState<any>("");
-  const toast = useToast();
+  const {addToast} = CustomToast();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
@@ -50,6 +51,8 @@ const Popup = ({
       });
     },
   });
+
+  
   const nftOrder = useMutation({
     mutationFn: (newTodo) => {
       return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
@@ -65,11 +68,11 @@ const Popup = ({
 
   const purchaseNFT = async () => {
     if (accountBalance < total) {
-      toast({
-        title: "Not Enough Balance",
-        status: "error",
-        isClosable: true,
-        position: "top-left",
+      addToast({
+        id:"transaction-id",
+        message: "Not Enough Balance",
+        type: "error",
+
       });
       return;
     } else {
@@ -110,22 +113,22 @@ const Popup = ({
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
-        toast({
-          title: "Transaction Completed",
-          status: "success",
-          isClosable: true,
-          position: "top-left",
+        addToast({
+          id:"transaction-id",
+          message: "Transaction Completed",
+          type: "success",
+          
         });
 
         setIsPurchase(true);
         setBuy(false);
         router.push("/");
       } else {
-        toast({
-          title: buyData.msg as string,
-          status: "error",
-          isClosable: true,
-          position: "top-left",
+        addToast({
+          id:"transaction-id",
+          message: buyData.msg as string,
+          type: "error",
+
         });
 
         setBuy(false);

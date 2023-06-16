@@ -11,7 +11,7 @@ import { displayDate, renderNFTImage } from "~/utils/helper";
 const BlogsListing = ({ storeBlogsData }: any) => {
   return (
     <>
-      <div className="max-h-full min-h-screen w-full  bg-bg-1 px-8">
+      <div className="max-h-full min-h-screen w-full max-w-[1600px] mx-auto  bg-bg-1 px-8">
         <section className="pb-6 pt-6 lg:pb-6 ">
           <div className="container mx-auto">
             <div className="-mx-4 flex flex-wrap justify-center">

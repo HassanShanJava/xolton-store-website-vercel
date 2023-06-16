@@ -4,7 +4,12 @@ import React, { useEffect, useState } from "react";
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
-import { customTruncateHandler, renderNFTIcon } from "~/utils/helper";
+import {
+  customTruncateHandler,
+  getCustomerConnectInfo,
+  loginConnectInfo,
+  renderNFTIcon,
+} from "~/utils/helper";
 import { web3Init } from "~/store/slices/web3Slice";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
@@ -15,51 +20,93 @@ import { setAccount } from "~/store/slices/web3Slice";
 
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
+import axios from "axios";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CustomToast } from "../globalToast";
+import NewUser from "../Ui/NewUser";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
+  const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
-  const toast = useToast();
+  const { addToast } = CustomToast();
 
   const { account } = useSelector((state: RootState) => state.web3);
+  const loginConnect = useMutation({
+    mutationFn: (payload) => {
+      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }).then((res) => res.json());
+
+    },
+  });
 
   // connect wallet
   const connectMetamask = async () => {
-    let data: any = await initWeb3();
-    if (data?.success !== false) {
-      toast({
-        title: "Wallet connected",
-        status: "success",
+    //
 
-        isClosable: true,
-        position: "top-left",
-      });
+    try {
+      let data: any = await initWeb3();
 
-      dispatch(
-        web3Init({
-          web3: data?.web3,
-          account: data?.account,
-          chainId: data?.chainId,
-        })
-      );
-    } else {
-      data && data.message.message
-        ? toast({
-            title: data.message.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
-          })
-        : toast({
-            title: data.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
-          });
+      const payload: any = {
+        store_id: process.env.NEXT_PUBLIC_STORE_ID,
+        wallet_address: data?.account,
+      };
+      
+
+      const response = await loginConnect.mutateAsync(payload);
+      // const response2 = await getCustomerConnectInfo();
+
+      // const response = await loginConnectInfo(payload);
+
+      console.log({ response }, "response");
+      // console.log({ response2 }, "result");
+
+      // if (response?.body === null) {
+
+      //   setShowPop(true);
+      // }else{
+      //   dispatch(
+      //     web3Init({
+      //       web3: data?.web3,
+      //       account: data?.account,
+      //       chainId: data?.chainId,
+      //     })
+      //   );
+      // }
+    } catch (error) {
+      console.log(error);
     }
+
+    // if (data?.success !== false) {
+    //   addToast({
+    //     id: "connect-wallet",
+    //     message: "Wallet connected",
+    //     type: "success",
+    //   });
+
+    // } else {
+    //   data && data.message.message
+    //     ? addToast({
+    //         id: "connect-wallet",
+    //         message: data.message.message,
+    //         type: "error",
+    //         position: "top-right",
+    //       })
+    //     : addToast({
+    //         id: "connect-wallet",
+    //         message: data.message,
+    //         type: "error",
+    //         position: "top-right",
+    //       });
+    // }
   };
 
   if (typeof window !== "undefined") {
@@ -67,16 +114,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
       if (account !== "") {
         dispatch(setAccount(accounts[0]));
       }
-
-      // else{
-      // if no extension found?
-      // toast({
-      //   title: "Please Install Metamask",
-      //   status: "error",
-      //   isClosable: true,
-      //   position: "top-left",
-      // });
-      // }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -192,9 +229,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
             >
               {customTruncateHandler(account, 8)}
+              {/* Connect Wallet */}
             </button>
           ) : (
             <button
@@ -207,6 +245,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           )}
         </div>
       </div>
+      {showPop && <NewUser open={showPop} setOpen={setShowPop} />}
     </>
   );
 };

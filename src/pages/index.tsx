@@ -1,23 +1,27 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Homepage from "~/components/Homepage/Homepage";
+import Footer from "~/components/Layout/Footer";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
-const Home: NextPage = ({ navData, webData }: any) => {
+const Home: NextPage = ({ navData, webData, seoData }: any) => {
+  // console.log({webData,seoData},"webData, seoData")
   return (
     <>
       <SeoHead
         name={webData?.name}
         title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
-        description="The one-stop NFT platform to turn your creative ideas into a full-blown NFT marketplace. Create your own NFT marketplace today for free."
+        description={webData.description}
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
+        canonical_url={""}
       />
       <main>
         <Homepage webData={webData} navData={navData} />
       </main>
+      <Footer webData={webData}/>
     </>
   );
 };
@@ -32,9 +36,11 @@ export async function getStaticProps() {
   }
 
   const result: any = await response.json();
+  console.log(result.data,"result")
 
   const navData = result?.data?.navbar || [];
   const webData = result?.data?.website || {};
+  const seoData = result?.data?.seo[0] || {};
 
-  return { props: { navData, webData } };
+  return { props: { navData, webData,seoData } };
 }

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://ten.xoltanmarketplace.com/
+
+# Sitemaps
+Sitemap: https://ten.xoltanmarketplace.com/sitemap.xml

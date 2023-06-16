@@ -2,9 +2,12 @@ const fs = require("fs");
 const loadEnvConfig = require("@next/env");
 loadEnvConfig.loadEnvConfig(process.cwd());
 
+
+// tailwindData
 const runAsync = async () => {
   // find all scripts in subfolder
   const response = await fetch(
+
     `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
     {
       headers: {
@@ -46,21 +49,18 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": ${
-          storeThemeData?.website?.theme?.colors.background
-            ? JSON.stringify(storeThemeData?.website?.theme?.colors.background)
-            : "#F1F3F5"
-        },
-        "bg-2": ${
-          storeThemeData?.website?.theme?.colors.header
-            ? JSON.stringify(storeThemeData?.website?.theme?.colors.header)
-            : "#F1F3F5"
-        },
-        "bg-3": ${
-          storeThemeData?.website?.theme?.colors.button
-            ? JSON.stringify(storeThemeData?.website?.theme?.colors.button)
-            : "#000"
-        },
+        "bg-1": ${storeThemeData?.website?.theme?.colors.background
+      ? JSON.stringify(storeThemeData?.website?.theme?.colors.background)
+      : "#F1F3F5"
+    },
+        "bg-2": ${storeThemeData?.website?.theme?.colors.header
+      ? JSON.stringify(storeThemeData?.website?.theme?.colors.header)
+      : "#F1F3F5"
+    },
+        "bg-3": ${storeThemeData?.website?.theme?.colors.button
+      ? JSON.stringify(storeThemeData?.website?.theme?.colors.button)
+      : "#000"
+    },
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",
@@ -106,9 +106,62 @@ export default {
   });
 };
 
+// sitemapData
+const runSiteAsync = async () => {
+  // find all scripts in subfolder
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const result = await response.json();
+
+  console.log({ result }, "result v")
+  const storeDetail = result?.data;
+  const domainName = storeDetail?.website?.domain_name;
+
+  // SEO
+  let robotFlag;
+  let robotContentFlag;
+  let sitemapFlag;
+  if (storeDetail?.seo[0]) {
+    robotFlag = storeDetail?.seo[0]?.robot?.robot
+    robotContentFlag = storeDetail?.seo[0]?.robot?.robot_content
+    sitemapFlag = storeDetail?.seo[0]?.sitemap
+  }
+
+  const sitemapData = `/** @type {import('next-sitemap').IConfig} */
+module.exports = {
+  siteUrl:"https://${domainName}.${process.env.NEXT_PUBLIC_LIVE_URL}",
+  generateRobotsTxt: ${robotFlag}, // (optional)
+  generateIndexSitemap: ${sitemapFlag},
+  ${robotFlag ?
+      `robotsTxtOptions: {
+          transformRobotsTxt: async () => 
+          ${JSON.stringify(robotContentFlag)}
+      }`: ""
+    }
+};`
+
+  // fs.writeFileSync("../../next-sitemap.config.js", sitemapData);
+  console.log(sitemapData, "sitemapData");
+  await fs.writeFileSync("next-sitemap.config.js", sitemapData, {
+    encoding: "utf8",
+    flag: "w",
+  });
+};
+
+
 // Self-invocation async function
 (async () => {
-  await runAsync();
+  await Promise.all([runAsync(), runSiteAsync()]);
 })().catch((err) => {
   console.error(err);
   throw err;

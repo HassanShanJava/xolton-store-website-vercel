@@ -59,9 +59,9 @@ export async function maticToUSD(price = 0 as number) {
     );
 
     const response = await data.json();
-    
+
     const maticPrice = +response.Data[1].open * Number(price);
-    
+
     return `${maticPrice.toFixed(3)}`;
   } catch (error: any) {
     console.log(error, "convertor matic to usd error");
@@ -69,16 +69,85 @@ export async function maticToUSD(price = 0 as number) {
 }
 
 
-export  async function websiteInfo() {
-  const response=await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+export async function websiteInfo() {
+  try {
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // referer: "xoltanmarketplace.com",
+        },
+      }
+    );
+
+    return response;
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+export async function loginConnectInfo(payload: any) {
+  try {
+
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
+      {
+        method: "POST",
+        mode: "no-cors", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload)
+      }
+    ).then(res=>res.json());
+
+    console.log({response},"response login connect")
+    return response;
+
+  } catch (e) {
+    console.log(e)
+  }
+
+}
+
+
+export async function registerConnectInfo(payload: any) {
+  const newpayload = JSON.stringify(payload)
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-customer/register`,
     {
       headers: {
         "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
+        // referer: "xoltanmarketplace.com",
       },
+      mode:"no-cors",
+      method: "POST",
+      body: newpayload
     }
   );
+
+  return response;
+}
+
+
+
+export async function getCustomerConnectInfo() {
+  // const newpayload = JSON.stringify(payload)
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-customer/`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        // referer: "xoltanmarketplace.com",
+      },
+      mode:"no-cors",
+      method: "GET",
+    }
+  ).then(res=>res.json());
 
   return response;
 } 
