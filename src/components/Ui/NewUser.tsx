@@ -19,7 +19,6 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
   const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-
   const registerConnect = useMutation({
     mutationFn: async (payload) => {
       return await fetch(
@@ -40,9 +39,6 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
     setLoading(true);
     let data: any = await initWeb3();
     if (data?.success !== false) {
-      
-
-
       const payload = {
         store_id: process.env.NEXT_PUBLIC_STORE_ID,
         wallet_address: data?.account,
@@ -50,14 +46,15 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
       };
 
       const res = await registerConnect.mutateAsync(payload);
+      console.log({res},"res register")
 
-      if (res) {
+      if (res.status == 200) {
         addToast({
           id: "registered",
           type: "success",
           message: "Registered Successfully!",
         });
-        
+
         dispatch(
           web3Init({
             web3: data?.web3,
@@ -65,8 +62,8 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
             chainId: data?.chainId,
           })
         );
-  
-        setOpen(false)
+
+        setOpen(false);
 
         // addToast({
         //   id: "connect-wallet",
@@ -74,21 +71,23 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
         //   type: "success",
         // });
       } else {
-        data && data.message.message
-          ? addToast({
-              id: "connect-wallet",
-              message: data.message.message,
-              type: "error",
-              position: "top-right",
-            })
-          : addToast({
-              id: "connect-wallet",
-              message: data.message,
-              type: "error",
-              position: "top-right",
-            });
+        console.log(res.status, res.statusText);
       }
       // setOpen(false);
+    } else {
+      data && data.message.message
+        ? addToast({
+            id: "connect-wallet",
+            message: data.message.message,
+            type: "error",
+            position: "top-right",
+          })
+        : addToast({
+            id: "connect-wallet",
+            message: data.message,
+            type: "error",
+            position: "top-right",
+          });
     }
   };
 

@@ -6,7 +6,7 @@ import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
 const Home: NextPage = ({ navData, webData, seoData }: any) => {
-  console.log({webData,seoData},"webData, seoData")
+  // console.log({webData,seoData},"webData, seoData")
   return (
     <>
       <SeoHead

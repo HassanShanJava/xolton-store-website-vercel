@@ -6,6 +6,7 @@ import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
 import {
   customTruncateHandler,
+  getCustomerConnectInfo,
   loginConnectInfo,
   renderNFTIcon,
 } from "~/utils/helper";
@@ -19,6 +20,7 @@ import { setAccount } from "~/store/slices/web3Slice";
 
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
+import axios from "axios";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
@@ -35,13 +37,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const loginConnect = useMutation({
     mutationFn: (payload) => {
       return fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        method: "POST",
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload), // body data type must match "Content-Type" header
-      });
+        body: JSON.stringify(payload),
+      }).then((res) => res.json());
+
     },
   });
 
@@ -56,30 +59,28 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         store_id: process.env.NEXT_PUBLIC_STORE_ID,
         wallet_address: data?.account,
       };
-      // const response =  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
-      //   method: "POST", // *GET, POST, PUT, DELETE, etc.
-      //   mode: "no-cors",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(payload), // body data type must match "Content-Type" header
-      // });
+      
 
       const response = await loginConnect.mutateAsync(payload);
+      // const response2 = await getCustomerConnectInfo();
 
-      console.log({ response });
-      if (response?.body === null) {
-        
-        setShowPop(true);
-      }else{
-        dispatch(
-          web3Init({
-            web3: data?.web3,
-            account: data?.account,
-            chainId: data?.chainId,
-          })
-        );
-      }
+      // const response = await loginConnectInfo(payload);
+
+      console.log({ response }, "response");
+      // console.log({ response2 }, "result");
+
+      // if (response?.body === null) {
+
+      //   setShowPop(true);
+      // }else{
+      //   dispatch(
+      //     web3Init({
+      //       web3: data?.web3,
+      //       account: data?.account,
+      //       chainId: data?.chainId,
+      //     })
+      //   );
+      // }
     } catch (error) {
       console.log(error);
     }

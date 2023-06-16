@@ -90,30 +90,22 @@ export async function websiteInfo() {
 
 
 export async function loginConnectInfo(payload: any) {
-
   try {
 
-    payload = JSON.stringify(payload)
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
       {
+        method: "POST",
+        mode: "no-cors", 
         headers: {
           "Content-Type": "application/json",
-          referer: "xoltanmarketplace.com",
         },
-        method: "POST",
-        body: payload
+        body: JSON.stringify(payload)
       }
-    );
+    ).then(res=>res.json());
 
-    // if (!response.ok) {
-    //   throw new Error("Network at fault!")
-    // }
-
-    // if(result.data){
-
-    // }
+    console.log({response},"response login connect")
     return response;
 
   } catch (e) {
@@ -124,18 +116,38 @@ export async function loginConnectInfo(payload: any) {
 
 
 export async function registerConnectInfo(payload: any) {
-  payload = JSON.stringify(payload)
+  const newpayload = JSON.stringify(payload)
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/store-customer/register`,
     {
       headers: {
         "Content-Type": "application/json",
-        referer: "xoltanmarketplace.com",
+        // referer: "xoltanmarketplace.com",
       },
+      mode:"no-cors",
       method: "POST",
-      body: payload
+      body: newpayload
     }
   );
+
+  return response;
+}
+
+
+
+export async function getCustomerConnectInfo() {
+  // const newpayload = JSON.stringify(payload)
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/store-customer/`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        // referer: "xoltanmarketplace.com",
+      },
+      mode:"no-cors",
+      method: "GET",
+    }
+  ).then(res=>res.json());
 
   return response;
 } 
