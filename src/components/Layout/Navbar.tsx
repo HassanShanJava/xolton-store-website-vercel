@@ -44,7 +44,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         },
         body: JSON.stringify(payload),
       }).then((res) => res.json());
-
     },
   });
 
@@ -59,14 +58,42 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         store_id: process.env.NEXT_PUBLIC_STORE_ID,
         wallet_address: data?.account,
       };
-      
 
-      const response = await loginConnect.mutateAsync(payload);
+      if (data?.success !== false) {
+        addToast({
+          id: "connect-wallet",
+          message: "Wallet connected",
+          type: "success",
+        });
+        dispatch(
+          web3Init({
+            web3: data?.web3,
+            account: data?.account,
+            chainId: data?.chainId,
+          })
+        );
+      } else {
+        data && data.message.message
+          ? addToast({
+              id: "connect-wallet",
+              message: data.message.message,
+              type: "error",
+              position: "top-right",
+            })
+          : addToast({
+              id: "connect-wallet",
+              message: data.message,
+              type: "error",
+              position: "top-right",
+            });
+      }
+
+      // const response = await loginConnect.mutateAsync(payload);
       // const response2 = await getCustomerConnectInfo();
 
       // const response = await loginConnectInfo(payload);
 
-      console.log({ response }, "response");
+      // console.log({ response }, "response");
       // console.log({ response2 }, "result");
 
       // if (response?.body === null) {
@@ -84,29 +111,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     } catch (error) {
       console.log(error);
     }
-
-    // if (data?.success !== false) {
-    //   addToast({
-    //     id: "connect-wallet",
-    //     message: "Wallet connected",
-    //     type: "success",
-    //   });
-
-    // } else {
-    //   data && data.message.message
-    //     ? addToast({
-    //         id: "connect-wallet",
-    //         message: data.message.message,
-    //         type: "error",
-    //         position: "top-right",
-    //       })
-    //     : addToast({
-    //         id: "connect-wallet",
-    //         message: data.message,
-    //         type: "error",
-    //         position: "top-right",
-    //       });
-    // }
   };
 
   if (typeof window !== "undefined") {
