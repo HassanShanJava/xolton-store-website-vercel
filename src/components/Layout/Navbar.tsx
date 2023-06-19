@@ -35,15 +35,17 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
   const { account } = useSelector((state: RootState) => state.web3);
   const loginConnect = useMutation({
-    mutationFn: (payload) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }).then((res) => res.json());
+    mutationFn: async (payload) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await response.json();
+      return result;
     },
   });
 
@@ -59,12 +61,42 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         wallet_address: data?.account,
       };
 
-      if (data?.success !== false) {
-        addToast({
-          id: "connect-wallet",
-          message: "Wallet connected",
-          type: "success",
-        });
+      const response = await loginConnect.mutateAsync(payload);
+      console.log({ response });
+
+      if (response?.storeCustomer === null) {
+        setShowPop(true);
+      } else {
+        if (data?.success !== false) {
+          addToast({
+            id: "connect-wallet",
+            message: "Wallet connected",
+            type: "success",
+          });
+          dispatch(
+            web3Init({
+              web3: data?.web3,
+              account: data?.account,
+              chainId: data?.chainId,
+            })
+          );
+
+          localStorage.setItem("store_customer", JSON.stringify(response.storeCustomer));
+        } else {
+          data && data.message.message
+            ? addToast({
+                id: "connect-wallet",
+                message: data.message.message,
+                type: "error",
+                position: "top-right",
+              })
+            : addToast({
+                id: "connect-wallet",
+                message: data.message,
+                type: "error",
+                position: "top-right",
+              });
+        }
         dispatch(
           web3Init({
             web3: data?.web3,
@@ -72,51 +104,37 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             chainId: data?.chainId,
           })
         );
-      } else {
-        data && data.message.message
-          ? addToast({
-              id: "connect-wallet",
-              message: data.message.message,
-              type: "error",
-              position: "top-right",
-            })
-          : addToast({
-              id: "connect-wallet",
-              message: data.message,
-              type: "error",
-              position: "top-right",
-            });
       }
-
-      // const response = await loginConnect.mutateAsync(payload);
-      // const response2 = await getCustomerConnectInfo();
-
-      // const response = await loginConnectInfo(payload);
-
-      // console.log({ response }, "response");
-      // console.log({ response2 }, "result");
-
-      // if (response?.body === null) {
-
-      //   setShowPop(true);
-      // }else{
-      //   dispatch(
-      //     web3Init({
-      //       web3: data?.web3,
-      //       account: data?.account,
-      //       chainId: data?.chainId,
-      //     })
-      //   );
-      // }
     } catch (error) {
       console.log(error);
     }
   };
 
   if (typeof window !== "undefined") {
-    window?.ethereum?.on("accountsChanged", function (accounts: String) {
+    window?.ethereum?.on("accountsChanged", async function (accounts: String) {
       if (account !== "") {
-        dispatch(setAccount(accounts[0]));
+        const payload: any = {
+          store_id: process.env.NEXT_PUBLIC_STORE_ID,
+          wallet_address: accounts[0],
+        };
+
+        const changed_response = await loginConnect.mutateAsync(payload);
+        console.log({ changed_response });
+        if (changed_response?.storeCustomer === null) {
+          setShowPop(true);
+        } else {
+          dispatch(setAccount(accounts[0]));
+          addToast({
+            id: "acc-changed",
+            type: "success",
+            message: "Account Changed!",
+          });
+          console.log(changed_response.store_customer)
+          localStorage.setItem(
+            "store_customer",
+            JSON.stringify(changed_response.storeCustomer)
+          );
+        }
       }
     });
 

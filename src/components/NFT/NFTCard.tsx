@@ -115,7 +115,7 @@ const NFTCard = ({ nft }: any) => {
               </button>
             )}
 
-            {nft?.sell_type?.includes("offer") && (
+            {(nft?.sell_type?.includes("offer") ||nft?.sell_type?.includes("fixed-offer")) && (
               <button
                 type="button"
                 onClick={(e) => {

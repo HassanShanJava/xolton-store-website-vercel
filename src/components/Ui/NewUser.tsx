@@ -21,17 +21,16 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
 
   const registerConnect = useMutation({
     mutationFn: async (payload) => {
-      return await fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/store-customer/register`,
         {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload), // body data type must match "Content-Type" header
+          method: "POST",
+          body: JSON.stringify(payload),
         }
       );
+
+      const result = await response.json();
+      return result;
     },
   });
 
@@ -48,7 +47,7 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
       const res = await registerConnect.mutateAsync(payload);
       console.log({ res }, "res register");
 
-      if (res.status == 200) {
+      if (res.store_customer !== null) {
         addToast({
           id: "registered",
           type: "success",
@@ -62,18 +61,14 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
             chainId: data?.chainId,
           })
         );
-
+        console.log(res.store_customer)
+        localStorage.setItem("store_customer", JSON.stringify(res.storeCustomer));
         setOpen(false);
 
-        // addToast({
-        //   id: "connect-wallet",
-        //   message: "Wallet connected",
-        //   type: "success",
-        // });
       } else {
         console.log(res.status, res.statusText);
       }
-      // setOpen(false);
+
     } else {
       data && data.message.message
         ? addToast({
