@@ -26,7 +26,7 @@ const NFTCard = ({ nft }: any) => {
 
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
-  
+
   const buyNFT = async () => {
     account == ""
       ? addToast({
@@ -46,7 +46,7 @@ const NFTCard = ({ nft }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
-  
+
   const offerNFT = async () => {
     account == ""
       ? addToast({
@@ -66,7 +66,7 @@ const NFTCard = ({ nft }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
-  
+
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
@@ -96,31 +96,38 @@ const NFTCard = ({ nft }: any) => {
             )}
 
             <p>
-              {nft?.price} <span className="text-xs lowercase">MATIC</span>
+              {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "}
+              <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 
-          <div className="px-2 flex justify-between items-center gap-2">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                offerNFT();
-              }}
-              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-            >
-              Offer Now
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                buyNFT();
-              }}
-              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-            >
-              Buy
-            </button>
+          <div className="flex items-center justify-between gap-2 px-2">
+            {nft?.sell_type?.includes("fixed") && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  buyNFT();
+                }}
+                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+              >
+                Buy
+              </button>
+            )}
+
+            {nft?.sell_type?.includes("offer") && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  offerNFT();
+                }}
+                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+              >
+                Offer Now
+              </button>
+            )}
+
             {showPop && (
               <Popup
                 nft={nft}
