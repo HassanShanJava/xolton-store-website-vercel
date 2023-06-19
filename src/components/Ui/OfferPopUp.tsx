@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { useToast } from "@chakra-ui/react";
-import Web3 from "web3";
+// import { useToast } from "@chakra-ui/react";
+// import Web3 from "web3";
 import { useSelector } from "react-redux";
-import { web3Init } from "~/store/slices/web3Slice";
+
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
 
 import { useRouter } from "next/router";
 
-import { checkTargetForNewValues } from "framer-motion";
-
 import { useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
-interface PopUpType {
+import { useForm } from "react-hook-form";
+import { Input } from "@chakra-ui/react";
+
+interface OfferPopUpType {
   open: boolean;
   setBuy: Function;
   price: number;
@@ -21,15 +22,16 @@ interface PopUpType {
   accountBalance: number;
 }
 
-const Popup = ({
+const OfferPopUp = ({
   open,
   setBuy,
   nft,
   price,
   tax,
   accountBalance,
-}: PopUpType) => {
+}: OfferPopUpType) => {
   const router = useRouter();
+  const { handleSubmit, register, setValue } = useForm<any>();
 
   const [isPurchase, setIsPurchase] = useState<any>("");
   const { addToast } = CustomToast();
@@ -65,7 +67,7 @@ const Popup = ({
     },
   });
 
-  const purchaseNFT = async () => {
+  const offerNFT = async () => {
     if (accountBalance < total) {
       addToast({
         id: "transaction-id",
@@ -144,7 +146,7 @@ const Popup = ({
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="mb-5 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl ">Checkout</h3>
+                  <h3 className="text-3xl ">Checkout - Offer</h3>
                   <div
                     onClick={(e) => {
                       e.preventDefault();
@@ -157,69 +159,77 @@ const Popup = ({
                 </div>
                 {/*body*/}
 
-                <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      Your balance
-                    </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {(+accountBalance).toFixed(5)}{" "}
-                      <span className="text-xs lowercase">MATIC</span>
-                    </p>
-                  </div>
+                <form onSubmit={handleSubmit(offerNFT)}>
+                  <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        Your balance
+                      </p>
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        {(+accountBalance).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      NFT Price
-                    </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {(+price).toFixed(5)}{" "}
-                      <span className="text-xs lowercase">MATIC</span>
-                    </p>
-                  </div>
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        NFT Price
+                      </p>
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        {(+price).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      Service fee 2%
-                    </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {(+tax).toFixed(5)}{" "}
-                      <span className="text-xs lowercase">MATIC</span>
-                    </p>
-                  </div>
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        Service fee 2%
+                      </p>
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        {(+tax).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      You will pay
-                    </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)}{" "}
-                      <span className="text-xs lowercase">MATIC</span>
-                    </p>
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        You will pay
+                      </p>
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        {total.toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
+
+                    <Input
+                      type="number"
+                      placeholder="Offer Price"
+                      required
+                      {...register("offer_price")}
+                    />
                   </div>
-                </div>
-                {/*footer*/}
-                <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
-                  <button
-                    className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
-                    type="button"
-                    onClick={purchaseNFT}
-                    disabled={isPurchase}
-                  >
-                    {isPurchase !== false ? (
-                      "Purchase"
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-center py-1.5">
-                          <div className="progress"></div>
-                          <div className="progress"></div>
-                          <div className="progress"></div>
-                          <div className="progress"></div>
-                        </div>
-                      </>
-                    )}
-                  </button>
-                </div>
+                  {/*footer*/}
+                  <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
+                    <button
+                      className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+                      type="submit"
+                      disabled={isPurchase}
+                    >
+                      {isPurchase !== false ? (
+                        "Purchase"
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-center py-1.5">
+                            <div className="progress"></div>
+                            <div className="progress"></div>
+                            <div className="progress"></div>
+                            <div className="progress"></div>
+                          </div>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -232,4 +242,4 @@ const Popup = ({
   );
 };
 
-export default Popup;
+export default OfferPopUp;

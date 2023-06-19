@@ -46,7 +46,7 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
       };
 
       const res = await registerConnect.mutateAsync(payload);
-      console.log({res},"res register")
+      console.log({ res }, "res register");
 
       if (res.status == 200) {
         addToast({
