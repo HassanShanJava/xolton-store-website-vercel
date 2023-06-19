@@ -7,7 +7,7 @@ import { websiteInfo } from "~/utils/helper";
 export async function getStaticProps() {
   const responseWeb: any = await websiteInfo();
 
-  if (!responseWeb.ok) {
+  if (!responseWeb?.ok) {
     throw new Error("Network response was not ok");
   }
   const resultWeb: any = await responseWeb.json();

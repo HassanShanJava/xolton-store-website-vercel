@@ -27,6 +27,7 @@ import { CustomToast } from "../globalToast";
 import NewUser from "../Ui/NewUser";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
+  console.log({navprops})
   const [nav, setNav] = useState(false);
   const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
@@ -62,7 +63,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
       };
 
       const response = await loginConnect.mutateAsync(payload);
-      console.log({ response });
+
 
       if (response?.storeCustomer === null) {
         setShowPop(true);

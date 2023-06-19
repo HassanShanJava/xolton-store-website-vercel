@@ -280,7 +280,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
 NFTDetail.getIntialProps = async () => {
   const res = await websiteInfo();
 
-  const json = await res.json();
+  const json = await res?.json();
   return { navData: json.navData, webData: json.webData };
 };
 export default NFTDetail;

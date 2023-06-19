@@ -44,7 +44,7 @@ export async function getStaticProps({ params }: any) {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  if (!responseWeb.ok) {
+  if (!responseWeb?.ok) {
     throw new Error("Network response was not ok");
   }
 
