@@ -2,10 +2,7 @@ import { type Config } from "tailwindcss";
 
 export default {
   darkMode: "class",
-  content: [
-    
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     fontFamily: {
       storeFont: ["poppins", "inter"],
@@ -26,9 +23,11 @@ export default {
         "bg-2": "#AD8D98",
         "bg-3": "#9A9AAB",
         "gt-1": "#A0AEC0",
-        "tx-1":"rgba(0,0,0,0.48)",
-        "tx-2":"rgba(0,0,0,0.24)",
-        "tx-3":"#9CA3AF",
+        "tx-1": "rgba(0,0,0,0.48)",
+        "tx-2": "rgba(0,0,0,0.24)",
+        "tx-3": "#9CA3AF",
+        "tx-4": "#16161a0a",
+        "tx-5": "#16161a99",
       },
       backgroundImage: {
         "gradient-24":
@@ -40,9 +39,8 @@ export default {
       xss: "300px",
       xs: "340px",
       xxs: "540px",
-      sx:"580px",
+      sx: "580px",
       sm: "640px",
-
 
       // => @media (min-width: 640px) { ... }
 
@@ -52,7 +50,7 @@ export default {
 
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
-      xlg:"1200px",
+      xlg: "1200px",
       xl: "1280px",
       // => @media (min-width: 1280px) { ... }
 

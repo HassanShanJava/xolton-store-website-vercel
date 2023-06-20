@@ -18,14 +18,36 @@ import { web3Init } from "~/store/slices/web3Slice";
 import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
-import { useToast } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  useToast,
+} from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { CustomToast } from "../globalToast";
+import OfferPopUp from "../Ui/OfferPopUp";
 
 const NFTDetail = ({ NFTDetail }: any) => {
   const router = useRouter();
   const { id } = router.query;
+  const [showOfferPop, setShowOfferPop] = useState(false);
+  const [showPop, setShowPop] = useState(false);
+  const [accountBalance, setAccountBalance] = useState("");
+  const [usdMatic, setUsdMatic] = useState<any>("");
+  const [usdMinPriceMatic, setUsdMinPriceMatic] = useState<any>("");
+
+  const toast = useToast();
+
+  const { account }: any = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
+  const { addToast } = CustomToast();
+
   // nft detail api
   const {
     isLoading,
@@ -69,15 +91,23 @@ const NFTDetail = ({ NFTDetail }: any) => {
       enabled: NFTDetail?.contract_id ? true : false,
     }
   );
-
-  const [showPop, setShowPop] = useState(false);
-  const [accountBalance, setAccountBalance] = useState("");
-  const [usdMatic, setUsdMatic] = useState<any>("");
-
-  const toast = useToast();
-
-  const { account }: any = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state: any) => state.web3);
+  const { data: NFTOffer } = useQuery(
+    ["nftOffer"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&nft_id=${id}&sell_type=offer`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: NFTDetail?.contract_id ? true : false,
+    }
+  );
 
   // buy nft
   const buyNFT = async () => {
@@ -97,21 +127,46 @@ const NFTDetail = ({ NFTDetail }: any) => {
 
     setAccountBalance(accountBalance);
   };
+  // offer nft
+  const offerNFT = async () => {
+    account == ""
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Connect Wallet",
+          type: "error",
+        })
+      : account == NFTDetail.creator_id
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Owner cannot buy there own NFT",
+          type: "error",
+        })
+      : setShowOfferPop(true);
 
+    const balance = await web3?.eth.getBalance(account);
+    const accountBalance = web3?.utils.fromWei(balance, "ether");
+    setAccountBalance(accountBalance);
+  };
   // convert matic to usd
   useEffect(() => {
     (async () => {
       if (NFTDetail !== null || NFTDetail !== undefined) {
         try {
           const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
+          const nftMinPrice: number = NFTDetail?.min_price
+            ? +NFTDetail?.min_price
+            : 0;
           const maitccprice = await maticToUSD(nftPrice);
+          const maitccMinprice = await maticToUSD(nftMinPrice);
+          setUsdMinPriceMatic(maitccMinprice);
           setUsdMatic(maitccprice);
         } catch (e) {
           console.log(e, "consvertion error front-end");
         }
       }
     })();
-  }, [nftApiDetail?.data[0]?.price]);
+  }, [nftApiDetail?.data[0]]);
+
   useEffect(() => {
     refetch();
   }, [id]);
@@ -150,30 +205,73 @@ const NFTDetail = ({ NFTDetail }: any) => {
               </p>
 
               {/* price and button */}
-              <div className="py-3">
-                <div className="my-3 flex justify-between">
-                  <p>
-                    {NFTDetail.price}{" "}
-                    <span className="text-xs lowercase text-slate-500">
-                      MATIC
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-xs lowercase text-slate-500">$</span>
-                    {` ${usdMatic}`}
-                  </p>
+              <div className="rounded-[16px] border-2 border-tx-4 px-2 ">
+                <div className="my-3 flex flex-col justify-between gap-2 md:flex-row">
+                  {NFTDetail?.sell_type?.includes("fixed") && (
+                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                      <p className="text-sm text-tx-5">Price</p>
+                      <p>
+                        <span className=" text-lg font-bold">
+                          {NFTDetail.price}{" "}
+                        </span>
+
+                        <span className="text-xs lowercase text-slate-500">
+                          MATIC
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-xs lowercase text-slate-500">
+                          ${` ${usdMatic}`}
+                        </span>
+                      </p>
+                    </div>
+                  )}
+                  {NFTDetail?.sell_type?.includes("offer") && (
+                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                      <p className="text-sm text-tx-5">Highest Offer</p>
+                      <p>
+                        <span className=" text-lg font-bold">
+                          {NFTDetail.min_price}{" "}
+                        </span>
+
+                        <span className="text-xs lowercase text-slate-500">
+                          MATIC
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-xs lowercase text-slate-500">
+                          ${` ${usdMinPriceMatic}`}
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <div className="mb-3">
-                  <button
-                    type="button"
-                    className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      buyNFT();
-                    }}
-                  >
-                    BUY
-                  </button>
+                <div className="mb-3 flex flex-col gap-2 md:flex-row">
+                  {NFTDetail?.sell_type?.includes("fixed") && (
+                    <button
+                      type="button"
+                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        buyNFT();
+                      }}
+                    >
+                      BUY
+                    </button>
+                  )}
+                  {NFTDetail?.sell_type?.includes("offer") && (
+                    <button
+                      type="button"
+                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        offerNFT();
+                      }}
+                    >
+                      Offer
+                    </button>
+                  )}
+
                   {showPop && NFTDetail && (
                     <Popup
                       open={showPop}
@@ -184,49 +282,134 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       accountBalance={+accountBalance}
                     />
                   )}
+                  {showOfferPop && (
+                    <OfferPopUp
+                      nft={NFTDetail}
+                      open={showOfferPop}
+                      setBuy={setShowOfferPop}
+                      price={+NFTDetail.price}
+                      tax={+NFTDetail.tax}
+                      accountBalance={+accountBalance}
+                    />
+                  )}
                 </div>
               </div>
 
               {/* nft detail */}
               <div className="py-6">
-                <div className=" group rounded-xl border border-tx-2 bg-white">
-                  <summary className="flex cursor-pointer list-none items-center justify-between p-3 font-medium">
-                    <span>NFT Detail</span>
-                  </summary>
-                  {/*divider  */}
-                  <div className=" border-t border-tx-2 " />
-                  <div className="md:text-md   text-xs text-slate-500  sm:text-sm">
-                    <div className="flex justify-between p-3">
-                      <p>Contract Address</p>
-                      <Link
-                        href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
-                        target="_blank"
+                <Accordion
+                  className=" group rounded-xl !border-none bg-white"
+                  allowToggle
+                >
+                  <AccordionItem
+                    className={` !border-t-0 ${
+                      NFTDetail.sell_type.includes("offer")
+                        ? " border-b-2 border-tx-2 "
+                        : " !border-b-0"
+                    }  `}
+                  >
+                    <h2>
+                      <AccordionButton
+                        _expanded={{ bg: "gray", color: "white" }}
+                        className=" group rounded-t-xl"
                       >
-                        <p className="hover:text-bg-2/80">
-                          {customTruncateHandler(NFTDetail?.contract_address)}
-                        </p>
-                      </Link>
-                    </div>
-                    {/*divider  */}
-                    <div className=" border-t border-tx-2" />
-                    <div className="flex justify-between p-3  ">
-                      <p>Token Standard</p>
-                      <p>ERC-721</p>
-                    </div>
-                    {/*divider  */}
-                    <div className=" border-t border-tx-2" />
-                    <div className="flex justify-between p-3  ">
-                      <p>Token ID</p>
-                      <p>{NFTDetail.token_id}</p>
-                    </div>
-                    {/*divider  */}
-                    <div className=" border-t border-tx-2" />
-                    <div className="flex justify-between p-3 ">
-                      <p>Blockchain</p>
-                      <p>Polygon - Matic</p>
-                    </div>
-                  </div>
-                </div>
+                        {/* <Box as="span" flex="1" textAlign="left">
+                          Section 1 title
+                        </Box> */}
+                        <summary className="flex-1 cursor-pointer list-none items-center justify-between p-3 text-left font-medium">
+                          <span>NFT Detail</span>
+                        </summary>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={0}>
+                      <div className="md:text-md   text-xs text-slate-500  sm:text-sm">
+                        <div className="flex justify-between p-3">
+                          <p>Contract Address</p>
+                          <Link
+                            href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
+                            target="_blank"
+                          >
+                            <p className="hover:text-bg-2/80">
+                              {customTruncateHandler(
+                                NFTDetail?.contract_address
+                              )}
+                            </p>
+                          </Link>
+                        </div>
+                        {/*divider  */}
+                        <div className=" border-t border-tx-2" />
+                        <div className="flex justify-between p-3  ">
+                          <p>Token Standard</p>
+                          <p>ERC-721</p>
+                        </div>
+                        {/*divider  */}
+                        <div className=" border-t border-tx-2" />
+                        <div className="flex justify-between p-3  ">
+                          <p>Token ID</p>
+                          <p>{NFTDetail.token_id}</p>
+                        </div>
+                        {/*divider  */}
+                        <div className=" border-t border-tx-2" />
+                        <div className="flex justify-between p-3 ">
+                          <p>Blockchain</p>
+                          <p>Polygon - Matic</p>
+                        </div>
+                      </div>
+                    </AccordionPanel>
+                  </AccordionItem>
+                  {NFTDetail.sell_type.includes("offer") && (
+                    <AccordionItem className="border-none">
+                      <h2>
+                        <AccordionButton
+                          _expanded={{ bg: "gray", color: "white" }}
+                        >
+                          <summary className="flex-1 cursor-pointer list-none items-center justify-between p-3 text-left font-medium">
+                            <span>NFT Offers</span>
+                          </summary>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={0}>
+                        <div
+                          className={`md:text-md h-72  ${
+                            NFTOffer &&
+                            NFTOffer?.length > 0 &&
+                            "overflow-x-hidden  overflow-y-scroll"
+                          } p-2  text-xs text-slate-500 sm:text-sm`}
+                        >
+                          {NFTOffer && NFTOffer?.length > 0 ? (
+                            NFTOffer?.map((item: any, index: any) => {
+                              return (
+                                <div key={index}>
+                                  <div className="flex justify-between p-3">
+                                    <p>Contract Address</p>
+                                    <Link
+                                      href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
+                                      target="_blank"
+                                    >
+                                      <p className="hover:text-bg-2/80">
+                                        {customTruncateHandler(
+                                          NFTDetail?.contract_address
+                                        )}
+                                      </p>
+                                    </Link>
+                                  </div>
+                                  {/*divider  */}
+                                  <div className=" border-t border-tx-2" />
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <div className=" flex items-center justify-center text-center text-lg">
+                              No Offers Yet!
+                            </div>
+                          )}
+                        </div>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  )}
+                </Accordion>
               </div>
             </div>
           </div>
