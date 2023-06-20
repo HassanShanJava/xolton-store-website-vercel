@@ -145,8 +145,8 @@ const OfferPopUp = ({
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
-                <div className="mb-5 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl ">Checkout - Offer</h3>
+                <div className="mb-3 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
+                  <h3 className="text-3xl ">Place an Offer</h3>
                   <div
                     onClick={(e) => {
                       e.preventDefault();
@@ -158,25 +158,30 @@ const OfferPopUp = ({
                   </div>
                 </div>
                 {/*body*/}
+                <div className="mx-3 p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="m-auto rounded-full bg-gray-300">
+
+                      <i className="fa-brands fa-ethereum w-8 h-8 text-center "></i>
+                    </div>
+                    
+                  </div>
+                </div>
 
                 <form onSubmit={handleSubmit(offerNFT)}>
-                  <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
+                  <div className="mx-3   p-3 ">
+                    <Input
+                      type="number"
+                      placeholder="Offer Price"
+                      required
+                      {...register("offer_price")}
+                    />
                     <div className="relative flex items-center justify-between ">
                       <p className=" text-md leading-relaxed text-slate-500">
                         Your balance
                       </p>
                       <p className=" text-md leading-relaxed text-slate-500">
                         {(+accountBalance).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
-
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        NFT Price
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {(+price).toFixed(5)}{" "}
                         <span className="text-xs lowercase">MATIC</span>
                       </p>
                     </div>
@@ -200,13 +205,6 @@ const OfferPopUp = ({
                         <span className="text-xs lowercase">MATIC</span>
                       </p>
                     </div>
-
-                    <Input
-                      type="number"
-                      placeholder="Offer Price"
-                      required
-                      {...register("offer_price")}
-                    />
                   </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
