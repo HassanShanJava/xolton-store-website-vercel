@@ -20,11 +20,13 @@ export async function buyNFT(
   ); //Contract Address
 
   try {
+    console.log("Maker Order :: ",makerOrder)
     makeArr.push(
       makerOrder?.isOrderAsk,
       makerOrder?.signer,
       makerOrder?.baseAccount,
       makerOrder?.nftContract,
+      makerOrder?.signer,
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId,
       toWei(makerOrder?.tax).toString(),
@@ -36,7 +38,7 @@ export async function buyNFT(
     takeArr.push(
       false,
       account,
-      toWei(totalPrice).toString(),
+      toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId
     );
 
