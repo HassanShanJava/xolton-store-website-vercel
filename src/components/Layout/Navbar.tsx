@@ -8,6 +8,7 @@ import {
   customTruncateHandler,
   getCustomerConnectInfo,
   loginConnectInfo,
+  maticToUSD,
   renderNFTIcon,
 } from "~/utils/helper";
 import { web3Init } from "~/store/slices/web3Slice";
@@ -25,14 +26,36 @@ import axios from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import NewUser from "../Ui/NewUser";
+import { setUserProcess } from "~/store/slices/authSlice";
+import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
-  console.log({navprops})
+  console.log({ navprops });
   const [nav, setNav] = useState(false);
   const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
   const { addToast } = CustomToast();
+  useEffect(() => {
+    const localStore = JSON.parse(
+      localStorage.getItem("store_customer") as string
+    );
+    if (localStore) {
+      dispatch(setUserProcess(localStore));
+    }
+  }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const nftPrice: number = 1;
+
+        const maitccprice = await maticToUSD(nftPrice);
+        dispatch(setMaticToUsdProcess(maitccprice));
+      } catch (e) {
+        console.log(e, "consvertion error front-end");
+      }
+    })();
+  }, []);
 
   const { account } = useSelector((state: RootState) => state.web3);
   const loginConnect = useMutation({
@@ -64,7 +87,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
       const response = await loginConnect.mutateAsync(payload);
 
-
       if (response?.storeCustomer === null) {
         setShowPop(true);
       } else {
@@ -82,7 +104,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             })
           );
 
-          localStorage.setItem("store_customer", JSON.stringify(response.storeCustomer));
+          localStorage.setItem(
+            "store_customer",
+            JSON.stringify(response.storeCustomer)
+          );
         } else {
           data && data.message.message
             ? addToast({
@@ -130,7 +155,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             type: "success",
             message: "Account Changed!",
           });
-          console.log(changed_response.store_customer)
+          console.log(changed_response.store_customer);
           localStorage.setItem(
             "store_customer",
             JSON.stringify(changed_response.storeCustomer)

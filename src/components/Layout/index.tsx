@@ -9,13 +9,13 @@ import SeoHead from "./SeoHead";
 
 const Layout = ({ children, ...props }: any) => {
   // use context
+  
 
   return (
     <>
       <Provider store={store}>
         <div>
           <Navbar navData={props?.navData} webData={props?.webData} />
-
           <main>{children}</main>
         </div>
       </Provider>
