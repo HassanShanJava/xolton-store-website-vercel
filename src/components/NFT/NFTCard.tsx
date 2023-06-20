@@ -20,7 +20,8 @@ const NFTCard = ({ nft }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
-
+  const [wmaticBalance , setWmaticBalance] = useState("");
+  
   // const toast = useToast();
   const { addToast } = CustomToast();
 
