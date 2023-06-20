@@ -15,6 +15,7 @@ import { Tooltip, useToast } from "@chakra-ui/react";
 import Link from "next/link";
 import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
+import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 
 const NFTCard = ({ nft }: any) => {
   const [showPop, setShowPop] = useState(false);
@@ -49,23 +50,33 @@ const NFTCard = ({ nft }: any) => {
   };
 
   const offerNFT = async () => {
-    account == ""
-      ? addToast({
+    if(account == "" || account===null){
+      addToast({
           id: "connect-wallet-buy",
           message: "Connect Wallet",
           type: "error",
         })
-      : account == nft.creator_id
-      ? addToast({
-          id: "connect-wallet-buy",
-          message: "Owner cannot buy there own NFT",
-          type: "error",
-        })
-      : setShowOfferPop(true);
+        return
+    }else if(account == nft.creator_id){
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      })
+      return;
+    }else{
+      setShowOfferPop(true)
+      
+      let wmaticBalance:any = await getBalance(web3,account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount,"ether");
+      setWmaticBalance(wmaticBalance)
+      console.log("Account balance wmatic ",wmaticBalance)
+      const balance = await web3?.eth.getBalance(account);
+      const accountBalance = web3?.utils.fromWei(balance, "ether");
+      setAccountBalance(accountBalance);
+    }
+      
 
-    const balance = await web3?.eth.getBalance(account);
-    const accountBalance = web3?.utils.fromWei(balance, "ether");
-    setAccountBalance(accountBalance);
   };
 
   return (
@@ -151,6 +162,7 @@ const NFTCard = ({ nft }: any) => {
                 price={+nft.price}
                 tax={+nft.tax}
                 accountBalance={+accountBalance}
+                wmaticBalance={+wmaticBalance}
               />
             )}
           </div>

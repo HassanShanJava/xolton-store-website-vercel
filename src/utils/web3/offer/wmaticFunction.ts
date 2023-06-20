@@ -64,7 +64,7 @@ export async function approvalWMATIC(
 
 export async function getBalance(
     web3:any,
-    account: string
+    account: any
     ){
     const WMATICContract = new web3.eth.Contract(
         WMATICAbi, //ABI
