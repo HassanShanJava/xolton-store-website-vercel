@@ -70,7 +70,11 @@ const NFTCard = ({ nft }: any) => {
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
-        <a href={`/nft-details/${nft.id}.html`}>
+        <a
+          href={`/nft-details/${nft.id}${
+            process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+          }`}
+        >
           <div className={" relative h-80 max-h-[290px]  w-full"}>
             <Image
               src={renderNFTImage(nft)}
@@ -115,7 +119,7 @@ const NFTCard = ({ nft }: any) => {
               </button>
             )}
 
-            {(nft?.sell_type?.includes("offer") ||nft?.sell_type?.includes("fixed-offer")) && (
+            {nft?.sell_type?.includes("offer") && (
               <button
                 type="button"
                 onClick={(e) => {
