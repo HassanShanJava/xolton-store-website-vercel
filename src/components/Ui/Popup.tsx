@@ -12,6 +12,7 @@ import { checkTargetForNewValues } from "framer-motion";
 
 import { useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
+import { customTruncateHandler } from "~/utils/helper";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -36,6 +37,8 @@ const Popup = ({
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
+
+  
 
   const total: any = Number(+price + +tax);
 
@@ -139,7 +142,7 @@ const Popup = ({
         <>
           {/* overlay */}
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative mx-auto my-6  w-full max-w-[450px] ">
+            <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -156,6 +159,24 @@ const Popup = ({
                   </div>
                 </div>
                 {/*body*/}
+                <div className="mx-3 p-3">
+                  <div className="flex items-center justify-center gap-3 rounded-full border border-gray-700 p-4">
+                    {/* eth logo */}
+                    <div className="flex items-center rounded-full bg-gray-300">
+                      <i className="fa-brands fa-ethereum h-8 w-8 py-1.5 text-center "></i>
+                    </div>
+
+                    {/* account */}
+                    <p>{customTruncateHandler(account, 15)}</p>
+
+                    {/* connected */}
+                    <div className="rounded-3xl bg-green-200 p-0.5 text-center">
+                      <p className="px-1 text-[10px] text-green-900">
+                        Connected
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
                   <div className="relative flex items-center justify-between ">

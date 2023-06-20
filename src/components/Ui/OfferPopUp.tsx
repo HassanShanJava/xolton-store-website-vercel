@@ -11,7 +11,8 @@ import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { useForm } from "react-hook-form";
-import { Input } from "@chakra-ui/react";
+import { Input, NumberInput, NumberInputField } from "@chakra-ui/react";
+import { customTruncateHandler } from "~/utils/helper";
 
 interface OfferPopUpType {
   open: boolean;
@@ -31,44 +32,21 @@ const OfferPopUp = ({
   accountBalance,
 }: OfferPopUpType) => {
   const router = useRouter();
-  const { handleSubmit, register, setValue } = useForm<any>();
+  const { handleSubmit, register, setValue, getValues } = useForm<any>();
 
   const [isPurchase, setIsPurchase] = useState<any>("");
+  const [inputOffer, setInputOffer] = useState("");
   const { addToast } = CustomToast();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  const total: any = Number(+price + +tax);
+  
 
-  const nftUpdate = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
-    },
-  });
+  const total_price = parseFloat(inputOffer) + 0.02 * parseFloat(inputOffer);
 
-  const nftOrder = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
-    },
-  });
-
-  const offerNFT = async () => {
-    if (accountBalance < total) {
+  const offerNFT = async (values: any) => {
+    if (accountBalance < total_price) {
       addToast({
         id: "transaction-id",
         message: "Not Enough Balance",
@@ -78,40 +56,39 @@ const OfferPopUp = ({
     } else {
       setIsPurchase(false);
 
-      const buyData = await buyNFT(
-        web3,
-        account,
-        total,
-        nft?.store_makerorder[0]
-      );
+      // const buyData = await buyNFT(
+      //   web3,
+      //   account,
+      //   total_price,
+      //   nft?.store_makerorder[0]
+      // );
 
-      if (buyData?.success) {
+      if (true) {
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
         const payload: any = {
           id: nft.id,
-          owner: buyData.owner,
-          transaction_id: buyData.transaction_id,
-          is_listed: false,
+          owner: "",
+          transaction_id: "buyData.transaction_id",
           status: "Purchase",
           store_id: process.env.NEXT_PUBLIC_STORE_ID,
         };
 
-        const payloadOrder: any = {
-          store_id: nft.store_id,
-          nft_id: nft.id,
-          owner_address: buyData?.owner,
-          transaction_id: buyData?.transaction_id,
-          nft_name: nft.name,
-          total_amount: total, // 2.04
-          net_amount: total - 2 * +nft.tax, // 1.96
-          total_tax: 2 * +nft.tax, // 0.08
-          sell_type: "fixed",
-          previous_owner_address: buyData?.previous_owner,
-        };
+        // const payloadOrder: any = {
+        //   store_id: nft.store_id,
+        //   nft_id: nft.id,
+        //   owner_address: buyData?.owner,
+        //   transaction_id: buyData?.transaction_id,
+        //   nft_name: nft.name,
+        //   total_amount: total, // 2.04
+        //   net_amount: total_price - 2 * +nft.tax, // 1.96
+        //   total_tax: 2 * +nft.tax, // 0.08
+        //   sell_type: "fixed",
+        //   previous_owner_address: buyData?.previous_owner,
+        // };
 
-        const data = await nftUpdate.mutateAsync(payload);
-        const dataOrder = await nftOrder.mutateAsync(payloadOrder);
+        // const data = await nftUpdate.mutateAsync(payload);
+        // const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
         addToast({
           id: "transaction-id",
@@ -125,7 +102,7 @@ const OfferPopUp = ({
       } else {
         addToast({
           id: "transaction-id",
-          message: buyData.msg as string,
+          message: "issue on buy nft" as string,
           type: "error",
         });
 
@@ -135,13 +112,33 @@ const OfferPopUp = ({
     }
   };
 
+  const offerdetails=[
+    {
+      title:"Your balance",
+      values:"",
+    },
+    {
+      title:"Your balance",
+      values:"",
+    },
+    {
+      title:"Service fee 2%",
+      values:"",
+    },
+    {
+      title:"You will pay",
+      values:"",
+    },
+  ]
+  
+
   return (
     <>
       {open ? (
         <>
           {/* overlay */}
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative mx-auto my-6  w-full max-w-[450px] ">
+            <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -159,23 +156,49 @@ const OfferPopUp = ({
                 </div>
                 {/*body*/}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="m-auto rounded-full bg-gray-300">
-
-                      <i className="fa-brands fa-ethereum w-8 h-8 text-center "></i>
+                  <div className="flex items-center justify-center gap-3 rounded-full border border-gray-700 p-4">
+                    {/* eth logo */}
+                    <div className="flex items-center rounded-full bg-gray-300">
+                      <i className="fa-brands fa-ethereum h-8 w-8 py-1.5 text-center "></i>
                     </div>
-                    
+
+                    {/* account */}
+                    <p>{customTruncateHandler(account, 15)}</p>
+
+                    {/* connected */}
+                    <div className="rounded-3xl bg-green-200 p-0.5 text-center">
+                      <p className="px-1 text-[10px] text-green-900">
+                        Connected
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 <form onSubmit={handleSubmit(offerNFT)}>
+                  <div className="m-3">
+                    <NumberInput
+                      min={nft.min_price ? nft.min_price : 0}
+                      max={nft.max_price ? nft.max_price : 50}
+                    >
+                      <NumberInputField
+                        placeholder="Offer Price"
+                        required
+                        onChange={(e) => setInputOffer(e.target.value)}
+                      />
+                    </NumberInput>
+
+                  </div>
                   <div className="mx-3   p-3 ">
-                    <Input
-                      type="number"
-                      placeholder="Offer Price"
-                      required
-                      {...register("offer_price")}
-                    />
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        Your balance
+                      </p>
+                      <p className=" text-md leading-relaxed text-slate-500">
+                        {(+accountBalance).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
+                    
                     <div className="relative flex items-center justify-between ">
                       <p className=" text-md leading-relaxed text-slate-500">
                         Your balance
@@ -191,7 +214,9 @@ const OfferPopUp = ({
                         Service fee 2%
                       </p>
                       <p className=" text-md leading-relaxed text-slate-500">
-                        {(+tax).toFixed(5)}{" "}
+                        {inputOffer
+                          ? (0.02 * Number(inputOffer)).toFixed(5)
+                          : (0).toFixed(5)}{" "}
                         <span className="text-xs lowercase">MATIC</span>
                       </p>
                     </div>
@@ -201,7 +226,7 @@ const OfferPopUp = ({
                         You will pay
                       </p>
                       <p className=" text-md leading-relaxed text-slate-500">
-                        {total.toFixed(5)}{" "}
+                        {total_price ? total_price.toFixed(5) : (0).toFixed(5)}{" "}
                         <span className="text-xs lowercase">MATIC</span>
                       </p>
                     </div>
@@ -214,7 +239,7 @@ const OfferPopUp = ({
                       disabled={isPurchase}
                     >
                       {isPurchase !== false ? (
-                        "Purchase"
+                        "OFFER NOW"
                       ) : (
                         <>
                           <div className="flex items-center justify-center py-1.5">

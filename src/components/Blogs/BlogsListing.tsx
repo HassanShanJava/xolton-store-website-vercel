@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useSelector } from "react-redux";
-import { customTruncateHandler } from "~/store/helper";
+import { customTruncateHandler } from "~/utils/helper";
 import { RootState } from "~/store/store";
 
 import { displayDate, renderNFTImage } from "~/utils/helper";
