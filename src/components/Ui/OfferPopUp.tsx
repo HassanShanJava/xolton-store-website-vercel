@@ -115,19 +115,25 @@ const OfferPopUp = ({
   const offerdetails=[
     {
       title:"Your balance",
-      values:"",
+      values:(+accountBalance).toFixed(5),
+      symbol:"matic"
     },
     {
-      title:"Your balance",
-      values:"",
+      title:"Your Wmatic balance",
+      values:(+accountBalance).toFixed(5),
+      symbol:"wmatic"
     },
     {
       title:"Service fee 2%",
-      values:"",
+      values:inputOffer
+      ? (0.02 * Number(inputOffer)).toFixed(5)
+      : (0).toFixed(5),
+      symbol:"matic"
     },
     {
       title:"You will pay",
-      values:"",
+      values:total_price ? total_price.toFixed(5) : (0).toFixed(5),
+      symbol:"matic"
     },
   ]
   
@@ -175,62 +181,35 @@ const OfferPopUp = ({
                 </div>
 
                 <form onSubmit={handleSubmit(offerNFT)}>
-                  <div className="m-3">
+                  <div className="m-4">
                     <NumberInput
                       min={nft.min_price ? nft.min_price : 0}
-                      max={nft.max_price ? nft.max_price : 50}
-                    >
+                      >
                       <NumberInputField
                         placeholder="Offer Price"
                         required
+                        
+                        max={nft.max_price ? nft.max_price : 50}
                         onChange={(e) => setInputOffer(e.target.value)}
                       />
                     </NumberInput>
 
                   </div>
-                  <div className="mx-3   p-3 ">
+                  {offerdetails.map((item,i)=>(
+                    <div key={i} className="mx-3   p-1 ">
                     <div className="relative flex items-center justify-between ">
                       <p className=" text-md leading-relaxed text-slate-500">
-                        Your balance
+                        {item.title}
                       </p>
                       <p className=" text-md leading-relaxed text-slate-500">
-                        {(+accountBalance).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
+                        {item.values}{" "}
+                        <span className="text-xs lowercase">{item.symbol}</span>
                       </p>
                     </div>
                     
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        Your balance
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {(+accountBalance).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
-
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        Service fee 2%
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {inputOffer
-                          ? (0.02 * Number(inputOffer)).toFixed(5)
-                          : (0).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
-
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        You will pay
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {total_price ? total_price.toFixed(5) : (0).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
+                  
                   </div>
+                  ))}
                   {/*footer*/}
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                     <button
