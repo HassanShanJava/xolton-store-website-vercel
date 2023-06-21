@@ -17,7 +17,10 @@ import { useForm } from "react-hook-form";
 import { Input, NumberInput, NumberInputField } from "@chakra-ui/react";
 import { customTruncateHandler } from "~/utils/helper";
 import OfferSignModal from "../Modal/OfferSign";
-import { finishNftOfferCreateProcess, setNftOfferCreateProcess } from "~/store/slices/offerSteps";
+import {
+  finishNftOfferCreateProcess,
+  setNftOfferCreateProcess,
+} from "~/store/slices/offerSteps";
 import { signSignature } from "~/utils/web3/offer/offerNft";
 
 interface OfferPopUpType {
@@ -39,6 +42,8 @@ const OfferPopUp = ({
   accountBalance,
   wmaticBalance,
 }: OfferPopUpType) => {
+  const { user }: any = useSelector((state: RootState) => state.user);
+
   const router = useRouter();
   const { handleSubmit, register, setValue, getValues } = useForm<any>();
 
@@ -46,7 +51,20 @@ const OfferPopUp = ({
   const [isModal, setIsModal] = useState(false); //for loader
   const [inputOffer, setInputOffer] = useState("");
   const { addToast } = CustomToast();
+  const offerUpload = useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
 
+      const result = await response.json();
+      return result;
+    },
+  });
   const dispatch = useDispatch();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
@@ -83,39 +101,26 @@ const OfferPopUp = ({
     };
 
     console.log({ sign_payload }, "sign_payload");
-    try {
-      const signature_result = await signSignature(sign_payload, web3);
-    } catch (e:any) {
-      addToast({
-        id: "offer-error",
-        message: e?.message,
-        type: "error",
-      });
-      
-      
+
+    const signature_result = await signSignature(sign_payload, web3);
+    if (signature_result?.success) {
+      return signature_result;
+    } else {
+      return signature_result;
     }
   };
   const approval = async () => {
-    try{
-
-      const aproval_result = await approvalWMATIC(web3, account, total_price);
-      if (aproval_result.success) {
-        dispatch(setNftOfferCreateProcess(3)); //false conver first
-        const signature_data = await signature() ;
-        
+    const aproval_result = await approvalWMATIC(web3, account, total_price);
+    if (aproval_result.success) {
+      dispatch(setNftOfferCreateProcess(3)); //false conver first
+      const signature_data = await signature();
+      if (signature_data?.success) {
+        return { ...signature_data, ...aproval_result };
       } else {
-        
-        
-        throw new Error(aproval_result?.msg)
+        throw new Error(aproval_result?.msg);
       }
-    }catch(e){
-      
-      dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
-      addToast({
-        id: "offer-error",
-        message: e?.message,
-        type: "error",
-      });
+    } else {
+      throw new Error(aproval_result?.msg);
     }
   };
   const offerNFT = async (e: any) => {
@@ -126,16 +131,51 @@ const OfferPopUp = ({
       setIsModal(true); //true
       dispatch(setNftOfferCreateProcess(2));
       try {
-        await approval();
-      } catch (e: any) {
-        console.log("error: ", { e });
-        dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
-       
+        const data: any = await approval();
+        const signature = data?.sign.substring(2);
+
+        console.log(data, "datadatadatadata");
+        const payload: any = {
+          store_id: process.env.NEXT_PUBLIC_STORE_ID,
+          nft_id: nft?.id,
+          offer_amount: +inputOffer,
+          store_customer_id: user?.id,
+          sell_type: "offer",
+          is_order_ask: true,
+          nft_owner: nft.store_makerorder[0]?.signer,
+          base_account: nft.store_makerorder[0]?.baseAccount,
+          nft_contract: nft.store_makerorder[0]?.nftContract,
+          signer: account,
+          tokenId: nft?.store_makerorder[0]?.tokenId,
+          tax: +((2 / 100) * +inputOffer).toFixed(5),
+          nonce: data?.nonce?.toString() || "",
+          signed_v: parseInt(signature.substring(128, 130), 16).toString(),
+          signed_r: "0x" + signature.substring(0, 64),
+          signed_s: "0x" + signature.substring(64, 128),
+        };
+        const response = await offerUpload.mutateAsync(payload);
+
+        if (response) {
+          dispatch(setNftOfferCreateProcess(4));
+          //false conver first
+
           addToast({
             id: "offer-error",
-            message: e?.message,
-            type: "error",
+            message: "Your Offer Uploaded Successfully",
+            type: "success",
           });
+        } else {
+          throw new Error("Something Went Wrong!");
+        }
+      } catch (e: any) {
+        console.log("error: ", { e });
+        dispatch(finishNftOfferCreateProcess()); //false conver first
+
+        addToast({
+          id: "offer-error",
+          message: e?.message,
+          type: "error",
+        });
       }
     } else if (wmaticBalance + accountBalance >= total_price) {
       setIsModal(true);
@@ -148,24 +188,25 @@ const OfferPopUp = ({
       if (result.success) {
         dispatch(setNftOfferCreateProcess(2)); //false conver first
         try {
-          await approval();
-        } catch (e) {
+          const data = await approval();
+          console.log(data, "offer");
+        } catch (e: any) {
           console.log("error message: ", { e });
-          dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
-          
-            addToast({
-              id: "offer-error",
-              message: e?.message,
-              type: "error",
-            });
+          dispatch(finishNftOfferCreateProcess()); //false conver first
 
+          addToast({
+            id: "offer-error",
+            message: e?.message,
+            type: "error",
+          });
         }
         // const aproval_result
       } else {
-        dispatch(setNftOfferCreateProcess(null)); //false conver first
+        dispatch(finishNftOfferCreateProcess()); //false conver first
+
         addToast({
           id: "offer-error",
-          message: "somthing went wrong in aproval",
+          message: result?.msg,
         });
       }
     } else {

@@ -287,7 +287,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       accountBalance={+accountBalance}
                     />
                   )}
-                  {showOfferPop && (
+                  {/* {showOfferPop && (
                     <OfferPopUp
                       nft={NFTDetail}
                       open={showOfferPop}
@@ -296,7 +296,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       tax={+NFTDetail.tax}
                       accountBalance={+accountBalance}
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
 
