@@ -1,17 +1,24 @@
 import React, { useState } from "react";
 // import { useToast } from "@chakra-ui/react";
 // import Web3 from "web3";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
-
+import {
+  approvalWMATIC,
+  maticDeposit,
+} from "~/utils/web3/offer/wmaticFunction";
 import { useRouter } from "next/router";
 
 import { useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { useForm } from "react-hook-form";
-import { Input } from "@chakra-ui/react";
+import { Input, NumberInput, NumberInputField } from "@chakra-ui/react";
+import { customTruncateHandler } from "~/utils/helper";
+import OfferSignModal from "../Modal/OfferSign";
+import { finishNftOfferCreateProcess, setNftOfferCreateProcess } from "~/store/slices/offerSteps";
+import { signSignature } from "~/utils/web3/offer/offerNft";
 
 interface OfferPopUpType {
   open: boolean;
@@ -20,6 +27,7 @@ interface OfferPopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
+  wmaticBalance: number;
 }
 
 const OfferPopUp = ({
@@ -29,111 +37,171 @@ const OfferPopUp = ({
   price,
   tax,
   accountBalance,
+  wmaticBalance,
 }: OfferPopUpType) => {
   const router = useRouter();
-  const { handleSubmit, register, setValue } = useForm<any>();
+  const { handleSubmit, register, setValue, getValues } = useForm<any>();
 
-  const [isPurchase, setIsPurchase] = useState<any>("");
+  const [isPurchase, setIsPurchase] = useState<any>(""); //for loader
+  const [isModal, setIsModal] = useState(false); //for loader
+  const [inputOffer, setInputOffer] = useState("");
   const { addToast } = CustomToast();
+
+  const dispatch = useDispatch();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  const total: any = Number(+price + +tax);
+  const total_price = parseFloat(inputOffer) + 0.02 * parseFloat(inputOffer);
 
-  const nftUpdate = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
+  const offerStepsData = [
+    {
+      heading: "Conversion",
+      text: "Send transaction to convert to wrapped token.",
     },
-  });
-
-  const nftOrder = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
+    {
+      heading: "Approve",
+      text: "This transaction is only conducted once.",
     },
-  });
 
-  const offerNFT = async () => {
-    if (accountBalance < total) {
+    {
+      heading: "Signature",
+      text: "Sign the message to place your offer on this NFT.",
+    },
+  ];
+
+  const signature = async () => {
+    console.log("NFT :: ", nft);
+
+    const sign_payload = {
+      nftContract: nft.store_makerorder[0]?.nftContract,
+      nftOwner: nft.store_makerorder[0]?.signer,
+      signer: account,
+      baseAccount: nft.store_makerorder[0]?.baseAccount,
+      tokenId: nft.store_makerorder[0]?.tokenId,
+      sign_price: parseFloat(inputOffer),
+    };
+
+    console.log({ sign_payload }, "sign_payload");
+    try {
+      const signature_result = await signSignature(sign_payload, web3);
+    } catch (e:any) {
+      addToast({
+        id: "offer-error",
+        message: e?.message,
+        type: "error",
+      });
+      
+      
+    }
+  };
+  const approval = async () => {
+    try{
+
+      const aproval_result = await approvalWMATIC(web3, account, total_price);
+      if (aproval_result.success) {
+        dispatch(setNftOfferCreateProcess(3)); //false conver first
+        const signature_data = await signature() ;
+        
+      } else {
+        
+        
+        throw new Error(aproval_result?.msg)
+      }
+    }catch(e){
+      
+      dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
+      addToast({
+        id: "offer-error",
+        message: e?.message,
+        type: "error",
+      });
+    }
+  };
+  const offerNFT = async (e: any) => {
+    e.preventDefault();
+    dispatch(setNftOfferCreateProcess(1));
+
+    if (wmaticBalance >= total_price) {
+      setIsModal(true); //true
+      dispatch(setNftOfferCreateProcess(2));
+      try {
+        await approval();
+      } catch (e: any) {
+        console.log("error: ", { e });
+        dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
+       
+          addToast({
+            id: "offer-error",
+            message: e?.message,
+            type: "error",
+          });
+      }
+    } else if (wmaticBalance + accountBalance >= total_price) {
+      setIsModal(true);
+      dispatch(setNftOfferCreateProcess(1)); //false conver first
+      const remainbalance: any = total_price - wmaticBalance;
+      console.log({ remainbalance }, "remainbalance");
+
+      const result = await maticDeposit(web3, account, remainbalance);
+
+      if (result.success) {
+        dispatch(setNftOfferCreateProcess(2)); //false conver first
+        try {
+          await approval();
+        } catch (e) {
+          console.log("error message: ", { e });
+          dispatch(setNftOfferCreateProcess(finishNftOfferCreateProcess())); //false conver first
+          
+            addToast({
+              id: "offer-error",
+              message: e?.message,
+              type: "error",
+            });
+
+        }
+        // const aproval_result
+      } else {
+        dispatch(setNftOfferCreateProcess(null)); //false conver first
+        addToast({
+          id: "offer-error",
+          message: "somthing went wrong in aproval",
+        });
+      }
+    } else {
       addToast({
         id: "transaction-id",
         message: "Not Enough Balance",
         type: "error",
       });
       return;
-    } else {
-      setIsPurchase(false);
-
-      const buyData = await buyNFT(
-        web3,
-        account,
-        total,
-        nft?.store_makerorder[0]
-      );
-
-      if (buyData?.success) {
-        // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
-
-        const payload: any = {
-          id: nft.id,
-          owner: buyData.owner,
-          transaction_id: buyData.transaction_id,
-          is_listed: false,
-          status: "Purchase",
-          store_id: process.env.NEXT_PUBLIC_STORE_ID,
-        };
-
-        const payloadOrder: any = {
-          store_id: nft.store_id,
-          nft_id: nft.id,
-          owner_address: buyData?.owner,
-          transaction_id: buyData?.transaction_id,
-          nft_name: nft.name,
-          total_amount: total, // 2.04
-          net_amount: total - 2 * +nft.tax, // 1.96
-          total_tax: 2 * +nft.tax, // 0.08
-          sell_type: "fixed",
-          previous_owner_address: buyData?.previous_owner,
-        };
-
-        const data = await nftUpdate.mutateAsync(payload);
-        const dataOrder = await nftOrder.mutateAsync(payloadOrder);
-
-        addToast({
-          id: "transaction-id",
-          message: "Transaction Completed",
-          type: "success",
-        });
-
-        setIsPurchase(true);
-        setBuy(false);
-        router.push("/");
-      } else {
-        addToast({
-          id: "transaction-id",
-          message: buyData.msg as string,
-          type: "error",
-        });
-
-        setBuy(false);
-        router.push("/");
-      }
     }
   };
+
+  const offerdetails = [
+    {
+      title: "Your balance",
+      values: (+accountBalance).toFixed(5),
+      symbol: "matic",
+    },
+    {
+      title: "Your Wmatic balance",
+      values: (+wmaticBalance).toFixed(5),
+      symbol: "wmatic",
+    },
+    {
+      title: "Service fee 2%",
+      values: inputOffer
+        ? (0.02 * Number(inputOffer)).toFixed(5)
+        : (0).toFixed(5),
+      symbol: "matic",
+    },
+    {
+      title: "You will pay",
+      values: total_price ? total_price.toFixed(5) : (0).toFixed(5),
+      symbol: "matic",
+    },
+  ];
 
   return (
     <>
@@ -141,7 +209,7 @@ const OfferPopUp = ({
         <>
           {/* overlay */}
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative mx-auto my-6  w-full max-w-[450px] ">
+            <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -159,53 +227,56 @@ const OfferPopUp = ({
                 </div>
                 {/*body*/}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="m-auto rounded-full bg-gray-300">
-
-                      <i className="fa-brands fa-ethereum w-8 h-8 text-center "></i>
+                  <div className="flex items-center justify-center gap-3 rounded-full border border-gray-700 p-4">
+                    {/* eth logo */}
+                    <div className="flex items-center rounded-full bg-gray-300">
+                      <i className="fa-brands fa-ethereum h-8 w-8 py-1.5 text-center "></i>
                     </div>
-                    
+
+                    {/* account */}
+                    <p>{customTruncateHandler(account, 15)}</p>
+
+                    {/* connected */}
+                    <div className="rounded-3xl bg-green-200 p-0.5 text-center">
+                      <p className="px-1 text-[10px] text-green-900">
+                        Connected
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit(offerNFT)}>
-                  <div className="mx-3   p-3 ">
+                <form
+                  onSubmit={(e) => {
+                    offerNFT(e);
+                  }}
+                >
+                  <div className="m-4">
                     <Input
-                      type="number"
                       placeholder="Offer Price"
+                      min={nft.min_price ? nft.min_price : 0}
+                      max={nft.max_price ? nft.max_price : 50}
+                      type="number"
+                      step={"any"}
                       required
-                      {...register("offer_price")}
+                      maxLength={2}
+                      onChange={(e) => setInputOffer(e.target.value)}
                     />
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        Your balance
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {(+accountBalance).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
-
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        Service fee 2%
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {(+tax).toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
-
-                    <div className="relative flex items-center justify-between ">
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        You will pay
-                      </p>
-                      <p className=" text-md leading-relaxed text-slate-500">
-                        {total.toFixed(5)}{" "}
-                        <span className="text-xs lowercase">MATIC</span>
-                      </p>
-                    </div>
                   </div>
+                  {offerdetails.map((item, i) => (
+                    <div key={i} className="mx-3   p-1 ">
+                      <div className="relative flex items-center justify-between ">
+                        <p className=" text-md leading-relaxed text-slate-500">
+                          {item.title}
+                        </p>
+                        <p className=" text-md leading-relaxed text-slate-500">
+                          {item.values}{" "}
+                          <span className="text-xs lowercase">
+                            {item.symbol}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                   {/*footer*/}
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                     <button
@@ -214,7 +285,7 @@ const OfferPopUp = ({
                       disabled={isPurchase}
                     >
                       {isPurchase !== false ? (
-                        "Purchase"
+                        "OFFER NOW"
                       ) : (
                         <>
                           <div className="flex items-center justify-center py-1.5">
@@ -236,6 +307,13 @@ const OfferPopUp = ({
       ) : (
         ""
       )}
+      <OfferSignModal
+        modalState={isModal}
+        title={"Place Offer for NFT"}
+        setModalState={setIsModal}
+        offerStepsData={offerStepsData}
+        type={"offerNft"}
+      />
     </>
   );
 };

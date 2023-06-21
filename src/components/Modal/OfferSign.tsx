@@ -32,37 +32,37 @@ import {
           )}
         </div>
         <div className="text-black flex flex-col ">
-          <div className="text-black">{props.heading}</div>
-          <div className="text-black">{props.text}</div>
+          <div className="text-black font-medium">{props.heading}</div>
+          <div className="text-black text-sm">{props.text}</div>
         </div>
       </div>
     );
   };
   
-  export default function OfferMinitingModal(props: any) {
+  export default function OfferSignModal(props: any) {
     const { onClose } = useDisclosure();
     const router = useRouter();
     const { nftStep } = useSelector((state: RootState) => state.nftOffer);
 
     const handleClose = () => {
-      router.push('/store/nfts');
+      router.push('/');
       props?.setModalState(false);
     };
     return (
       <>
         <Modal isCentered isOpen={props?.modalState} onClose={onClose}>
           <ModalOverlay
-            bg="transparent"
-            // backdropFilter="blur(10px) hue-rotate(90deg)"
+            // bg="white"
+            backdropFilter="blur(10px) hue-rotate(90deg)"
           />
           <ModalContent>
             <ModalHeader>{props?.title}</ModalHeader>
             {/* <ModalCloseButton /> */}
-            <ModalBody className="bg-bg-1">
+            <ModalBody className="bg-white">
               {nftStep == null ? (
                 <Text></Text>
               ) : (
-                props?.listStepsData.map((item: any, index: number) => {
+                props?.offerStepsData.map((item: any, index: number) => {
                   const status =
                     nftStep! > index + 1
                       ? 'complete'
