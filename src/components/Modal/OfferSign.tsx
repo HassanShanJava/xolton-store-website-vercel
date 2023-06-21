@@ -32,8 +32,8 @@ import {
           )}
         </div>
         <div className="text-black flex flex-col ">
-          <div className="text-black">{props.heading}</div>
-          <div className="text-black">{props.text}</div>
+          <div className="text-black font-medium">{props.heading}</div>
+          <div className="text-black text-sm">{props.text}</div>
         </div>
       </div>
     );

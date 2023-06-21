@@ -7,7 +7,7 @@ const toWei: any = (num: any) => Web3.utils.toWei(num.toString(), "ether");
 export async function maticDeposit(
     web3: any,
     account: string,
-    conversionPrice: Int16Array,
+    conversionPrice: any,
   ){
     const WMATICContract = new web3.eth.Contract(
         WMATICAbi, //ABI
@@ -15,6 +15,7 @@ export async function maticDeposit(
     ); //Contract Address
         let transaction_id;
     try{
+        console.log("convert :: ",conversionPrice)
         const result = await WMATICContract.methods
         .deposit()
         .send({ from: account, value: toWei(conversionPrice) })
@@ -36,7 +37,7 @@ export async function maticDeposit(
 export async function approvalWMATIC(
     web3: any,
     account: string,
-    totalPrice: Int16Array,
+    totalPrice: any,
   ){
     const WMATICContract = new web3.eth.Contract(
         WMATICAbi, //ABI
