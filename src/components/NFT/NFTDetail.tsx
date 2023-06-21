@@ -40,10 +40,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
+import UpdateModal from "../Modal/UpdateModal";
 
 const NFTDetail = ({ NFTDetail }: any) => {
   const { user } = useSelector((state: RootState) => state.user);
-  const [offer, setOffer] = useState<any>([]);
+  const { maticToUsd } = useSelector((state: RootState) => state.matic);
 
   const router = useRouter();
   const { id } = router.query;
@@ -62,7 +63,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
-  console.log(offer, "offer");
+
   // nft detail api
   const {
     isLoading,
@@ -100,37 +101,6 @@ const NFTDetail = ({ NFTDetail }: any) => {
         throw new Error("Network response was not ok");
       }
       return response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: NFTDetail?.contract_id ? true : false,
-    }
-  );
-  const {
-    data: NFTOffer,
-    isLoading: offerLoading,
-    refetch: NFTOfferRefetch,
-    isFetching: offerFetching,
-  } = useQuery(
-    ["nftOffer"],
-    async () => {
-      const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
-          process.env.NEXT_PUBLIC_STORE_ID
-        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
-          filter
-        ).toString()}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      if (filter?.skip > 0) {
-        setOffer([...offer, ...data?.data]);
-      } else {
-        setOffer([...data?.data]);
-      }
-      return data?.data;
     },
     {
       refetchOnWindowFocus: false,
@@ -195,52 +165,10 @@ const NFTDetail = ({ NFTDetail }: any) => {
       }
     })();
   }, [nftApiDetail?.data[0]]);
-  const offerCancelApi = useMutation({
-    mutationFn: async (payload: any) => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?${new URLSearchParams(
-          payload
-        ).toString()}`,
-        {
-          method: "DELETE",
-        }
-      );
 
-      const result = await response.json();
-      return result;
-    },
-  });
-  const cancelOffer = async (data: any) => {
-    try {
-      const payload: any = {
-        offer_id: data?.id,
-      };
-      const response = await offerCancelApi.mutateAsync(payload);
-      if (response) {
-        addToast({
-          id: "connect-wallet-buy",
-          message: "Offer Canceled Successfylly!",
-          type: "success",
-        });
-        NFTOfferRefetch();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const handleFilter = () => {
-    setFilter((prevFilters: any) => ({
-      ...prevFilters,
-      take: prevFilters?.take + 5,
-      skip: prevFilters?.take,
-    }));
-  };
   useEffect(() => {
     refetch();
   }, [id]);
-  useEffect(() => {
-    NFTOfferRefetch();
-  }, [filter?.take]);
 
   return (
     <div className="bg-bg-1">
@@ -283,7 +211,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       <p className="text-sm text-tx-5">Price</p>
                       <p>
                         <span className=" text-lg font-bold">
-                          {NFTDetail.price}{" "}
+                          {NFTDetail?.price.toFixed(2)}{" "}
                         </span>
 
                         <span className="text-xs lowercase text-slate-500">
@@ -292,7 +220,10 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       </p>
                       <p>
                         <span className="text-xs lowercase text-slate-500">
-                          ${` ${usdMatic}`}
+                          $
+                          {` ${(
+                            +NFTDetail.price * (+maticToUsd as number)
+                          ).toFixed(2)}`}
                         </span>
                       </p>
                     </div>
@@ -302,7 +233,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       <p className="text-sm text-tx-5">Highest Offer</p>
                       <p>
                         <span className=" text-lg font-bold">
-                          {NFTDetail.min_price}{" "}
+                          {(+NFTDetail?.min_price).toFixed(2)}{" "}
                         </span>
 
                         <span className="text-xs lowercase text-slate-500">
@@ -311,7 +242,10 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       </p>
                       <p>
                         <span className="text-xs lowercase text-slate-500">
-                          ${` ${usdMinPriceMatic}`}
+                          $
+                          {` ${(
+                            +NFTDetail.min_price * (+maticToUsd as number)
+                          ).toFixed(2)}`}
                         </span>
                       </p>
                     </div>
@@ -370,6 +304,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
               <div className="py-6">
                 <Accordion
                   className=" group rounded-xl !border-none bg-white"
+                  defaultIndex={[0]}
                   allowToggle
                 >
                   <AccordionItem
@@ -430,113 +365,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                     </AccordionPanel>
                   </AccordionItem>
                   {NFTDetail.sell_type.includes("offer") && (
-                    <AccordionItem className="border-none">
-                      <h2>
-                        <AccordionButton
-                          _expanded={{ bg: "gray", color: "white" }}
-                        >
-                          <summary className="flex-1 cursor-pointer list-none items-center justify-between p-3 text-left font-medium">
-                            <span>NFT Offers</span>
-                          </summary>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel pb={0}>
-                        <div
-                          className={`md:text-md h-80  ${
-                            NFTOffer &&
-                            NFTOffer?.length > 0 &&
-                            "overflow-x-hidden  overflow-y-scroll"
-                          } p-2  text-xs text-slate-500 sm:text-sm `}
-                        >
-                          {offer && offer?.length > 0 ? (
-                            offer?.map((item: any, index: any) => {
-                              return (
-                                <div key={index}>
-                                  <div className="flex flex-wrap justify-between p-3">
-                                    <p>{item?.store_customers?.full_name}</p>
-                                    <p>{(+item?.offer_amount).toFixed(2)}</p>
-                                    <p>{displayDate(item?.created_at)}</p>
-                                    {item?.store_customers?.id == user?.id && (
-                                      <p>
-                                        <Menu placement="bottom-end">
-                                          <MenuButton
-                                            transition="all 0.3s"
-                                            className="mx-auto flex h-fit w-fit  items-center rounded-full  px-2"
-                                          >
-                                            <i className="text-md fas fa-ellipsis-v  text-slate-500 hover:text-gray-950" />
-                                          </MenuButton>
-                                          <Portal>
-                                            <MenuList
-                                              className="absolute -top-7 right-2 bg-bg-3  p-4  text-white hover:bg-bg-3/75"
-                                              p={0}
-                                              minW="0"
-                                              w={"3rem"}
-                                            >
-                                              <MenuItem p={0}>
-                                                <Tooltip
-                                                  label={"Update Offer"}
-                                                  placement="left"
-                                                  className="w-full  font-normal  "
-                                                >
-                                                  <div
-                                                    className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                                    // onClick={() => handleUpdate(blogsData)}
-                                                  >
-                                                    <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
-                                                  </div>
-                                                </Tooltip>
-                                              </MenuItem>
-                                              <MenuItem p={0}>
-                                                <Tooltip
-                                                  label={"Cancel Offer"}
-                                                  placement="left"
-                                                  className="w-full  font-normal  "
-                                                >
-                                                  <div
-                                                    className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                                    onClick={() =>
-                                                      cancelOffer(item)
-                                                    }
-                                                  >
-                                                    <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
-                                                  </div>
-                                                </Tooltip>
-                                              </MenuItem>
-                                            </MenuList>
-                                          </Portal>
-                                        </Menu>
-                                      </p>
-                                    )}
-                                  </div>
-                                  {/*divider  */}
-                                  <div className=" border-t border-tx-2" />
-                                </div>
-                              );
-                            })
-                          ) : (
-                            <div className=" flex items-center justify-center text-center text-lg">
-                              No Offers Yet!
-                            </div>
-                          )}
-                          {NFTOffer && NFTOffer?.length > 0 && (
-                            <div className="mt-4 flex w-full items-center justify-center ">
-                              <button
-                                // disabled={!notificationData?.isRemaining || isLoading}
-                                onClick={handleFilter}
-                                className={`  mt-4 flex items-center justify-center rounded-full bg-gray-300/30 px-3 py-2 duration-150 hover:bg-gray-300/80 `}
-                              >
-                                {offerFetching ? (
-                                  <Spinner size="md" thickness={"4px"} />
-                                ) : (
-                                  "See More"
-                                )}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </AccordionPanel>
-                    </AccordionItem>
+                    <OfferList id={id} user={user} />
                   )}
                 </Accordion>
               </div>
@@ -586,6 +415,219 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
         </div>
       </div>
     )
+  );
+};
+
+const OfferList: any = ({ id, user }: any) => {
+  const [offer, setOffer] = useState<any>([]);
+  const [isModal, setIsModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [selectedOffer, setSelectedOffer] = useState({});
+
+  const [filter, setFilter] = useState({
+    take: 5,
+    skip: 0,
+  });
+  const { addToast } = CustomToast();
+
+  const router = useRouter();
+  //   offer cancel api
+  const offerCancelApi = useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?${new URLSearchParams(
+          payload
+        ).toString()}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const result = await response.json();
+      return result;
+    },
+  });
+  const {
+    data: NFTOffer,
+    isLoading: offerLoading,
+    refetch: NFTOfferRefetch,
+    isFetching: offerFetching,
+  } = useQuery(
+    ["nftOffer"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
+          filter as any
+        ).toString()}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      if (filter?.skip > 0) {
+        setOffer([...offer, ...data?.data]);
+      } else {
+        setOffer([...data?.data]);
+      }
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: id ? true : false,
+    }
+  );
+  const defaultModalParams = {
+    selectedOffer,
+    setSelectedOffer,
+    refetch: NFTOfferRefetch,
+  };
+  const featureModalParams = {
+    ...defaultModalParams,
+    isModal,
+    setIsModal,
+    title,
+  };
+  useEffect(() => {
+    NFTOfferRefetch();
+  }, [filter?.take]);
+  const handleFilter = () => {
+    setFilter((prevFilters: any) => ({
+      ...prevFilters,
+      take: prevFilters?.take + 5,
+      skip: prevFilters?.take,
+    }));
+  };
+  const cancelOffer = async (data: any) => {
+    try {
+      setSelectedOffer(data);
+      setTitle("Offer");
+      setIsModal(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  return (
+    <AccordionItem className="border-none">
+      <h2>
+        <AccordionButton _expanded={{ bg: "gray", color: "white" }}>
+          <summary className="flex-1 cursor-pointer list-none items-center justify-between p-3 text-left font-medium">
+            <span>NFT Offers</span>
+          </summary>
+          <AccordionIcon />
+        </AccordionButton>
+      </h2>
+      <AccordionPanel pb={0}>
+        <div
+          className={`md:text-md h-80  ${
+            offer && offer?.length > 0 && "overflow-x-hidden  overflow-y-scroll"
+          } p-2  text-xs text-slate-500 sm:text-sm `}
+        >
+          {offer && offer?.length > 0 ? (
+            offer?.map((item: any, index: any) => {
+              return (
+                <div key={index}>
+                  <div
+                    className={`grid ${
+                      item?.store_customers?.id == user?.id
+                        ? "grid-cols-4 bg-black bg-opacity-20 "
+                        : "grid-cols-4 "
+                    }  justify-between p-3`}
+                  >
+                    <p
+                      className={
+                        item?.store_customers?.id == user?.id
+                          ? " col-span-2"
+                          : " col-span-2"
+                      }
+                    >
+                      {item?.store_customers?.full_name}
+                    </p>
+                    <p>{(+item?.offer_amount).toFixed(2)}</p>
+                    <p className=" flex flex-row gap-2">
+                      {displayDate(item?.created_at)}
+                      {item?.store_customers?.id == user?.id && (
+                        <p>
+                          <Menu placement="bottom-end">
+                            <MenuButton
+                              transition="all 0.3s"
+                              className="mx-auto flex h-fit w-fit  items-center rounded-full  px-2"
+                            >
+                              <i className="text-md fas fa-ellipsis-v  text-slate-500 hover:text-gray-950" />
+                            </MenuButton>
+                            <Portal>
+                              <MenuList
+                                className="absolute -top-7 right-2 bg-bg-3  p-4  text-white hover:bg-bg-3/75"
+                                p={0}
+                                minW="0"
+                                w={"3rem"}
+                              >
+                                <MenuItem p={0}>
+                                  <Tooltip
+                                    label={"Update Offer"}
+                                    placement="left"
+                                    className="w-full  font-normal  "
+                                  >
+                                    <div
+                                      className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                      // onClick={() => handleUpdate(blogsData)}
+                                    >
+                                      <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
+                                    </div>
+                                  </Tooltip>
+                                </MenuItem>
+                                <MenuItem p={0}>
+                                  <Tooltip
+                                    label={"Cancel Offer"}
+                                    placement="left"
+                                    className="w-full  font-normal  "
+                                  >
+                                    <div
+                                      className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                      onClick={() => cancelOffer(item)}
+                                    >
+                                      <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
+                                    </div>
+                                  </Tooltip>
+                                </MenuItem>
+                              </MenuList>
+                            </Portal>
+                          </Menu>
+                        </p>
+                      )}
+                    </p>
+                  </div>
+                  {/*divider  */}
+                  <div className=" border-t border-tx-2" />
+                </div>
+              );
+            })
+          ) : (
+            <div className=" flex items-center justify-center text-center text-lg">
+              No Offers Yet!
+            </div>
+          )}
+          {NFTOffer && NFTOffer?.length > 0 && (
+            <div className="mt-4 flex w-full items-center justify-center ">
+              <button
+                // disabled={!notificationData?.isRemaining || isLoading}
+                onClick={handleFilter}
+                className={`  mt-4 flex items-center justify-center rounded-full bg-gray-300/30 px-3 py-2 duration-150 hover:bg-gray-300/80 `}
+              >
+                {offerFetching ? (
+                  <Spinner size="md" thickness={"4px"} />
+                ) : (
+                  "See More"
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </AccordionPanel>
+      <UpdateModal {...featureModalParams} />
+    </AccordionItem>
   );
 };
 

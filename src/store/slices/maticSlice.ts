@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface authInterface {
-  maticToUsd: string | null;
+  maticToUsd: string | "0";
 }
 
 export const initialState: authInterface = {
-  maticToUsd: null,
+  maticToUsd: "0",
 };
 
 export const maticSlice = createSlice({
@@ -17,7 +17,7 @@ export const maticSlice = createSlice({
       state.maticToUsd = action.payload;
     },
     finishUserProcess: (state) => {
-      state.maticToUsd = null;
+      state.maticToUsd = "0";
     },
   },
 });
