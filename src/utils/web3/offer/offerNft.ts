@@ -64,7 +64,7 @@ export const signSignature = async (payload: any, web3: any) => {
         sender: payload?.signer,
         collection: payload.nftContract,
         baseAccount: payload.baseAccount,
-        nftOwner: payload?.signer,
+        nftOwner: payload?.nftOwner,
         price: toWei(payload?.sign_price).toString(),
         nonce: parseInt(random_nonce),
         tokenId: parseInt(payload.tokenId),
