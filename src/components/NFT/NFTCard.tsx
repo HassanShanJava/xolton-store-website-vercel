@@ -21,8 +21,8 @@ const NFTCard = ({ nft }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
-  const [wmaticBalance , setWmaticBalance] = useState("");
-  
+  const [wmaticBalance, setWmaticBalance] = useState("");
+
   // const toast = useToast();
   const { addToast } = CustomToast();
 
@@ -50,33 +50,31 @@ const NFTCard = ({ nft }: any) => {
   };
 
   const offerNFT = async () => {
-    if(account == "" || account===null){
+    if (account == "" || account === null) {
       addToast({
-          id: "connect-wallet-buy",
-          message: "Connect Wallet",
-          type: "error",
-        })
-        return
-    }else if(account == nft.creator_id){
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+      return;
+    } else if (account == nft.creator_id) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
-      })
+      });
       return;
-    }else{
-      setShowOfferPop(true)
-      
-      let wmaticBalance:any = await getBalance(web3,account);
-      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount,"ether");
-      setWmaticBalance(wmaticBalance)
-      console.log("Account balance wmatic ",wmaticBalance)
+    } else {
+      setShowOfferPop(true);
+
+      let wmaticBalance: any = await getBalance(web3, account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+      setWmaticBalance(wmaticBalance);
+      console.log("Account balance wmatic ", wmaticBalance);
       const balance = await web3?.eth.getBalance(account);
       const accountBalance = web3?.utils.fromWei(balance, "ether");
       setAccountBalance(accountBalance);
     }
-      
-
   };
 
   return (
@@ -112,26 +110,25 @@ const NFTCard = ({ nft }: any) => {
             )}
 
             <p>
-              {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "}
+              {/* {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "} */}
+              {nft?.price}{" "}
               <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-2 px-2">
-            {nft?.sell_type?.includes("fixed") && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  buyNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                Buy
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                buyNFT();
+              }}
+              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+            >
+              Buy
+            </button>
 
-            {nft?.sell_type?.includes("offer") && (
+            {nft?.sell_type?.includes("-offer") && (
               <button
                 type="button"
                 onClick={(e) => {

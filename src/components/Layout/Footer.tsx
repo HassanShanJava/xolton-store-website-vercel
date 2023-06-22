@@ -85,25 +85,30 @@ const Footer = ({ webData }: any) => {
                     </ul>
                   </div>
 
-                  <div className="w-full px-4 lg:w-4/12">
-                    <span className="text-blueGray-500 mb-2 block text-sm font-semibold uppercase">
-                      Socials
-                    </span>
-                    <ul className="list-unstyled">
-                      {webData.socials.map((icons: any, i: any) => (
-                        <ul key={i}>
-                          <li>
-                            <Link
-                              className="text-blueGray-600 block   pb-2 text-sm hover:underline"
-                              href={icons}
-                            >
-                              {`Link ${i+1}`}
-                            </Link>
-                          </li>
-                        </ul>
-                      ))}
-                    </ul>
-                  </div>
+                  {webData.socials && (
+                    <div className="w-full px-4 lg:w-4/12">
+                      <span className="text-blueGray-500 mb-2 block text-sm font-semibold uppercase">
+                        Socials
+                      </span>
+                      <ul className="list-unstyled">
+                        {webData.socials.map((item: any, i: any) => (
+                          <ul key={i}>
+                            <li className="hover:underline">
+                              <Link
+                                className="text-blueGray-600 flex items-center gap-2  pb-2 text-sm capitalize "
+                                href={item.url}
+                              >
+                                <span>
+                                  <i className={`fa-brands fa-${item.social_type} w-4 h-4 text-center`}></i>
+                                </span>
+                                {item.social_type}
+                              </Link>
+                            </li>
+                          </ul>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

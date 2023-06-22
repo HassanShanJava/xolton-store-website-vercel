@@ -36,7 +36,6 @@ export async function getStaticProps() {
   }
 
   const result: any = await response.json();
-  console.log(result.data,"result")
 
   const navData = result?.data?.navbar || [];
   const webData = result?.data?.website || {};

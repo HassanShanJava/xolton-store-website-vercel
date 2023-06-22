@@ -41,10 +41,12 @@ import Link from "next/link";
 import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
 import UpdateModal from "../Modal/UpdateModal";
+import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 
 const NFTDetail = ({ NFTDetail }: any) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
+  const [wmaticBalance, setWmaticBalance] = useState("");
 
   const router = useRouter();
   const { id } = router.query;
@@ -65,28 +67,28 @@ const NFTDetail = ({ NFTDetail }: any) => {
   const { addToast } = CustomToast();
 
   // nft detail api
-  const {
-    isLoading,
-    isError,
-    isFetched,
-    data: nftApiDetail,
-    refetch,
-    error,
-  } = useQuery(
-    ["nftDetail"],
-    async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+  // const {
+  //   isLoading,
+  //   isError,
+  //   isFetched,
+  //   data: nftApiDetail,
+  //   refetch,
+  //   error,
+  // } = useQuery(
+  //   ["nftDetail"],
+  //   async () => {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  //     return response.json();
+  //   },
+  //   {
+  //     refetchOnWindowFocus: false,
+  //   }
+  // );
 
   // const NFTDetail = nftApiDetail?.data[0];
 
@@ -144,6 +146,9 @@ const NFTDetail = ({ NFTDetail }: any) => {
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
+    let wmaticBalance: any = await getBalance(web3, account);
+    wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+    setWmaticBalance(wmaticBalance);
     setAccountBalance(accountBalance);
   };
   // convert matic to usd
@@ -164,11 +169,11 @@ const NFTDetail = ({ NFTDetail }: any) => {
         }
       }
     })();
-  }, [nftApiDetail?.data[0]]);
+  }, [NFTDetail]);
 
-  useEffect(() => {
-    refetch();
-  }, [id]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [id]);
 
   return (
     <div className="bg-bg-1">
@@ -297,6 +302,17 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       accountBalance={+accountBalance}
                     />
                   )} */}
+                  {showOfferPop && (
+                    <OfferPopUp
+                      nft={NFTDetail}
+                      open={showOfferPop}
+                      setBuy={setShowOfferPop}
+                      price={+NFTDetail.price}
+                      tax={+NFTDetail.tax}
+                      accountBalance={+accountBalance}
+                      wmaticBalance={+wmaticBalance}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -458,7 +474,7 @@ const OfferList: any = ({ id, user }: any) => {
       const response: any = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
+        }&nft_id=${id}&sell_type=fixed-offer&${new URLSearchParams(
           filter as any
         ).toString()}`
       );
@@ -525,6 +541,11 @@ const OfferList: any = ({ id, user }: any) => {
             offer && offer?.length > 0 && "overflow-x-hidden  overflow-y-scroll"
           } p-2  text-xs text-slate-500 sm:text-sm `}
         >
+          <div className="grid grid-cols-4 justify-between  p-3">
+            <p className="col-span-2">Name</p>
+            <p>Amount</p>
+            <p>Last Placed</p>
+          </div>
           {offer && offer?.length > 0 ? (
             offer?.map((item: any, index: any) => {
               return (
@@ -572,7 +593,7 @@ const OfferList: any = ({ id, user }: any) => {
                                   >
                                     <div
                                       className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      // onClick={() => handleUpdate(blogsData)}
+                                      // onClick={() => handleUpdate(item)}
                                     >
                                       <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
                                     </div>

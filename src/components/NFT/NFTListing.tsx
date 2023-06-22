@@ -5,9 +5,11 @@ import { useRouter } from "next/router";
 
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useSelector } from "react-redux";
 
 const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
+  const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });

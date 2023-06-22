@@ -123,7 +123,7 @@ const runSiteAsync = async () => {
   }
   const result = await response.json();
 
-  console.log({ result }, "result v")
+  // console.log({ result }, "result v")
   const storeDetail = result?.data;
   const domainName = storeDetail?.website?.domain_name;
 

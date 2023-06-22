@@ -31,6 +31,7 @@ interface OfferPopUpType {
   nft: any;
   accountBalance: number;
   wmaticBalance: number;
+  id?:string;
 }
 
 const OfferPopUp = ({
@@ -41,6 +42,7 @@ const OfferPopUp = ({
   tax,
   accountBalance,
   wmaticBalance,
+  id
 }: OfferPopUpType) => {
   const { user }: any = useSelector((state: RootState) => state.user);
 
@@ -72,6 +74,7 @@ const OfferPopUp = ({
 
   const total_price = parseFloat(inputOffer) + 0.02 * parseFloat(inputOffer);
 
+  // offer modal steps content
   const offerStepsData = [
     {
       heading: "Conversion",
@@ -88,6 +91,7 @@ const OfferPopUp = ({
     },
   ];
 
+  // step 3
   const signature = async () => {
     console.log("NFT :: ", nft);
 
@@ -97,7 +101,7 @@ const OfferPopUp = ({
       signer: account,
       baseAccount: nft.store_makerorder[0]?.baseAccount,
       tokenId: nft.store_makerorder[0]?.tokenId,
-      sign_price: parseFloat(inputOffer),
+      sign_price: parseFloat(inputOffer).toFixed(5),
     };
 
     console.log({ sign_payload }, "sign_payload");
@@ -109,10 +113,12 @@ const OfferPopUp = ({
       return signature_result;
     }
   };
+
+  // step 2
   const approval = async () => {
     const aproval_result = await approvalWMATIC(web3, account, total_price);
     if (aproval_result.success) {
-      dispatch(setNftOfferCreateProcess(3)); //false conver first
+      dispatch(setNftOfferCreateProcess(3)); //signature
       const signature_data = await signature();
       if (signature_data?.success) {
         return { ...signature_data, ...aproval_result };
@@ -123,13 +129,15 @@ const OfferPopUp = ({
       throw new Error(aproval_result?.msg);
     }
   };
+
+  // step 1
   const offerNFT = async (e: any) => {
     e.preventDefault();
-    dispatch(setNftOfferCreateProcess(1));
+    dispatch(setNftOfferCreateProcess(1)); //conversion
 
     if (wmaticBalance >= total_price) {
       setIsModal(true); //true
-      dispatch(setNftOfferCreateProcess(2));
+      dispatch(setNftOfferCreateProcess(2)); //aproval
       try {
         const data: any = await approval();
         const signature = data?.sign.substring(2);
@@ -147,7 +155,7 @@ const OfferPopUp = ({
           nft_contract: nft.store_makerorder[0]?.nftContract,
           signer: account,
           tokenId: nft?.store_makerorder[0]?.tokenId,
-          tax: +((2 / 100) * +inputOffer).toFixed(5),
+          tax: +((2 / 100) * +inputOffer),
           nonce: data?.nonce?.toString() || "",
           signed_v: parseInt(signature.substring(128, 130), 16).toString(),
           signed_r: "0x" + signature.substring(0, 64),
@@ -155,17 +163,20 @@ const OfferPopUp = ({
         };
         const response = await offerUpload.mutateAsync(payload);
 
-        if (response) {
-          dispatch(setNftOfferCreateProcess(4));
+        if (response.success) {
+          dispatch(setNftOfferCreateProcess(4)); //finish ofer
           //false conver first
-
+          
           addToast({
             id: "offer-error",
             message: "Your Offer Uploaded Successfully",
             type: "success",
           });
+          setBuy(false)
         } else {
-          throw new Error("Something Went Wrong!");
+          dispatch(setNftOfferCreateProcess(4)); //finish ofer
+          setBuy(false)
+          throw new Error(response.message);
         }
       } catch (e: any) {
         console.log("error: ", { e });
@@ -190,6 +201,43 @@ const OfferPopUp = ({
         try {
           const data = await approval();
           console.log(data, "offer");
+          const signature = data?.sign.substring(2);
+
+          const payload: any = {
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
+            nft_id: nft?.id,
+            offer_amount: +inputOffer,
+            store_customer_id: user?.id,
+            sell_type: "offer",
+            is_order_ask: true,
+            nft_owner: nft.store_makerorder[0]?.signer,
+            base_account: nft.store_makerorder[0]?.baseAccount,
+            nft_contract: nft.store_makerorder[0]?.nftContract,
+            signer: account,
+            tokenId: nft?.store_makerorder[0]?.tokenId,
+            tax: +((2 / 100) * +inputOffer).toFixed(5),
+            nonce: data?.nonce?.toString() || "",
+            signed_v: parseInt(signature.substring(128, 130), 16).toString(),
+            signed_r: "0x" + signature.substring(0, 64),
+            signed_s: "0x" + signature.substring(64, 128),
+          };
+          const response = await offerUpload.mutateAsync(payload);
+
+          if (response.success) {
+            dispatch(setNftOfferCreateProcess(4)); //finish ofer
+            setBuy(false)
+            //false conver first
+
+            addToast({
+              id: "offer-error",
+              message: "Your Offer Uploaded Successfully",
+              type: "success",
+            });
+          } else {
+            dispatch(finishNftOfferCreateProcess()); //false conver first
+            setBuy(false)
+            throw new Error(response.message);
+          }
         } catch (e: any) {
           console.log("error message: ", { e });
           dispatch(finishNftOfferCreateProcess()); //false conver first
