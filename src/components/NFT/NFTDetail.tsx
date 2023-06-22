@@ -50,6 +50,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
 
   const router = useRouter();
   const { id } = router.query;
+  console.log({id})
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [filter, setFilter] = useState({
     take: 5,
@@ -238,7 +239,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       <p className="text-sm text-tx-5">Highest Offer</p>
                       <p>
                         <span className=" text-lg font-bold">
-                          {(+NFTDetail?.min_price).toFixed(2)}{" "}
+                          {(+NFTDetail.highest_offer).toFixed(2)}{" "}
                         </span>
 
                         <span className="text-xs lowercase text-slate-500">
@@ -278,7 +279,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                         offerNFT();
                       }}
                     >
-                      Offer
+                      {NFTDetail.is_offered ? "Update Offer" : "Offer"}
                     </button>
                   )}
 
@@ -474,7 +475,7 @@ const OfferList: any = ({ id, user }: any) => {
       const response: any = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&nft_id=${id}&sell_type=fixed-offer&${new URLSearchParams(
+        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
           filter as any
         ).toString()}`
       );

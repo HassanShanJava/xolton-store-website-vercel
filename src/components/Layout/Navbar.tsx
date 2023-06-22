@@ -30,7 +30,7 @@ import { setUserProcess } from "~/store/slices/authSlice";
 import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
-  console.log({ navprops });
+
   const [nav, setNav] = useState(false);
   const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
