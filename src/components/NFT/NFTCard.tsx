@@ -29,6 +29,8 @@ const NFTCard = ({ nft }: any) => {
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
+
+  console.log({nft})
   const buyNFT = async () => {
     account == ""
       ? addToast({
@@ -48,6 +50,7 @@ const NFTCard = ({ nft }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
+  console.log({nft})
 
   const offerNFT = async () => {
     if (account == "" || account === null) {
@@ -77,11 +80,13 @@ const NFTCard = ({ nft }: any) => {
     }
   };
 
+  console.log(nft._id.$oid)
+
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <a
-          href={`/nft-details/${nft.id}${
+          href={`/nft-details/${nft._id.$oid}${
             process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
           }`}
         >

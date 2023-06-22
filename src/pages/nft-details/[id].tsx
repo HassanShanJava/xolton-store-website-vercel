@@ -21,14 +21,16 @@ export async function getStaticPaths() {
     throw new Error("Network response was not ok");
   }
   const result: any = await response.json();
+  console.log(result.data)
 
   const paths = result?.data?.map((post: any) => ({
-    params: { id: post.id },
+    params: { id: post?._id['$oid'] },
   }));
 
   return { paths, fallback: false };
 }
 export async function getStaticProps({ params }: any) {
+  console.log(params?.id,'params?.id')
   const response: any = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&id=${params?.id}`,
     {
@@ -49,6 +51,8 @@ export async function getStaticProps({ params }: any) {
   }
 
   const result: any = await response.json();
+
+  console.log(result,"result")
 
   const resultWeb: any = await responseWeb.json();
   const navData = resultWeb?.data?.navbar || [];
