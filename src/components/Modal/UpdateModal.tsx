@@ -12,7 +12,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-export default function UpdateModal(props: any) {
+export default function CancelOfferModal(props: any) {
   // TOAST
   const toast = useToast();
   // upload NFT API

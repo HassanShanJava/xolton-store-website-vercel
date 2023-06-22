@@ -40,13 +40,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
-import UpdateModal from "../Modal/UpdateModal";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+import CancelOfferModal from "../Modal/UpdateModal";
 
 const NFTDetail = ({ NFTDetail }: any) => {
   const { user } = useSelector((state: RootState) => state.user);
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
+  const [updateOffer, setUpdateOffer] = useState("");
 
   const router = useRouter();
   const { id } = router.query;
@@ -94,6 +95,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
   // const NFTDetail = nftApiDetail?.data[0];
 
   // nft collection api
+  
   const { data: NFTCollection } = useQuery(
     ["nftCollection"],
     async () => {
@@ -113,16 +115,26 @@ const NFTDetail = ({ NFTDetail }: any) => {
 
   // buy nft
   const buyNFT = async () => {
-    account != ""
-      ? setShowPop(true)
-      : account == ""
-      ? toast({
-          title: "Connect Wallet",
-          status: "error",
-          isClosable: true,
-          position: "top-left",
-        })
-      : "";
+    if(account != ""){
+      setShowPop(true)
+    }else  if(account == NFTDetail.creator_id){
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      })
+    }else if(account == "") {
+      toast({
+        title: "Connect Wallet",
+        status: "error",
+        isClosable: true,
+        position: "top-left",
+      })
+
+    }else{
+      return;
+    }
+    
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
@@ -130,20 +142,29 @@ const NFTDetail = ({ NFTDetail }: any) => {
     setAccountBalance(accountBalance);
   };
   // offer nft
-  const offerNFT = async () => {
-    account == ""
-      ? addToast({
-          id: "connect-wallet-buy",
-          message: "Connect Wallet",
-          type: "error",
-        })
-      : account == NFTDetail.creator_id
-      ? addToast({
-          id: "connect-wallet-buy",
-          message: "Owner cannot buy there own NFT",
-          type: "error",
-        })
-      : setShowOfferPop(true);
+  const offerNFT = async (id?:any) => {
+    if(account != ""){
+      setShowOfferPop(true)
+      if(id!==''){
+        setUpdateOffer(id)
+      }
+    }else  if(account == NFTDetail.creator_id){
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      })
+    }else if(account == "") {
+      toast({
+        title: "Connect Wallet",
+        status: "error",
+        isClosable: true,
+        position: "top-left",
+      })
+
+    }else{
+      return;
+    }
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
@@ -312,6 +333,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       tax={+NFTDetail.tax}
                       accountBalance={+accountBalance}
                       wmaticBalance={+wmaticBalance}
+                      id={updateOffer}
                     />
                   )}
                 </div>
@@ -648,7 +670,7 @@ const OfferList: any = ({ id, user }: any) => {
           )}
         </div>
       </AccordionPanel>
-      <UpdateModal {...featureModalParams} />
+      <CancelOfferModal {...featureModalParams} />
     </AccordionItem>
   );
 };
