@@ -28,7 +28,7 @@ const NFTListing = ({ contract_id }: any) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&${new URLSearchParams(sortFilter).toString()}${user ? '&store_customer_id='+user?.id :''}`
+        }&${new URLSearchParams(sortFilter).toString()}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

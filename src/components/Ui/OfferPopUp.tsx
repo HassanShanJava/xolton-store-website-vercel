@@ -161,7 +161,15 @@ const OfferPopUp = ({
           signed_r: "0x" + signature.substring(0, 64),
           signed_s: "0x" + signature.substring(64, 128),
         };
-        const response = await offerUpload.mutateAsync(payload);
+
+        let response 
+        if(id){
+
+          response = await offerUpload.mutateAsync({id:id, ...payload});
+        }else{
+          response = await offerUpload.mutateAsync(payload);
+
+        }
 
         if (response.success) {
           dispatch(setNftOfferCreateProcess(4)); //finish ofer
