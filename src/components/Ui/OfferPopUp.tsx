@@ -22,6 +22,7 @@ import {
   setNftOfferCreateProcess,
 } from "~/store/slices/offerSteps";
 import { signSignature } from "~/utils/web3/offer/offerNft";
+import NFTDetail from "../NFT/NFTDetail";
 
 interface OfferPopUpType {
   open: boolean;
@@ -280,6 +281,11 @@ const OfferPopUp = ({
 
   const offerdetails = [
     {
+      title: "Min Price:",
+      values: nft?.highest_offer ? (nft?.highest_offer + 0.1*nft?.highest_offer).toFixed(5):(nft?.min_price).toFixed(5),
+      symbol: "matic",
+    },
+    {
       title: "Your balance",
       values: (+accountBalance).toFixed(5),
       symbol: "matic",
@@ -353,8 +359,8 @@ const OfferPopUp = ({
                   <div className="m-4">
                     <Input
                       placeholder="Offer Price"
-                      min={nft.min_price ? nft.min_price : 0}
-                      max={nft.max_price ? nft.max_price : 50}
+                      defaultValue={nft.is_offered ?nft?.highest_offer + 0.1*nft?.highest_offer:null}
+                      min={nft.highest_offer ? (nft?.highest_offer + 0.1*nft?.highest_offer) : 0}
                       type="number"
                       step={"any"}
                       required

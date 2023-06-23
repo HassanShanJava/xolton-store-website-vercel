@@ -29,7 +29,7 @@ export default function Document() {
         />
 
         {/* Google Tag Manager */}
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
         <!-- Google Tag Manager -->
@@ -43,9 +43,9 @@ export default function Document() {
         </script>
 
         <!-- End Google Tag Manager -->
-      `,
+      `
           }}
-        />
+        /> */}
       </Head>
       <body className="font-storeFont">
         <Main />

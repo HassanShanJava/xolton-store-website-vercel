@@ -43,15 +43,15 @@ import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 import CancelOfferModal from "../Modal/UpdateModal";
 
-const NFTDetail = ({ NFTDetail }: any) => {
-  const { user } = useSelector((state: RootState) => state.user);
+const NFTDetail = () => {
+  const { user }: any = useSelector((state: RootState) => state.user);
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
-  const [updateOffer, setUpdateOffer] = useState("");
+  const [updateOffer, setUpdateOffer] = useState(""); //offer id
 
   const router = useRouter();
   const { id } = router.query;
-  console.log({id})
+  console.log({ id });
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [filter, setFilter] = useState({
     take: 5,
@@ -62,93 +62,93 @@ const NFTDetail = ({ NFTDetail }: any) => {
   const [usdMatic, setUsdMatic] = useState<any>("");
   const [usdMinPriceMatic, setUsdMinPriceMatic] = useState<any>("");
 
-  const toast = useToast();
-
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
-
-  console.log({NFTDetail},"payload payload payload")
+  //
 
   // nft detail api
-  // const {
-  //   isLoading,
-  //   isError,
-  //   isFetched,
-  //   data: nftApiDetail,
-  //   refetch,
-  //   error,
-  // } = useQuery(
-  //   ["nftDetail"],
-  //   async () => {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-  //     return response.json();
-  //   },
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
-
+  const {
+    isLoading,
+    isError,
+    isFetched,
+    data: nftDetail,
+    refetch,
+    error,
+  } = useQuery(
+    ["nftDetail"],
+    async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }${user ? "&store_customer_id=" + user?.id : ""}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data?.data[0];
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+  
   // const NFTDetail = nftApiDetail?.data[0];
-
+  
   // nft collection api
   
   const { data: NFTCollection } = useQuery(
     ["nftCollection"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${NFTDetail?.contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-      );
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${nftDetail?.contract_id.$oid}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+        );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      return response.json();
+      const data = await response.json();
+      return data?.data[0];
     },
     {
       refetchOnWindowFocus: false,
-      enabled: NFTDetail?.contract_id ? true : false,
+      enabled: nftDetail?.contract_id.$oid ? true : false,
     }
-  );
-
-  // buy nft
-  const buyNFT = async () => {
-    if(account != ""){
-      setShowPop(true)
-    }else  if(account == NFTDetail.creator_id){
-      addToast({
-        id: "connect-wallet-buy",
+    );
+    console.log({ nftDetail, NFTCollection }, "payload payload payload");
+    
+    // buy nft
+    const buyNFT = async () => {
+      if (account != "") {
+        setShowPop(true);
+      } else if (account == nftDetail?.creator_id) {
+        addToast({
+          id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
-      })
-    }else if(account == "") {
-      toast({
-        title: "Connect Wallet",
-        status: "error",
-        isClosable: true,
-        position: "top-left",
-      })
-
-    }else{
+      });
+    } else if (account == "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    } else {
       return;
     }
-    
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
 
     setAccountBalance(accountBalance);
   };
+
   // offer nft
-  const offerNFT = async (id?:any) => {
-    if(account != ""){
-      setShowOfferPop(true)
-      if(id!==''){
-        setUpdateOffer(id)
+  const offerNFT = async (offerid?: any) => {
+    if (account != "") {
+      setShowOfferPop(true);
+      if (offerid !== "") {
+        setUpdateOffer(offerid);
       }
 
       const balance = await web3?.eth.getBalance(account);
@@ -157,34 +157,30 @@ const NFTDetail = ({ NFTDetail }: any) => {
       wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
       setWmaticBalance(wmaticBalance);
       setAccountBalance(accountBalance);
-    }else  if(account == NFTDetail.creator_id){
+    } else if (account == nftDetail?.creator_id) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
-      })
-    }else if(account === null ||account==='') {
-      toast({
-        title: "Connect Wallet",
-        status: "error",
-        isClosable: true,
-        position: "top-left",
-      })
-
-    }else{
+      });
+    } else if (account === null || account === "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    } else {
       return;
     }
-
-
   };
   // convert matic to usd
   useEffect(() => {
     (async () => {
       if (NFTDetail !== null || NFTDetail !== undefined) {
         try {
-          const nftPrice: number = NFTDetail?.price ? +NFTDetail?.price : 0;
-          const nftMinPrice: number = NFTDetail?.min_price
-            ? +NFTDetail?.min_price
+          const nftPrice: number = nftDetail?.price ? +nftDetail?.price : 0;
+          const nftMinPrice: number = nftDetail?.min_price
+            ? +nftDetail?.min_price
             : 0;
           const maitccprice = await maticToUSD(nftPrice);
           const maitccMinprice = await maticToUSD(nftMinPrice);
@@ -197,20 +193,16 @@ const NFTDetail = ({ NFTDetail }: any) => {
     })();
   }, [NFTDetail]);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [id]);
-
   return (
     <div className="bg-bg-1">
-      {NFTDetail && (
+      {nftDetail && (
         <div className="mx-auto max-h-full min-h-screen w-full max-w-[1400px]   px-4 pt-12 font-storeFont ">
           <div className=" mx-auto flex w-full max-w-7xl flex-col items-start  justify-between gap-4 sm:flex-row">
             {/* full nft image */}
             <div className="[min-w-[840px]]:mb-0  top-20  mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
               <div className="h-[450px] w-full  sm:px-0">
                 <Image
-                  src={renderNFTImage(NFTDetail)}
+                  src={renderNFTImage(nftDetail)}
                   alt="/nft"
                   width={500}
                   height={400}
@@ -225,65 +217,53 @@ const NFTDetail = ({ NFTDetail }: any) => {
             <div className="w-full max-w-xl md:px-0">
               {/* intial details */}
               <p className="text-5xl capitalize">
-                {NFTDetail.name}{" "}
+                {nftDetail?.name}{" "}
                 <span className="text-[20px] text-ac-2">
-                  #{NFTDetail.token_id}
+                  #{nftDetail?.token_id}
                 </span>
               </p>
               <p className="text-md my-5 max-w-md justify-start text-tx-1">
-                {NFTDetail.description}
+                {nftDetail?.description}
               </p>
 
               {/* price and button */}
-              <div className="rounded-[16px] border-2 border-tx-4 px-2 ">
+              <div className="border-tx-4 rounded-[16px] border-2 px-2 ">
                 <div className="my-3 flex flex-col justify-between gap-2 md:flex-row">
-                  {NFTDetail?.sell_type?.includes("fixed") && (
+                  {nftDetail?.sell_type?.includes("fixed") && (
                     <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                      <p className="text-sm text-tx-5">Price</p>
-                      <p>
-                        <span className=" text-lg font-bold">
-                          {NFTDetail?.price.toFixed(2)}{" "}
-                        </span>
-
+                      <p className="text-tx-5 text-sm">Price</p>
+                      <span className=" text-lg font-bold">
+                        {nftDetail?.price.toFixed(2)}{" "}
                         <span className="text-xs lowercase text-slate-500">
                           MATIC
                         </span>
-                      </p>
-                      <p>
-                        <span className="text-xs lowercase text-slate-500">
-                          $
-                          {` ${(
-                            +NFTDetail.price * (+maticToUsd as number)
-                          ).toFixed(2)}`}
-                        </span>
+                      </span>
+                      <p className="text-xs lowercase text-slate-500">
+                        {`$ ${(
+                          +nftDetail?.price * (+maticToUsd as number)
+                        ).toFixed(2)}`}
                       </p>
                     </div>
                   )}
-                  {NFTDetail?.sell_type?.includes("offer") && (
+                  {nftDetail?.sell_type?.includes("offer") && (
                     <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                      <p className="text-sm text-tx-5">Highest Offer</p>
-                      <p>
-                        <span className=" text-lg font-bold">
-                          {(+NFTDetail.highest_offer).toFixed(2)}{" "}
-                        </span>
-
+                      <p className="text-tx-5 text-sm">Highest Offer</p>
+                      <span className=" text-lg font-bold">
+                        {(+nftDetail?.highest_offer).toFixed(2)}{" "}
                         <span className="text-xs lowercase text-slate-500">
                           MATIC
                         </span>
-                      </p>
-                      <p>
-                        <span className="text-xs lowercase text-slate-500">
-                          $
-                          {` ${(
-                            +NFTDetail.min_price * (+maticToUsd as number)
-                          ).toFixed(2)}`}
-                        </span>
+                      </span>
+                      <p className="text-xs lowercase text-slate-500">
+                        {`$ ${(
+                          +nftDetail?.min_price * (+maticToUsd as number)
+                        ).toFixed(2)}`}
                       </p>
                     </div>
                   )}
                 </div>
                 <div className="mb-3 flex flex-col gap-2 md:flex-row">
-                  {NFTDetail?.sell_type?.includes("fixed") && (
+                  {nftDetail?.sell_type?.includes("fixed") && (
                     <button
                       type="button"
                       className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
@@ -295,7 +275,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       BUY
                     </button>
                   )}
-                  {NFTDetail?.sell_type?.includes("offer") && (
+                  {nftDetail?.sell_type?.includes("offer") && (
                     <button
                       type="button"
                       className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
@@ -304,17 +284,17 @@ const NFTDetail = ({ NFTDetail }: any) => {
                         offerNFT();
                       }}
                     >
-                      {NFTDetail.is_offered ? "Update Offer" : "Offer"}
+                      {nftDetail?.is_offered ? "Update Offer" : "Offer"}
                     </button>
                   )}
 
-                  {showPop && NFTDetail && (
+                  {showPop && nftDetail && (
                     <Popup
                       open={showPop}
-                      nft={NFTDetail}
+                      nft={nftDetail}
                       setBuy={setShowPop}
-                      price={+NFTDetail.price}
-                      tax={+NFTDetail.tax}
+                      price={+nftDetail?.price}
+                      tax={+nftDetail?.tax}
                       accountBalance={+accountBalance}
                     />
                   )}
@@ -323,18 +303,18 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       nft={NFTDetail}
                       open={showOfferPop}
                       setBuy={setShowOfferPop}
-                      price={+NFTDetail.price}
-                      tax={+NFTDetail.tax}
+                      price={+nftDetail?.price}
+                      tax={+nftDetail?.tax}
                       accountBalance={+accountBalance}
                     />
                   )} */}
                   {showOfferPop && (
                     <OfferPopUp
-                      nft={NFTDetail}
+                      nft={nftDetail}
                       open={showOfferPop}
                       setBuy={setShowOfferPop}
-                      price={+NFTDetail.price}
-                      tax={+NFTDetail.tax}
+                      price={+nftDetail?.price}
+                      tax={+nftDetail?.tax}
                       accountBalance={+accountBalance}
                       wmaticBalance={+wmaticBalance}
                       id={updateOffer}
@@ -352,7 +332,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                 >
                   <AccordionItem
                     className={` !border-t-0 ${
-                      NFTDetail.sell_type.includes("offer")
+                      nftDetail?.sell_type.includes("offer")
                         ? " border-b-2 border-tx-2 "
                         : " !border-b-0"
                     }  `}
@@ -376,12 +356,12 @@ const NFTDetail = ({ NFTDetail }: any) => {
                         <div className="flex justify-between p-3">
                           <p>Contract Address</p>
                           <Link
-                            href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${NFTDetail?.contract_address}`}
+                            href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${nftDetail?.contract_address}`}
                             target="_blank"
                           >
                             <p className="hover:text-bg-2/80">
                               {customTruncateHandler(
-                                NFTDetail?.contract_address
+                                nftDetail?.contract_address
                               )}
                             </p>
                           </Link>
@@ -396,7 +376,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
                         <div className=" border-t border-tx-2" />
                         <div className="flex justify-between p-3  ">
                           <p>Token ID</p>
-                          <p>{NFTDetail.token_id}</p>
+                          <p>{nftDetail?.token_id}</p>
                         </div>
                         {/*divider  */}
                         <div className=" border-t border-tx-2" />
@@ -407,8 +387,8 @@ const NFTDetail = ({ NFTDetail }: any) => {
                       </div>
                     </AccordionPanel>
                   </AccordionItem>
-                  {NFTDetail.sell_type.includes("offer") && (
-                    <OfferList id={id} user={user} />
+                  {nftDetail?.sell_type.includes("offer") && (
+                    <OfferList id={id} user={user} offer_id={updateOffer} />
                   )}
                 </Accordion>
               </div>
@@ -417,8 +397,8 @@ const NFTDetail = ({ NFTDetail }: any) => {
 
           {/* collection */}
           <CollectionList
-            id={NFTDetail?.id}
-            contract_id={NFTDetail?.contract_id}
+            id={nftDetail?.id}
+            contract_id={nftDetail?.contract_id.$oid}
             NFTCollection={NFTCollection?.data}
           />
         </div>
