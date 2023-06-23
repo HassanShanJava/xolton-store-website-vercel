@@ -11,7 +11,7 @@ const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
   const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
-  console.log(user,'user')
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
 

@@ -68,6 +68,8 @@ const NFTDetail = ({ NFTDetail }: any) => {
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
 
+  console.log({NFTDetail},"payload payload payload")
+
   // nft detail api
   // const {
   //   isLoading,
@@ -148,13 +150,20 @@ const NFTDetail = ({ NFTDetail }: any) => {
       if(id!==''){
         setUpdateOffer(id)
       }
+
+      const balance = await web3?.eth.getBalance(account);
+      const accountBalance = web3?.utils.fromWei(balance, "ether");
+      let wmaticBalance: any = await getBalance(web3, account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+      setWmaticBalance(wmaticBalance);
+      setAccountBalance(accountBalance);
     }else  if(account == NFTDetail.creator_id){
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
       })
-    }else if(account == "") {
+    }else if(account === null ||account==='') {
       toast({
         title: "Connect Wallet",
         status: "error",
@@ -166,12 +175,7 @@ const NFTDetail = ({ NFTDetail }: any) => {
       return;
     }
 
-    const balance = await web3?.eth.getBalance(account);
-    const accountBalance = web3?.utils.fromWei(balance, "ether");
-    let wmaticBalance: any = await getBalance(web3, account);
-    wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
-    setWmaticBalance(wmaticBalance);
-    setAccountBalance(accountBalance);
+
   };
   // convert matic to usd
   useEffect(() => {

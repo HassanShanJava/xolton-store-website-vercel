@@ -96,11 +96,11 @@ const OfferPopUp = ({
     console.log("NFT :: ", nft);
 
     const sign_payload = {
-      nftContract: nft.store_makerorder[0]?.nftContract,
-      nftOwner: nft.store_makerorder[0]?.signer,
+      nftContract: nft.store_makerorder?.nftContract,
+      nftOwner: nft.store_makerorder?.signer,
       signer: account,
-      baseAccount: nft.store_makerorder[0]?.baseAccount,
-      tokenId: nft.store_makerorder[0]?.tokenId,
+      baseAccount: nft.store_makerorder?.baseAccount,
+      tokenId: nft.store_makerorder?.tokenId,
       sign_price: parseFloat(inputOffer).toFixed(5),
     };
 
@@ -145,16 +145,16 @@ const OfferPopUp = ({
         console.log(data, "datadatadatadata");
         const payload: any = {
           store_id: process.env.NEXT_PUBLIC_STORE_ID,
-          nft_id: nft?.id,
+          nft_id: nft?._id.$oid,
           offer_amount: +inputOffer,
           store_customer_id: user?.id,
           sell_type: "offer",
           is_order_ask: true,
-          nft_owner: nft.store_makerorder[0]?.signer,
-          base_account: nft.store_makerorder[0]?.baseAccount,
-          nft_contract: nft.store_makerorder[0]?.nftContract,
+          nft_owner: nft.store_makerorder?.signer,
+          base_account: nft.store_makerorder?.baseAccount,
+          nft_contract: nft.store_makerorder?.nftContract,
           signer: account,
-          tokenId: nft?.store_makerorder[0]?.tokenId,
+          tokenId: nft?.store_makerorder?.tokenId,
           tax: +((2 / 100) * +inputOffer),
           nonce: data?.nonce?.toString() || "",
           signed_v: parseInt(signature.substring(128, 130), 16).toString(),
@@ -162,11 +162,13 @@ const OfferPopUp = ({
           signed_s: "0x" + signature.substring(64, 128),
         };
 
+
         let response 
         if(id){
-
+          console.log({id},"update bro")
           response = await offerUpload.mutateAsync({id:id, ...payload});
         }else{
+          console.log({payload},"payload creareted")
           response = await offerUpload.mutateAsync(payload);
 
         }
@@ -218,17 +220,18 @@ const OfferPopUp = ({
             store_customer_id: user?.id,
             sell_type: "offer",
             is_order_ask: true,
-            nft_owner: nft.store_makerorder[0]?.signer,
-            base_account: nft.store_makerorder[0]?.baseAccount,
-            nft_contract: nft.store_makerorder[0]?.nftContract,
+            nft_owner: nft.store_makerorder?.signer,
+            base_account: nft.store_makerorder?.baseAccount,
+            nft_contract: nft.store_makerorder?.nftContract,
             signer: account,
-            tokenId: nft?.store_makerorder[0]?.tokenId,
+            tokenId: nft?.store_makerorder?.tokenId,
             tax: +((2 / 100) * +inputOffer).toFixed(5),
             nonce: data?.nonce?.toString() || "",
             signed_v: parseInt(signature.substring(128, 130), 16).toString(),
             signed_r: "0x" + signature.substring(0, 64),
             signed_s: "0x" + signature.substring(64, 128),
           };
+
           const response = await offerUpload.mutateAsync(payload);
 
           if (response.success) {
