@@ -108,6 +108,8 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             "store_customer",
             JSON.stringify(response.storeCustomer)
           );
+      dispatch(setUserProcess(response.storeCustomer));
+
         } else {
           data && data.message.message
             ? addToast({
@@ -274,13 +276,13 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         </ul>
 
         <div className="mr-2">
+          {/* Connect Wallet */}
           {account != "" ? (
             <button
               type="button"
               className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
             >
               {customTruncateHandler(account, 8)}
-              {/* Connect Wallet */}
             </button>
           ) : (
             <button

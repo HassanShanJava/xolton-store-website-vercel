@@ -91,19 +91,22 @@ const NFTDetail = () => {
     },
     {
       refetchOnWindowFocus: false,
+      enabled: id || user?.id ? true : false,
     }
   );
-  
+  useEffect(() => {
+    refetch();
+  }, [user?.id]);
   // const NFTDetail = nftApiDetail?.data[0];
-  
+
   // nft collection api
-  
+
   const { data: NFTCollection } = useQuery(
     ["nftCollection"],
     async () => {
       const response: any = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${nftDetail?.contract_id.$oid}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-        );
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -114,16 +117,16 @@ const NFTDetail = () => {
       refetchOnWindowFocus: false,
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
-    );
-    console.log({ nftDetail, NFTCollection }, "payload payload payload");
-    
-    // buy nft
-    const buyNFT = async () => {
-      if (account != "") {
-        setShowPop(true);
-      } else if (account == nftDetail?.creator_id) {
-        addToast({
-          id: "connect-wallet-buy",
+  );
+  console.log({ nftDetail, NFTCollection }, "payload payload payload");
+
+  // buy nft
+  const buyNFT = async () => {
+    if (account != "") {
+      setShowPop(true);
+    } else if (account == nftDetail?.creator_id) {
+      addToast({
+        id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
       });
@@ -281,10 +284,10 @@ const NFTDetail = () => {
                       className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
                       onClick={(e) => {
                         e.preventDefault();
-                        offerNFT();
+                        nftDetail.is_offered? offerNFT():offerNFT()
                       }}
                     >
-                      {nftDetail?.is_offered ? "Update Offer" : "Offer"}
+                      {nftDetail.is_offered ? "Update Offer" : "Offer"}
                     </button>
                   )}
 
@@ -300,7 +303,7 @@ const NFTDetail = () => {
                   )}
                   {/* {showOfferPop && (
                     <OfferPopUp
-                      nft={NFTDetail}
+                      nft={NFTDetail};
                       open={showOfferPop}
                       setBuy={setShowOfferPop}
                       price={+nftDetail?.price}
@@ -318,6 +321,7 @@ const NFTDetail = () => {
                       accountBalance={+accountBalance}
                       wmaticBalance={+wmaticBalance}
                       id={updateOffer}
+                      refetch={refetch()}
                     />
                   )}
                 </div>
@@ -388,7 +392,12 @@ const NFTDetail = () => {
                     </AccordionPanel>
                   </AccordionItem>
                   {nftDetail?.sell_type.includes("offer") && (
-                    <OfferList id={id} user={user} offer_id={updateOffer} />
+                    <OfferList
+                      id={id}
+                      user={user}
+                      offer_id={updateOffer}
+                      nftDetail={nftDetail}
+                    />
                   )}
                 </Accordion>
               </div>
@@ -430,7 +439,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
 
         {/* collection nfts */}
         <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
-          {NFTCollection.filter((list: any) => list?.id !== id)?.map(
+          {NFTCollection.filter((list: any) => list?._id.$oid !== id)?.map(
             (collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
             )
@@ -441,11 +450,21 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   );
 };
 
-const OfferList: any = ({ id, user }: any) => {
+const OfferList: any = ({ id, user, nftDetail }: any) => {
   const [offer, setOffer] = useState<any>([]);
   const [isModal, setIsModal] = useState(false);
   const [title, setTitle] = useState("");
   const [selectedOffer, setSelectedOffer] = useState({});
+  const { account }: any = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
+  const [showPop, setShowPop] = useState(false);
+  const [accountBalance, setAccountBalance] = useState("");
+  const [usdMatic, setUsdMatic] = useState<any>("");
+  const [usdMinPriceMatic, setUsdMinPriceMatic] = useState<any>("");
+  const { maticToUsd } = useSelector((state: RootState) => state.matic);
+  const [wmaticBalance, setWmaticBalance] = useState("");
+  const [updateOffer, setUpdateOffer] = useState(""); //offer id
+  const [showOfferPop, setShowOfferPop] = useState(false);
 
   const [filter, setFilter] = useState({
     take: 5,
@@ -512,9 +531,11 @@ const OfferList: any = ({ id, user }: any) => {
     setIsModal,
     title,
   };
+
   useEffect(() => {
     NFTOfferRefetch();
   }, [filter?.take]);
+  
   const handleFilter = () => {
     setFilter((prevFilters: any) => ({
       ...prevFilters,
@@ -530,6 +551,38 @@ const OfferList: any = ({ id, user }: any) => {
     } catch (e) {
       console.log(e);
     }
+  };
+  // offer nft
+  const offerNFT = async (offerid?: any) => {
+    if (account != "") {
+      setShowOfferPop(true);
+      if (offerid !== "") {
+        setUpdateOffer(offerid);
+      }
+
+      const balance = await web3?.eth.getBalance(account);
+      const accountBalance = web3?.utils.fromWei(balance, "ether");
+      let wmaticBalance: any = await getBalance(web3, account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+      setWmaticBalance(wmaticBalance);
+      setAccountBalance(accountBalance);
+      
+    } else if (account == nftDetail?.creator_id) {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      });
+    } else if (account === null || account === "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    } else {
+      return;
+    }
+
   };
 
   return (
@@ -600,7 +653,7 @@ const OfferList: any = ({ id, user }: any) => {
                                   >
                                     <div
                                       className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      // onClick={() => handleUpdate(item)}
+                                      onClick={() => {offerNFT(item?.id)}}
                                     >
                                       <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
                                     </div>
@@ -614,7 +667,7 @@ const OfferList: any = ({ id, user }: any) => {
                                   >
                                     <div
                                       className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      onClick={() => cancelOffer(item)}
+                                      onClick={() => {cancelOffer(item)}}
                                     >
                                       <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
                                     </div>
@@ -655,6 +708,19 @@ const OfferList: any = ({ id, user }: any) => {
         </div>
       </AccordionPanel>
       <CancelOfferModal {...featureModalParams} />
+      {showOfferPop && (
+        <OfferPopUp
+          nft={nftDetail}
+          open={showOfferPop}
+          setBuy={setShowOfferPop}
+          price={+nftDetail?.price}
+          tax={+nftDetail?.tax}
+          accountBalance={+accountBalance}
+          wmaticBalance={+wmaticBalance}
+          id={updateOffer}
+          refetch={NFTOfferRefetch()}
+        />
+      )}
     </AccordionItem>
   );
 };

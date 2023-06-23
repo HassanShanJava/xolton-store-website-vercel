@@ -33,6 +33,7 @@ interface OfferPopUpType {
   accountBalance: number;
   wmaticBalance: number;
   id?:string;
+  refetch?:any
 }
 
 const OfferPopUp = ({
@@ -43,9 +44,11 @@ const OfferPopUp = ({
   tax,
   accountBalance,
   wmaticBalance,
-  id
+  id,
+  refetch
 }: OfferPopUpType) => {
   const { user }: any = useSelector((state: RootState) => state.user);
+  console.log({id},'ididididid')
 
   const router = useRouter();
   const { handleSubmit, register, setValue, getValues } = useForm<any>();
@@ -60,6 +63,21 @@ const OfferPopUp = ({
         `${process.env.NEXT_PUBLIC_API_URL}/offer-nft`,
         {
           method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await response.json();
+      return result;
+    },
+  });
+  
+  const offerUpdate = useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft`,
+        {
+          method: "PUT",
           body: JSON.stringify(payload),
         }
       );
@@ -167,10 +185,12 @@ const OfferPopUp = ({
         let response 
         if(id){
           console.log({id},"update bro")
-          response = await offerUpload.mutateAsync({id:id, ...payload});
+          response = await offerUpdate.mutateAsync({offer_id:id, ...payload});
+          
         }else{
           console.log({payload},"payload creareted")
           response = await offerUpload.mutateAsync(payload);
+          
 
         }
 
@@ -183,6 +203,7 @@ const OfferPopUp = ({
             message: "Your Offer Uploaded Successfully",
             type: "success",
           });
+          refetch()
           setBuy(false)
         } else {
           dispatch(setNftOfferCreateProcess(4)); //finish ofer
@@ -233,8 +254,16 @@ const OfferPopUp = ({
             signed_s: "0x" + signature.substring(64, 128),
           };
 
-          const response = await offerUpload.mutateAsync(payload);
-
+          let response 
+          if(id){
+            console.log({id},"update bro")
+            response = await offerUpdate.mutateAsync({offer_id:id, ...payload});
+          }else{
+            console.log({payload},"payload creareted")
+            response = await offerUpload.mutateAsync(payload);
+  
+          }
+  
           if (response.success) {
             dispatch(setNftOfferCreateProcess(4)); //finish ofer
             setBuy(false)
@@ -250,6 +279,8 @@ const OfferPopUp = ({
             setBuy(false)
             throw new Error(response.message);
           }
+
+          
         } catch (e: any) {
           console.log("error message: ", { e });
           dispatch(finishNftOfferCreateProcess()); //false conver first

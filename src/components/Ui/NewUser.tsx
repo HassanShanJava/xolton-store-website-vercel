@@ -12,6 +12,7 @@ import { initWeb3 } from "~/utils/web3/web3Init";
 import { CustomToast } from "../globalToast";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { setUserProcess } from "~/store/slices/authSlice";
 
 const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
   const { handleSubmit, register, setValue } = useForm<any>();
@@ -63,6 +64,8 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
         );
         console.log(res.store_customer)
         localStorage.setItem("store_customer", JSON.stringify(res.storeCustomer));
+      dispatch(setUserProcess(res.storeCustomer));
+
         setOpen(false);
 
       } else {
