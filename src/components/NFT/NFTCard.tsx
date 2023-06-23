@@ -29,8 +29,7 @@ const NFTCard = ({ nft }: any) => {
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-
-  console.log({nft})
+  console.log(nft?.is_offered, "nft?.is_offered");
   const buyNFT = async () => {
     account == ""
       ? addToast({
@@ -50,7 +49,7 @@ const NFTCard = ({ nft }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
-  console.log({nft})
+  console.log({ nft });
 
   const offerNFT = async () => {
     if (account == "" || account === null) {
@@ -80,7 +79,7 @@ const NFTCard = ({ nft }: any) => {
     }
   };
 
-  console.log(nft._id.$oid)
+  console.log(nft._id.$oid);
 
   return (
     <>
@@ -116,8 +115,7 @@ const NFTCard = ({ nft }: any) => {
 
             <p>
               {/* {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "} */}
-              {nft?.price}{" "}
-              <span className="text-xs lowercase">MATIC</span>
+              {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 
@@ -133,7 +131,7 @@ const NFTCard = ({ nft }: any) => {
               Buy
             </button>
 
-            {nft?.sell_type?.includes("-offer") && (
+            {nft?.sell_type?.includes("-offer") && !nft?.is_offered && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -143,6 +141,18 @@ const NFTCard = ({ nft }: any) => {
                 className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
               >
                 Offer Now
+              </button>
+            )}
+            {nft?.sell_type?.includes("-offer") && nft?.is_offered && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // off  erNFT();
+                }}
+                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+              >
+                Cacnel Offer
               </button>
             )}
 
