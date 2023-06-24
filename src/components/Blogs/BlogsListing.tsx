@@ -11,7 +11,7 @@ import { displayDate, renderNFTImage } from "~/utils/helper";
 const BlogsListing = ({ storeBlogsData }: any) => {
   return (
     <>
-      <div className="max-h-full min-h-screen w-full max-w-[1600px] mx-auto  bg-bg-1 px-8">
+      <div className="mx-auto max-h-full min-h-screen w-full max-w-[1600px]  bg-bg-1 px-8">
         <section className="pb-6 pt-6 lg:pb-6 ">
           <div className="container mx-auto">
             <div className="-mx-4 flex flex-wrap justify-center">
@@ -40,7 +40,13 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                     <div key={i} className="group w-full max-w-lg px-4">
                       <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
                         <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
-                          <a href={`/blogs/${store?.meta}.html`}>
+                          <Link
+                            href={`/blogs/${store?.meta}${
+                              process.env.NEXT_PUBLIC_ENV !== "DEV"
+                                ? ".html"
+                                : ""
+                            }`}
+                          >
                             <Image
                               src={renderNFTImage(store)}
                               alt="image"
@@ -50,7 +56,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                               className="h-[240px] w-full object-cover"
                               priority
                             />
-                          </a>
+                          </Link>
                         </div>
                         <div>
                           <h3>

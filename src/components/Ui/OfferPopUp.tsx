@@ -32,8 +32,8 @@ interface OfferPopUpType {
   nft: any;
   accountBalance: number;
   wmaticBalance: number;
-  id?:string;
-  refetch?:any
+  id?: string;
+  refetch?: any;
 }
 
 const OfferPopUp = ({
@@ -45,10 +45,10 @@ const OfferPopUp = ({
   accountBalance,
   wmaticBalance,
   id,
-  refetch
+  refetch,
 }: OfferPopUpType) => {
   const { user }: any = useSelector((state: RootState) => state.user);
-  console.log({id},'ididididid')
+  console.log({ id }, "ididididid");
 
   const router = useRouter();
   const { handleSubmit, register, setValue, getValues } = useForm<any>();
@@ -71,7 +71,7 @@ const OfferPopUp = ({
       return result;
     },
   });
-  
+
   const offerUpdate = useMutation({
     mutationFn: async (payload: any) => {
       const response = await fetch(
@@ -161,7 +161,6 @@ const OfferPopUp = ({
         const data: any = await approval();
         const signature = data?.sign.substring(2);
 
-        console.log(data, "datadatadatadata");
         const payload: any = {
           store_id: process.env.NEXT_PUBLIC_STORE_ID,
           nft_id: nft?._id.$oid,
@@ -181,37 +180,40 @@ const OfferPopUp = ({
           signed_s: "0x" + signature.substring(64, 128),
         };
 
-
-        let response 
-        if(id){
-          console.log({id},"update bro")
-          response = await offerUpdate.mutateAsync({offer_id:id, ...payload});
-          
-        }else{
-          console.log({payload},"payload creareted")
+        let response;
+        if (id) {
+          console.log({ id, offer_id: id, ...payload }, "offer update");
+          response = await offerUpdate.mutateAsync({
+            offer_id: id,
+            ...payload,
+          });
+        } else {
+          console.log({ payload }, "offer create ");
           response = await offerUpload.mutateAsync(payload);
-          
-
         }
 
         if (response.success) {
-          dispatch(setNftOfferCreateProcess(4)); //finish ofer
+          setBuy(false);
+          refetch();
+          dispatch(finishNftOfferCreateProcess()); //finish ofer
           //false conver first
-          
+
           addToast({
             id: "offer-error",
-            message: "Your Offer Uploaded Successfully",
+            message: `Your Offer is Successfully ${
+              id !== "" ? "Updated" : "Uploaded"
+            }.`,
             type: "success",
           });
-          refetch()
-          setBuy(false)
+          refetch();
         } else {
-          dispatch(setNftOfferCreateProcess(4)); //finish ofer
-          setBuy(false)
+          setBuy(false);
+          dispatch(finishNftOfferCreateProcess()); //finish ofer
           throw new Error(response.message);
         }
       } catch (e: any) {
         console.log("error: ", { e });
+        setBuy(false);
         dispatch(finishNftOfferCreateProcess()); //false conver first
 
         addToast({
@@ -241,6 +243,7 @@ const OfferPopUp = ({
             offer_amount: +inputOffer,
             store_customer_id: user?.id,
             sell_type: "offer",
+            // sell_type: "fixed-offer",
             is_order_ask: true,
             nft_owner: nft.store_makerorder?.signer,
             base_account: nft.store_makerorder?.baseAccount,
@@ -254,19 +257,22 @@ const OfferPopUp = ({
             signed_s: "0x" + signature.substring(64, 128),
           };
 
-          let response 
-          if(id){
-            console.log({id},"update bro")
-            response = await offerUpdate.mutateAsync({offer_id:id, ...payload});
-          }else{
-            console.log({payload},"payload creareted")
+          let response;
+          if (id) {
+            console.log({ id }, "update bro");
+            response = await offerUpdate.mutateAsync({
+              offer_id: id,
+              ...payload,
+            });
+          } else {
+            console.log({ payload }, "payload creareted");
             response = await offerUpload.mutateAsync(payload);
-  
           }
-  
+
           if (response.success) {
-            dispatch(setNftOfferCreateProcess(4)); //finish ofer
-            setBuy(false)
+            setBuy(false);
+            refetch()
+            dispatch(finishNftOfferCreateProcess()); //finish ofer
             //false conver first
 
             addToast({
@@ -275,14 +281,13 @@ const OfferPopUp = ({
               type: "success",
             });
           } else {
+            setBuy(false);
             dispatch(finishNftOfferCreateProcess()); //false conver first
-            setBuy(false)
             throw new Error(response.message);
           }
-
-          
         } catch (e: any) {
           console.log("error message: ", { e });
+          setBuy(false);
           dispatch(finishNftOfferCreateProcess()); //false conver first
 
           addToast({
@@ -313,7 +318,9 @@ const OfferPopUp = ({
   const offerdetails = [
     {
       title: "Min Price:",
-      values: nft?.highest_offer ? (nft?.highest_offer + 0.1*nft?.highest_offer).toFixed(5):(nft?.min_price).toFixed(5),
+      values: nft?.highest_offer
+        ? (nft?.highest_offer + 0.1 * nft?.highest_offer).toFixed(5)
+        : (nft?.min_price).toFixed(5),
       symbol: "matic",
     },
     {
@@ -329,7 +336,7 @@ const OfferPopUp = ({
     {
       title: "Service fee 2%",
       values: inputOffer
-        ? (0.02 * Number(inputOffer)).toFixed(5)
+        ? (0.02 * Number(inputOffer)).toFixed(5) //2% tax included
         : (0).toFixed(5),
       symbol: "matic",
     },
@@ -345,7 +352,7 @@ const OfferPopUp = ({
       {open ? (
         <>
           {/* overlay */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur focus:outline-none">
             <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
@@ -390,8 +397,16 @@ const OfferPopUp = ({
                   <div className="m-4">
                     <Input
                       placeholder="Offer Price"
-                      defaultValue={nft.is_offered ?nft?.highest_offer + 0.1*nft?.highest_offer:null}
-                      min={nft.highest_offer ? (nft?.highest_offer + 0.1*nft?.highest_offer) : 0}
+                      defaultValue={
+                        nft.is_offered
+                          ? nft?.highest_offer + 0.1 * nft?.highest_offer //10% higher than previous highest bid
+                          : null
+                      }
+                      min={
+                        nft.highest_offer
+                          ? nft?.highest_offer + 0.1 * nft?.highest_offer
+                          : nft?.min_price
+                      }
                       type="number"
                       step={"any"}
                       required

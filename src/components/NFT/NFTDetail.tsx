@@ -25,8 +25,6 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
-  useToast,
   Menu,
   MenuButton,
   Spinner,
@@ -53,6 +51,7 @@ const NFTDetail = () => {
   const { id } = router.query;
   console.log({ id });
   const [showOfferPop, setShowOfferPop] = useState(false);
+  const [offer, setOffer] = useState<any>([]);
   const [filter, setFilter] = useState({
     take: 5,
     skip: 0,
@@ -99,8 +98,40 @@ const NFTDetail = () => {
   }, [user?.id]);
   // const NFTDetail = nftApiDetail?.data[0];
 
-  // nft collection api
+  // nft offers
+  const {
+    data: NFTOffer,
+    isLoading: offerLoading,
+    refetch: NFTOfferRefetch,
+    isFetching: offerFetching,
+  } = useQuery(
+    ["nftOffer"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
+          filter as any
+        ).toString()}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      if (filter?.skip > 0) {
+        setOffer([...offer, ...data?.data]);
+      } else {
+        setOffer([...data?.data]);
+      }
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: id ? true : false,
+    }
+  );
 
+  // nft collection api
   const { data: NFTCollection } = useQuery(
     ["nftCollection"],
     async () => {
@@ -111,14 +142,13 @@ const NFTDetail = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      return data?.data[0];
+      return data?.data;
     },
     {
       refetchOnWindowFocus: false,
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-  console.log({ nftDetail, NFTCollection }, "payload payload payload");
 
   // buy nft
   const buyNFT = async () => {
@@ -149,10 +179,11 @@ const NFTDetail = () => {
   // offer nft
   const offerNFT = async (offerid?: any) => {
     if (account != "") {
-      setShowOfferPop(true);
       if (offerid !== "") {
         setUpdateOffer(offerid);
       }
+
+      setShowOfferPop(true);
 
       const balance = await web3?.eth.getBalance(account);
       const accountBalance = web3?.utils.fromWei(balance, "ether");
@@ -195,6 +226,19 @@ const NFTDetail = () => {
       }
     })();
   }, [NFTDetail]);
+
+  // set offer id immdedially
+  (() => {
+    offer.map((item: any) => {
+      if (
+        item.store_customers.id === user.id &&
+        item.id === nftDetail.id &&
+        nftDetail.is_offered
+      ) {
+        setUpdateOffer(item.id);
+      }
+    });
+  })();
 
   return (
     <div className="bg-bg-1">
@@ -248,22 +292,23 @@ const NFTDetail = () => {
                       </p>
                     </div>
                   )}
-                  {nftDetail?.sell_type?.includes("offer") && (
-                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                      <p className="text-tx-5 text-sm">Highest Offer</p>
-                      <span className=" text-lg font-bold">
-                        {(+nftDetail?.highest_offer).toFixed(2)}{" "}
-                        <span className="text-xs lowercase text-slate-500">
-                          MATIC
+                  {nftDetail?.sell_type?.includes("offer") &&
+                    nftDetail.highest_offer != null && (
+                      <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                        <p className="text-tx-5 text-sm">Highest Offer</p>
+                        <span className=" text-lg font-bold">
+                          {(+nftDetail?.highest_offer).toFixed(2)}{" "}
+                          <span className="text-xs lowercase text-slate-500">
+                            MATIC
+                          </span>
                         </span>
-                      </span>
-                      <p className="text-xs lowercase text-slate-500">
-                        {`$ ${(
-                          +nftDetail?.min_price * (+maticToUsd as number)
-                        ).toFixed(2)}`}
-                      </p>
-                    </div>
-                  )}
+                        <p className="text-xs lowercase text-slate-500">
+                          {`$ ${(
+                            +nftDetail?.min_price * (+maticToUsd as number)
+                          ).toFixed(2)}`}
+                        </p>
+                      </div>
+                    )}
                 </div>
                 <div className="mb-3 flex flex-col gap-2 md:flex-row">
                   {nftDetail?.sell_type?.includes("fixed") && (
@@ -284,7 +329,9 @@ const NFTDetail = () => {
                       className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
                       onClick={(e) => {
                         e.preventDefault();
-                        nftDetail.is_offered? offerNFT():offerNFT()
+                        nftDetail.is_offered
+                          ? offerNFT(updateOffer)
+                          : offerNFT();
                       }}
                     >
                       {nftDetail.is_offered ? "Update Offer" : "Offer"}
@@ -299,6 +346,7 @@ const NFTDetail = () => {
                       price={+nftDetail?.price}
                       tax={+nftDetail?.tax}
                       accountBalance={+accountBalance}
+                      refetch={refetch}
                     />
                   )}
                   {/* {showOfferPop && (
@@ -321,7 +369,7 @@ const NFTDetail = () => {
                       accountBalance={+accountBalance}
                       wmaticBalance={+wmaticBalance}
                       id={updateOffer}
-                      refetch={refetch()}
+                      refetch={refetch}
                     />
                   )}
                 </div>
@@ -408,7 +456,7 @@ const NFTDetail = () => {
           <CollectionList
             id={nftDetail?.id}
             contract_id={nftDetail?.contract_id.$oid}
-            NFTCollection={NFTCollection?.data}
+            NFTCollection={NFTCollection}
           />
         </div>
       )}
@@ -430,7 +478,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
             type="button"
             className="md:text-md rounded-lg border-b border-transparent p-1 px-4 text-sm duration-300 hover:border-black hover:bg-white lg:text-lg "
             onClick={() => {
-              router.push(`/?contract_id=${contract_id} `);
+              router.push(`/?contract_id=${contract_id.$oid} `);
             }}
           >
             View More
@@ -532,10 +580,12 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
     title,
   };
 
+
+  console.log({offer},"offer")
   useEffect(() => {
     NFTOfferRefetch();
-  }, [filter?.take]);
-  
+  }, [filter?.take, user.id]);
+
   const handleFilter = () => {
     setFilter((prevFilters: any) => ({
       ...prevFilters,
@@ -566,7 +616,6 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
       wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
       setWmaticBalance(wmaticBalance);
       setAccountBalance(accountBalance);
-      
     } else if (account == nftDetail?.creator_id) {
       addToast({
         id: "connect-wallet-buy",
@@ -582,7 +631,6 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
     } else {
       return;
     }
-
   };
 
   return (
@@ -653,7 +701,9 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
                                   >
                                     <div
                                       className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      onClick={() => {offerNFT(item?.id)}}
+                                      onClick={() => {
+                                        offerNFT(item?.id);
+                                      }}
                                     >
                                       <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
                                     </div>
@@ -667,7 +717,9 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
                                   >
                                     <div
                                       className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      onClick={() => {cancelOffer(item)}}
+                                      onClick={() => {
+                                        cancelOffer(item);
+                                      }}
                                     >
                                       <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
                                     </div>

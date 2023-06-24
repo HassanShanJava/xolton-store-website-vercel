@@ -30,18 +30,20 @@ import { setUserProcess } from "~/store/slices/authSlice";
 import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
-
   const [nav, setNav] = useState(false);
   const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
   const { addToast } = CustomToast();
   useEffect(() => {
-    const localStore = JSON.parse(
-      localStorage.getItem("store_customer") as string
-    );
-    if (localStore) {
-      dispatch(setUserProcess(localStore));
+    const localStore = localStorage.getItem("store_customer");
+
+
+    if (localStore !== "undefined") {
+      let store = JSON.parse(localStore?localStore:"");
+      if (store !== undefined) {
+        dispatch(setUserProcess(store));
+      }
     }
   }, []);
   useEffect(() => {
@@ -87,7 +89,8 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
       const response = await loginConnect.mutateAsync(payload);
 
-      if (response?.storeCustomer === null) {
+      console.log(response?.storeCustomer,{response},"response")
+      if (response?.data === null) {
         setShowPop(true);
       } else {
         if (data?.success !== false) {
@@ -108,8 +111,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             "store_customer",
             JSON.stringify(response.storeCustomer)
           );
-      dispatch(setUserProcess(response.storeCustomer));
-
+          dispatch(setUserProcess(response.storeCustomer));
         } else {
           data && data.message.message
             ? addToast({
@@ -152,16 +154,18 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           setShowPop(true);
         } else {
           dispatch(setAccount(accounts[0]));
-          addToast({
-            id: "acc-changed",
-            type: "success",
-            message: "Account Changed!",
-          });
           console.log(changed_response.store_customer);
           localStorage.setItem(
             "store_customer",
             JSON.stringify(changed_response.storeCustomer)
-          );
+            );
+
+            dispatch(setUserProcess(changed_response.storeCustomer));
+            addToast({
+              id: "acc-changed",
+              type: "success",
+              message: "Account Changed!",
+            });
         }
       }
     });
@@ -230,7 +234,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                         nav.page_content !== "")
                   )
                   .map((list: any, i: number) => (
-                    <a
+                    <Link
                       href={`${list.link}/index.html`}
                       key={i}
                       onClick={handleNav}
@@ -238,18 +242,18 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                       <li className="flex items-center py-4 text-xl hover:border-b-2">
                         {list.page_name}
                       </li>
-                    </a>
+                    </Link>
                   ))}
             </ul>
           </nav>
         </div>
 
         <div className="relative ml-2 hidden h-8 w-8 sm:flex">
-          <a href={"/"}>
+          <Link href={"/"}>
             {webprops && (
               <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
             )}
-          </a>
+          </Link>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
@@ -264,14 +268,16 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                     nav.page_content !== "")
               )
               .map((list: any, i: number) => (
-                <a
+                <Link
                   href={`${
-                    list.link === "/" ? list.link : list.link + ".html"
+                    list.link === "/" ? list.link : list.link + 
+                      (process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : "")
+                    
                   }`}
                   key={i}
                 >
                   <li className="mx-4 hover:border-b-2">{list.page_name}</li>
-                </a>
+                </Link>
               ))}
         </ul>
 

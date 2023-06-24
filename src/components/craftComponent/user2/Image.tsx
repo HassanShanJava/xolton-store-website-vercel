@@ -4,6 +4,7 @@ import { useNode } from "@craftjs/core";
 import { FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { isValidImageType } from "~/utils/helper";
 import imageCompression from "browser-image-compression";
+import Link from "next/link";
 const Images = ({
   upload,
   src,
@@ -24,7 +25,7 @@ const Images = ({
 
   if (href) {
     return (
-      <a
+      <Link
         ref={(ref: any) => connect(drag(ref))}
         href={href}
         className={`${selected && "border-2 border-black"}`}
@@ -37,7 +38,7 @@ const Images = ({
             width ? width : "20"
           }%]  cursor-pointer object-${objectType}`}
         />
-      </a>
+      </Link>
     );
   } else {
     return (

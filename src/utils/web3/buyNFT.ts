@@ -11,6 +11,8 @@ export async function buyNFT(
   totalPrice: Int16Array,
   makerOrder: any
 ) {
+
+  console.log({makerOrder},"buyNFT payload")
   const makeArr: any = [];
   const takeArr: any = [];
   // make contract Instance

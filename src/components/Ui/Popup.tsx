@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 import { checkTargetForNewValues } from "framer-motion";
 
-import { useMutation } from "@tanstack/react-query";
+import { UseQueryResult, useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { customTruncateHandler } from "~/utils/helper";
 interface PopUpType {
@@ -20,6 +20,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
+  refetch?:any;
 }
 
 const Popup = ({
@@ -29,6 +30,7 @@ const Popup = ({
   price,
   tax,
   accountBalance,
+  refetch
 }: PopUpType) => {
   const router = useRouter();
 
@@ -83,14 +85,15 @@ const Popup = ({
         web3,
         account,
         total,
-        nft?.store_makerorder[0]
+        nft?.store_makerorder
       );
 
+      console.log(nft?.store_makerorder,{nft},"nft payload")
       if (buyData?.success) {
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
         const payload: any = {
-          id: nft.id,
+          id: nft._id.$oid,
           owner: buyData.owner,
           transaction_id: buyData.transaction_id,
           is_listed: false,
@@ -99,8 +102,8 @@ const Popup = ({
         };
 
         const payloadOrder: any = {
-          store_id: nft.store_id,
-          nft_id: nft.id,
+          store_id: nft.store_id.$oid,
+          nft_id: nft._id.$oid,
           owner_address: buyData?.owner,
           transaction_id: buyData?.transaction_id,
           nft_name: nft.name,
@@ -111,6 +114,7 @@ const Popup = ({
           previous_owner_address: buyData?.previous_owner,
         };
 
+
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
@@ -120,9 +124,12 @@ const Popup = ({
           type: "success",
         });
 
+
+
+        refetch()
         setIsPurchase(true);
         setBuy(false);
-        router.push("/");
+
       } else {
         addToast({
           id: "transaction-id",
@@ -141,7 +148,7 @@ const Popup = ({
       {open ? (
         <>
           {/* overlay */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="fixed backdrop-blur inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
             <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">

@@ -16,12 +16,14 @@ import Link from "next/link";
 import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+import { useQuery } from "@tanstack/react-query";
 
-const NFTCard = ({ nft }: any) => {
+const NFTCard = ({ nft, refetch }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
   const [wmaticBalance, setWmaticBalance] = useState("");
+  const [updateOffer, setUpdateOffer] = useState(""); //offer id
 
   // const toast = useToast();
   const { addToast } = CustomToast();
@@ -30,6 +32,48 @@ const NFTCard = ({ nft }: any) => {
   const { web3 } = useSelector((state: any) => state.web3);
 
   console.log(nft?.is_offered, "nft?.is_offered");
+
+  const [filter, setFilter] = useState({
+    take: 5,
+    skip: 0,
+  });
+  const [offer, setOffer] = useState<any>([]);
+  // nft offers
+  const {
+    data: NFTOffer,
+    isLoading: offerLoading,
+    refetch: NFTOfferRefetch,
+    isFetching: offerFetching,
+  } = useQuery(
+    ["nftOffer"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }&nft_id=${nft._id.$oid}&sell_type=offer&${new URLSearchParams(
+          filter as any
+        ).toString()}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      if (filter?.skip > 0) {
+        setOffer([...offer, ...data?.data]);
+      } else {
+        setOffer([...data?.data]);
+      }
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+      enabled: nft._id.$oid ? true : false,
+    }
+  );
+  
+  console.log({offer})
+
+
   const buyNFT = async () => {
     account == ""
       ? addToast({
@@ -51,31 +95,33 @@ const NFTCard = ({ nft }: any) => {
   };
   console.log({ nft });
 
-  const offerNFT = async () => {
-    if (account == "" || account === null) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-      return;
-    } else if (account == nft.creator_id) {
+  const offerNFT = async (offerid?: any) => {
+    if (account != "") {
+      setShowOfferPop(true);
+      if (offerid !== "") {
+        setUpdateOffer(offerid);
+      }
+
+      const balance = await web3?.eth.getBalance(account);
+      const accountBalance = web3?.utils.fromWei(balance, "ether");
+      let wmaticBalance: any = await getBalance(web3, account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+      setWmaticBalance(wmaticBalance);
+      setAccountBalance(accountBalance);
+    } else if (account == nft?.creator_id) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
       });
-      return;
+    } else if (account === null || account === "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
     } else {
-      setShowOfferPop(true);
-
-      let wmaticBalance: any = await getBalance(web3, account);
-      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
-      setWmaticBalance(wmaticBalance);
-      console.log("Account balance wmatic ", wmaticBalance);
-      const balance = await web3?.eth.getBalance(account);
-      const accountBalance = web3?.utils.fromWei(balance, "ether");
-      setAccountBalance(accountBalance);
+      return;
     }
   };
 
@@ -84,7 +130,7 @@ const NFTCard = ({ nft }: any) => {
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
-        <a
+        <Link
           href={`/nft-details/${nft._id.$oid}${
             process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
           }`}
@@ -99,7 +145,7 @@ const NFTCard = ({ nft }: any) => {
               className="mx-auto rounded-xl  object-cover "
             />
           </div>
-        </a>
+        </Link>
 
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">
@@ -143,16 +189,16 @@ const NFTCard = ({ nft }: any) => {
                 Offer Now
               </button>
             )}
-            {nft?.sell_type?.includes("-offer") && nft?.is_offered && (
+            {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
-                  // off  erNFT();
+                  // offerNFT();
                 }}
                 className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
               >
-                Cacnel Offer
+                Update Offer
               </button>
             )}
 
@@ -164,6 +210,7 @@ const NFTCard = ({ nft }: any) => {
                 price={+nft.price}
                 tax={+nft.tax}
                 accountBalance={+accountBalance}
+                refetch={refetch}
               />
             )}
             {showOfferPop && (
@@ -175,6 +222,8 @@ const NFTCard = ({ nft }: any) => {
                 tax={+nft.tax}
                 accountBalance={+accountBalance}
                 wmaticBalance={+wmaticBalance}
+                id={updateOffer}
+                refetch={refetch}
               />
             )}
           </div>
