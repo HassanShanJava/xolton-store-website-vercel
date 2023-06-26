@@ -37,10 +37,9 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const { addToast } = CustomToast();
   useEffect(() => {
     const localStore = localStorage.getItem("store_customer");
-
-
-    if (localStore !== "undefined") {
-      let store = JSON.parse(localStore?localStore:"");
+    console.log(localStore, "localStore");
+    if (localStore !== null) {
+      let store = JSON.parse(localStore ? localStore : "");
       if (store !== undefined) {
         dispatch(setUserProcess(store));
       }
@@ -89,7 +88,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
       const response = await loginConnect.mutateAsync(payload);
 
-      console.log(response?.storeCustomer,{response},"response")
+      console.log(response?.storeCustomer, { response }, "response");
       if (response?.data === null) {
         setShowPop(true);
       } else {
@@ -158,14 +157,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           localStorage.setItem(
             "store_customer",
             JSON.stringify(changed_response.storeCustomer)
-            );
+          );
 
-            dispatch(setUserProcess(changed_response.storeCustomer));
-            addToast({
-              id: "acc-changed",
-              type: "success",
-              message: "Account Changed!",
-            });
+          dispatch(setUserProcess(changed_response.storeCustomer));
+          addToast({
+            id: "acc-changed",
+            type: "success",
+            message: "Account Changed!",
+          });
         }
       }
     });
@@ -270,9 +269,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
               .map((list: any, i: number) => (
                 <Link
                   href={`${
-                    list.link === "/" ? list.link : list.link + 
-                      (process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : "")
-                    
+                    list.link === "/"
+                      ? list.link
+                      : list.link +
+                        (process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : "")
                   }`}
                   key={i}
                 >

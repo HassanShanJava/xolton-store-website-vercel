@@ -205,7 +205,7 @@ const OfferPopUp = ({
             }.`,
             type: "success",
           });
-          refetch();
+          // refetch();
         } else {
           setBuy(false);
           dispatch(finishNftOfferCreateProcess()); //finish ofer
@@ -271,7 +271,7 @@ const OfferPopUp = ({
 
           if (response.success) {
             setBuy(false);
-            refetch()
+            refetch();
             dispatch(finishNftOfferCreateProcess()); //finish ofer
             //false conver first
 

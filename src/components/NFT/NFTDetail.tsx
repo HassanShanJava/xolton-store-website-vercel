@@ -442,7 +442,6 @@ const NFTDetail = () => {
                   {nftDetail?.sell_type.includes("offer") && (
                     <OfferList
                       id={id}
-                      user={user}
                       offer_id={updateOffer}
                       nftDetail={nftDetail}
                     />
@@ -454,7 +453,7 @@ const NFTDetail = () => {
 
           {/* collection */}
           <CollectionList
-            id={nftDetail?.id}
+            id={nftDetail?._id.$oid}
             contract_id={nftDetail?.contract_id.$oid}
             NFTCollection={NFTCollection}
           />
@@ -487,7 +486,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
 
         {/* collection nfts */}
         <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
-          {NFTCollection.filter((list: any) => list?._id.$oid !== id)?.map(
+          {NFTCollection.filter((list: any) => list?._id['$oid'] !== id)?.map(
             (collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
             )
@@ -498,7 +497,9 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   );
 };
 
-const OfferList: any = ({ id, user, nftDetail }: any) => {
+const OfferList: any = ({ ids, nftDetail }: any) => {
+  const { user }: any = useSelector((state: RootState) => state.user);
+
   const [offer, setOffer] = useState<any>([]);
   const [isModal, setIsModal] = useState(false);
   const [title, setTitle] = useState("");
@@ -512,6 +513,8 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
   const [updateOffer, setUpdateOffer] = useState(""); //offer id
+  const router = useRouter();
+  const { id } = router.query;
   const [showOfferPop, setShowOfferPop] = useState(false);
 
   const [filter, setFilter] = useState({
@@ -520,7 +523,6 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
   });
   const { addToast } = CustomToast();
 
-  const router = useRouter();
   //   offer cancel api
   const offerCancelApi = useMutation({
     mutationFn: async (payload: any) => {
@@ -556,9 +558,9 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      if (filter?.skip > 0) {
+      if (filter?.skip > 0 && data) {
         setOffer([...offer, ...data?.data]);
-      } else {
+      } else if (data) {
         setOffer([...data?.data]);
       }
       return data?.data;
@@ -568,6 +570,7 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
       enabled: id ? true : false,
     }
   );
+  console.log(offer, "offer");
   const defaultModalParams = {
     selectedOffer,
     setSelectedOffer,
@@ -580,8 +583,7 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
     title,
   };
 
-
-  console.log({offer},"offer")
+  console.log({ offer }, "offer");
   useEffect(() => {
     NFTOfferRefetch();
   }, [filter?.take, user.id]);
@@ -770,7 +772,7 @@ const OfferList: any = ({ id, user, nftDetail }: any) => {
           accountBalance={+accountBalance}
           wmaticBalance={+wmaticBalance}
           id={updateOffer}
-          refetch={NFTOfferRefetch()}
+          refetch={NFTOfferRefetch}
         />
       )}
     </AccordionItem>

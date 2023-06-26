@@ -25,7 +25,7 @@ const Images = ({
 
   if (href) {
     return (
-      <Link
+      <a
         ref={(ref: any) => connect(drag(ref))}
         href={href}
         className={`${selected && "border-2 border-black"}`}
@@ -38,7 +38,7 @@ const Images = ({
             width ? width : "20"
           }%]  cursor-pointer object-${objectType}`}
         />
-      </Link>
+      </a>
     );
   } else {
     return (
