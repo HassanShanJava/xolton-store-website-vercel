@@ -33,6 +33,7 @@ interface OfferPopUpType {
   accountBalance: number;
   wmaticBalance: number;
   id?: string;
+  is_updated: boolean;
   refetch?: any;
 }
 
@@ -45,6 +46,7 @@ const OfferPopUp = ({
   accountBalance,
   wmaticBalance,
   id,
+  is_updated,
   refetch,
 }: OfferPopUpType) => {
   const { user }: any = useSelector((state: RootState) => state.user);
@@ -181,10 +183,10 @@ const OfferPopUp = ({
         };
 
         let response;
-        if (id) {
+        if (is_updated) {
           console.log({ id, offer_id: id, ...payload }, "offer update");
           response = await offerUpdate.mutateAsync({
-            offer_id: id,
+            // offer_id: id,
             ...payload,
           });
         } else {
@@ -258,10 +260,10 @@ const OfferPopUp = ({
           };
 
           let response;
-          if (id) {
+          if (is_updated) {
             console.log({ id }, "update bro");
             response = await offerUpdate.mutateAsync({
-              offer_id: id,
+              // offer_id: id,
               ...payload,
             });
           } else {

@@ -369,6 +369,7 @@ const NFTDetail = () => {
                       accountBalance={+accountBalance}
                       wmaticBalance={+wmaticBalance}
                       id={updateOffer}
+                      is_updated={nftDetail?.is_offered ? true : false}
                       refetch={refetch}
                     />
                   )}
@@ -486,7 +487,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
 
         {/* collection nfts */}
         <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
-          {NFTCollection.filter((list: any) => list?._id['$oid'] !== id)?.map(
+          {NFTCollection.filter((list: any) => list?._id["$oid"] !== id)?.map(
             (collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
             )
@@ -508,8 +509,7 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
   const { web3 } = useSelector((state: any) => state.web3);
   const [showPop, setShowPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
-  const [usdMatic, setUsdMatic] = useState<any>("");
-  const [usdMinPriceMatic, setUsdMinPriceMatic] = useState<any>("");
+
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
   const [updateOffer, setUpdateOffer] = useState(""); //offer id
@@ -772,6 +772,7 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
           accountBalance={+accountBalance}
           wmaticBalance={+wmaticBalance}
           id={updateOffer}
+          is_updated={nftDetail.is_offered ? true : false}
           refetch={NFTOfferRefetch}
         />
       )}

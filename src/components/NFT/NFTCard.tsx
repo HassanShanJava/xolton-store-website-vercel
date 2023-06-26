@@ -70,9 +70,8 @@ const NFTCard = ({ nft, refetch }: any) => {
       enabled: nft._id.$oid ? true : false,
     }
   );
-  
-  console.log({offer})
 
+  console.log({ offer });
 
   const buyNFT = async () => {
     account == ""
@@ -194,7 +193,7 @@ const NFTCard = ({ nft, refetch }: any) => {
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
-                  // offerNFT();
+                  offerNFT();
                 }}
                 className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
               >
@@ -223,6 +222,7 @@ const NFTCard = ({ nft, refetch }: any) => {
                 accountBalance={+accountBalance}
                 wmaticBalance={+wmaticBalance}
                 id={updateOffer}
+                is_updated={nft?.is_offered ? true : false}
                 refetch={refetch}
               />
             )}
