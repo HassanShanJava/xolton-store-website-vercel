@@ -202,9 +202,10 @@ const OfferPopUp = ({
 
           addToast({
             id: "offer-error",
-            message: `Your Offer is Successfully ${
-              id !== "" ? "Updated" : "Uploaded"
-            }.`,
+            message: is_updated
+              ? "Your Offer Updated Successfully!"
+              : "Your Offer Uploaded Successfully!",
+
             type: "success",
           });
           // refetch();
@@ -279,7 +280,9 @@ const OfferPopUp = ({
 
             addToast({
               id: "offer-error",
-              message: "Your Offer Uploaded Successfully",
+              message: is_updated
+                ? "Your Offer Updated Successfully!"
+                : "Your Offer Uploaded Successfully!",
               type: "success",
             });
           } else {

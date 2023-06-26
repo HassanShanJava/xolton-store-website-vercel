@@ -59,11 +59,6 @@ const NFTListing = ({ contract_id }: any) => {
     }
   );
 
-
-
-
-  
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSortFilter((prevFilters: any) => ({
@@ -85,7 +80,7 @@ const NFTListing = ({ contract_id }: any) => {
 
   useEffect(() => {
     refetch();
-  }, [sortFilter]);
+  }, [sortFilter,user?.id]);
 
   useEffect(() => {
     if (storeNfts?.data.length > 0) {
@@ -222,7 +217,7 @@ const NFTListing = ({ contract_id }: any) => {
               }
             >
               {nfts?.map((nft: any, i: number) => (
-                <NFTCard nft={nft} key={i} refetch={refetch}/>
+                <NFTCard nft={nft} key={i} refetch={refetch} />
               ))}
             </InfiniteScroll>
           </div>

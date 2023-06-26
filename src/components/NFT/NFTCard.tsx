@@ -129,7 +129,7 @@ const NFTCard = ({ nft, refetch }: any) => {
   return (
     <>
       <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
-        <Link
+        <a
           href={`/nft-details/${nft._id.$oid}${
             process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
           }`}
@@ -144,7 +144,7 @@ const NFTCard = ({ nft, refetch }: any) => {
               className="mx-auto rounded-xl  object-cover "
             />
           </div>
-        </Link>
+        </a>
 
         <div className="">
           <div className="flex items-center justify-between px-2.5 py-4">

@@ -93,11 +93,6 @@ const NFTDetail = () => {
       enabled: id || user?.id ? true : false,
     }
   );
-  useEffect(() => {
-    refetch();
-  }, [user?.id]);
-  // const NFTDetail = nftApiDetail?.data[0];
-
   // nft offers
   const {
     data: NFTOffer,
@@ -130,13 +125,16 @@ const NFTDetail = () => {
       enabled: id ? true : false,
     }
   );
-
   // nft collection api
-  const { data: NFTCollection } = useQuery(
+  const { data: NFTCollection, refetch: CollectionRefetch } = useQuery(
     ["nftCollection"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${nftDetail?.contract_id.$oid}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${
+          nftDetail?.contract_id.$oid
+        }&store_id=${process.env.NEXT_PUBLIC_STORE_ID}${
+          user ? "&store_customer_id=" + user?.id : ""
+        }`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -149,6 +147,11 @@ const NFTDetail = () => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
+  useEffect(() => {
+    refetch();
+    CollectionRefetch();
+    NFTOfferRefetch();
+  }, [user?.id]);
 
   // buy nft
   const buyNFT = async () => {
@@ -207,39 +210,27 @@ const NFTDetail = () => {
       return;
     }
   };
-  // convert matic to usd
-  useEffect(() => {
-    (async () => {
-      if (NFTDetail !== null || NFTDetail !== undefined) {
-        try {
-          const nftPrice: number = nftDetail?.price ? +nftDetail?.price : 0;
-          const nftMinPrice: number = nftDetail?.min_price
-            ? +nftDetail?.min_price
-            : 0;
-          const maitccprice = await maticToUSD(nftPrice);
-          const maitccMinprice = await maticToUSD(nftMinPrice);
-          setUsdMinPriceMatic(maitccMinprice);
-          setUsdMatic(maitccprice);
-        } catch (e) {
-          console.log(e, "consvertion error front-end");
-        }
-      }
-    })();
-  }, [NFTDetail]);
+  const AllRefetch = async () => {
+    refetch();
+    CollectionRefetch();
+    NFTOfferRefetch();
+  };
 
-  // set offer id immdedially
-  (() => {
-    offer.map((item: any) => {
-      if (
-        item.store_customers.id === user.id &&
-        item.id === nftDetail.id &&
-        nftDetail.is_offered
-      ) {
-        setUpdateOffer(item.id);
-      }
-    });
-  })();
-
+  const modalParam: any = {
+    filter,
+    setFilter,
+    offer,
+    setOffer,
+    NFTOffer,
+    offerLoading,
+    NFTOfferRefetch,
+    offerFetching,
+    setShowOfferPop,
+    showOfferPop,
+    addToast,
+    offerNFT,
+    refetch,
+  };
   return (
     <div className="bg-bg-1">
       {nftDetail && (
@@ -292,23 +283,32 @@ const NFTDetail = () => {
                       </p>
                     </div>
                   )}
-                  {nftDetail?.sell_type?.includes("offer") &&
-                    nftDetail.highest_offer != null && (
-                      <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                        <p className="text-tx-5 text-sm">Highest Offer</p>
-                        <span className=" text-lg font-bold">
-                          {(+nftDetail?.highest_offer).toFixed(2)}{" "}
-                          <span className="text-xs lowercase text-slate-500">
-                            MATIC
-                          </span>
+                  {nftDetail?.sell_type?.includes("offer") && (
+                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                      <p className="text-tx-5 text-sm">Highest Offer</p>
+                      <span className=" text-lg font-bold">
+                        {nftDetail.highest_offer
+                          ? (+nftDetail?.highest_offer).toFixed(2)
+                          : (+nftDetail.min_price).toFixed(2)}
+
+                        <span className="ml-1 text-xs lowercase text-slate-500">
+                          MATIC
                         </span>
-                        <p className="text-xs lowercase text-slate-500">
-                          {`$ ${(
-                            +nftDetail?.min_price * (+maticToUsd as number)
-                          ).toFixed(2)}`}
-                        </p>
-                      </div>
-                    )}
+                      </span>
+                      <p className="text-xs lowercase text-slate-500">
+                        {`$ ${
+                          nftDetail.highest_offer
+                            ? (
+                                +nftDetail?.highest_offer *
+                                (+maticToUsd as number)
+                              ).toFixed(2)
+                            : (
+                                +nftDetail?.min_price * (+maticToUsd as number)
+                              ).toFixed(2)
+                        }`}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="mb-3 flex flex-col gap-2 md:flex-row">
                   {nftDetail?.sell_type?.includes("fixed") && (
@@ -349,16 +349,7 @@ const NFTDetail = () => {
                       refetch={refetch}
                     />
                   )}
-                  {/* {showOfferPop && (
-                    <OfferPopUp
-                      nft={NFTDetail};
-                      open={showOfferPop}
-                      setBuy={setShowOfferPop}
-                      price={+nftDetail?.price}
-                      tax={+nftDetail?.tax}
-                      accountBalance={+accountBalance}
-                    />
-                  )} */}
+
                   {showOfferPop && (
                     <OfferPopUp
                       nft={nftDetail}
@@ -370,7 +361,7 @@ const NFTDetail = () => {
                       wmaticBalance={+wmaticBalance}
                       id={updateOffer}
                       is_updated={nftDetail?.is_offered ? true : false}
-                      refetch={refetch}
+                      refetch={AllRefetch}
                     />
                   )}
                 </div>
@@ -445,6 +436,7 @@ const NFTDetail = () => {
                       id={id}
                       offer_id={updateOffer}
                       nftDetail={nftDetail}
+                      {...modalParam}
                     />
                   )}
                 </Accordion>
@@ -498,30 +490,30 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
   );
 };
 
-const OfferList: any = ({ ids, nftDetail }: any) => {
+const OfferList: any = ({
+  filter,
+  setFilter,
+  offer,
+  setOffer,
+  NFTOffer,
+  offerLoading,
+  NFTOfferRefetch,
+  offerFetching,
+  setShowOfferPop,
+  showOfferPop,
+  addToast,
+  nftDetail,
+  offerNFT,
+  refetch,
+}: any) => {
   const { user }: any = useSelector((state: RootState) => state.user);
 
-  const [offer, setOffer] = useState<any>([]);
+  // const [offer, setOffer] = useState<any>([]);
   const [isModal, setIsModal] = useState(false);
   const [title, setTitle] = useState("");
   const [selectedOffer, setSelectedOffer] = useState({});
-  const { account }: any = useSelector((state: RootState) => state.web3);
-  const { web3 } = useSelector((state: any) => state.web3);
-  const [showPop, setShowPop] = useState(false);
-  const [accountBalance, setAccountBalance] = useState("");
 
-  const { maticToUsd } = useSelector((state: RootState) => state.matic);
-  const [wmaticBalance, setWmaticBalance] = useState("");
-  const [updateOffer, setUpdateOffer] = useState(""); //offer id
   const router = useRouter();
-  const { id } = router.query;
-  const [showOfferPop, setShowOfferPop] = useState(false);
-
-  const [filter, setFilter] = useState({
-    take: 5,
-    skip: 0,
-  });
-  const { addToast } = CustomToast();
 
   //   offer cancel api
   const offerCancelApi = useMutation({
@@ -539,42 +531,12 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
       return result;
     },
   });
-  const {
-    data: NFTOffer,
-    isLoading: offerLoading,
-    refetch: NFTOfferRefetch,
-    isFetching: offerFetching,
-  } = useQuery(
-    ["nftOffer"],
-    async () => {
-      const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
-          process.env.NEXT_PUBLIC_STORE_ID
-        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
-          filter as any
-        ).toString()}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      if (filter?.skip > 0 && data) {
-        setOffer([...offer, ...data?.data]);
-      } else if (data) {
-        setOffer([...data?.data]);
-      }
-      return data?.data;
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: id ? true : false,
-    }
-  );
-  console.log(offer, "offer");
+
   const defaultModalParams = {
     selectedOffer,
     setSelectedOffer,
     refetch: NFTOfferRefetch,
+    detailReftch: refetch,
   };
   const featureModalParams = {
     ...defaultModalParams,
@@ -583,7 +545,6 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
     title,
   };
 
-  console.log({ offer }, "offer");
   useEffect(() => {
     NFTOfferRefetch();
   }, [filter?.take, user.id]);
@@ -602,36 +563,6 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
       setIsModal(true);
     } catch (e) {
       console.log(e);
-    }
-  };
-  // offer nft
-  const offerNFT = async (offerid?: any) => {
-    if (account != "") {
-      setShowOfferPop(true);
-      if (offerid !== "") {
-        setUpdateOffer(offerid);
-      }
-
-      const balance = await web3?.eth.getBalance(account);
-      const accountBalance = web3?.utils.fromWei(balance, "ether");
-      let wmaticBalance: any = await getBalance(web3, account);
-      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
-      setWmaticBalance(wmaticBalance);
-      setAccountBalance(accountBalance);
-    } else if (account == nftDetail?.creator_id) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Owner cannot buy there own NFT",
-        type: "error",
-      });
-    } else if (account === null || account === "") {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-    } else {
-      return;
     }
   };
 
@@ -762,20 +693,6 @@ const OfferList: any = ({ ids, nftDetail }: any) => {
         </div>
       </AccordionPanel>
       <CancelOfferModal {...featureModalParams} />
-      {showOfferPop && (
-        <OfferPopUp
-          nft={nftDetail}
-          open={showOfferPop}
-          setBuy={setShowOfferPop}
-          price={+nftDetail?.price}
-          tax={+nftDetail?.tax}
-          accountBalance={+accountBalance}
-          wmaticBalance={+wmaticBalance}
-          id={updateOffer}
-          is_updated={nftDetail.is_offered ? true : false}
-          refetch={NFTOfferRefetch}
-        />
-      )}
     </AccordionItem>
   );
 };

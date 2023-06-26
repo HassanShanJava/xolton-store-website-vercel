@@ -205,11 +205,11 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         >
           <div className="mr-4 mt-4 flex items-center justify-between">
             <div className="relative ml-4  h-8 w-8 sm:flex">
-              <Link href={"/"}>
+              <a href={"/"}>
                 {webprops && (
                   <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
                 )}
-              </Link>
+              </a>
             </div>
 
             <div
@@ -233,7 +233,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                         nav.page_content !== "")
                   )
                   .map((list: any, i: number) => (
-                    <Link
+                    <a
                       href={`${list.link}/index.html`}
                       key={i}
                       onClick={handleNav}
@@ -241,18 +241,18 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                       <li className="flex items-center py-4 text-xl hover:border-b-2">
                         {list.page_name}
                       </li>
-                    </Link>
+                    </a>
                   ))}
             </ul>
           </nav>
         </div>
 
         <div className="relative ml-2 hidden h-8 w-8 sm:flex">
-          <Link href={"/"}>
+          <a href={"/"}>
             {webprops && (
               <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
             )}
-          </Link>
+          </a>
         </div>
 
         <ul className="hidden items-center justify-between text-sm sm:flex">
@@ -267,7 +267,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                     nav.page_content !== "")
               )
               .map((list: any, i: number) => (
-                <Link
+                <a
                   href={`${
                     list.link === "/"
                       ? list.link
@@ -277,7 +277,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                   key={i}
                 >
                   <li className="mx-4 hover:border-b-2">{list.page_name}</li>
-                </Link>
+                </a>
               ))}
         </ul>
 
