@@ -487,7 +487,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
         </div>
 
         {/* collection nfts */}
-        <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 ">
+        <div className="  grid  h-full w-full grid-cols-1 gap-4 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 ">
           {NFTCollection.filter((list: any) => list?._id["$oid"] !== id)?.map(
             (collectionNFT: any, i: any) => (
               <NFTCard nft={collectionNFT} key={i} />
