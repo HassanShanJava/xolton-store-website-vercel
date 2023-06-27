@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
+import Footer from "~/components/Layout/Footer";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
@@ -40,7 +41,7 @@ export async function getStaticProps({ params }: any) {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  if (!responseWeb.ok) {
+  if (!responseWeb?.ok) {
     throw new Error("Network response was not ok");
   }
 
@@ -60,7 +61,7 @@ const AboutDetailFunc = dynamic(
 
 export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
   return (
-    <>
+    <div className=" w-full bg-bg-1 py-2">
       <SeoHead
         name={storeBlogsData?.title}
         title={`${storeBlogsData?.title} `}
@@ -69,11 +70,14 @@ export default function BlogsPage({ storeBlogsData, navData, webData }: any) {
         banner_image={storeBlogsData?.thumb || webData?.banner_image}
         icon={webData?.logo_image}
       />
-      <AboutDetailFunc
-        storeBlogsData={storeBlogsData}
-        navData={navData}
-        webData={webData}
-      />
-    </>
+      <div className="mx-auto max-w-[1600px]">
+        <AboutDetailFunc
+          storeBlogsData={storeBlogsData}
+          navData={navData}
+          webData={webData}
+        />
+      </div>
+      <Footer webData={webData}/>
+    </div>
   );
 }

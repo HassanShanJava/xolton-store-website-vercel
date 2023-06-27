@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Footer from "~/components/Layout/Footer";
 import SeoHead from "~/components/Layout/SeoHead";
 import { websiteInfo } from "~/utils/helper";
 
@@ -7,6 +8,7 @@ const NFTDetails = dynamic(() => import("../../components/NFT/NFTDetail"), {
 });
 
 export async function getStaticPaths() {
+
   const response: any = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&rows=50`,
     {
@@ -20,14 +22,16 @@ export async function getStaticPaths() {
     throw new Error("Network response was not ok");
   }
   const result: any = await response.json();
+  // console.log(result.data)
 
   const paths = result?.data?.map((post: any) => ({
-    params: { id: post.id },
+    params: { id: post?._id['$oid'] },
   }));
 
   return { paths, fallback: false };
 }
 export async function getStaticProps({ params }: any) {
+  // console.log(params?.id,'params?.id')
   const response: any = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&id=${params?.id}`,
     {
@@ -43,11 +47,13 @@ export async function getStaticProps({ params }: any) {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  if (!responseWeb.ok) {
+  if (!responseWeb?.ok) {
     throw new Error("Network response was not ok");
   }
 
   const result: any = await response.json();
+
+  // console.log(result,"result")
 
   const resultWeb: any = await responseWeb.json();
   const navData = resultWeb?.data?.navbar || [];
@@ -61,7 +67,7 @@ export default function detailPage({ navData, webData, storeBlogsData }: any) {
       <SeoHead
         name={`NFT Detail | ${webData?.name}`}
         title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
-        description="The one-stop NFT platform to turn your creative ideas into a full-blown NFT marketplace. Create your own NFT marketplace today for free."
+        description={webData.description}
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
@@ -71,6 +77,7 @@ export default function detailPage({ navData, webData, storeBlogsData }: any) {
         webData={webData}
         NFTDetail={storeBlogsData}
       />
+      <Footer webData={webData}/>
     </>
   );
 }

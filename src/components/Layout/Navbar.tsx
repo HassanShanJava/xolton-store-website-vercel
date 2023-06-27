@@ -4,7 +4,13 @@ import React, { useEffect, useState } from "react";
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
 import Link from "next/link";
-import { customTruncateHandler, renderNFTIcon } from "~/utils/helper";
+import {
+  customTruncateHandler,
+  getCustomerConnectInfo,
+  loginConnectInfo,
+  maticToUSD,
+  renderNFTIcon,
+} from "~/utils/helper";
 import { web3Init } from "~/store/slices/web3Slice";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
@@ -15,68 +21,201 @@ import { setAccount } from "~/store/slices/web3Slice";
 
 import { storeWebPageData } from "~/store/slices/pageSlice";
 import { storeWebThemeData } from "~/store/slices/themeSlice";
+import axios from "axios";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { CustomToast } from "../globalToast";
+import NewUser from "../Ui/NewUser";
+import { setUserProcess } from "~/store/slices/authSlice";
+import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
+import Web3 from "web3";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
+  const [showPop, setShowPop] = useState(false);
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
-  const toast = useToast();
+  const { addToast } = CustomToast();
+  useEffect(() => {
+    (async () => {
+      try {
+        const localStore: any = localStorage.getItem("store_customer");
+        console.log(localStore, "localStore");
+        if (localStore !== null) {
+          let store = JSON.parse(localStore ? localStore : "");
+          if (store !== undefined) {
+            dispatch(setUserProcess(store));
+            const web3 = new Web3(window.ethereum);
+
+            let account = await window.ethereum.request({
+              method: "eth_requestAccounts",
+            });
+            console.log("Account : ", account);
+            console.log("localStore?.wallet_address : ", store?.wallet_address);
+
+            if (
+              account[0]?.toLowerCase() === store?.wallet_address?.toLowerCase()
+            ) {
+              account = account[0];
+              const chainId = await window.ethereum.request({
+                method: "eth_chainId",
+              });
+
+              console.log("If Condition configWeb3");
+              dispatch(
+                web3Init({
+                  web3: web3,
+                  account: account,
+                  chainId: chainId,
+                })
+              );
+
+              return { account, web3 };
+            } else {
+              console.log("ERROR");
+              console.log("ELSE Condition configWeb3");
+      localStorage.removeItem("store_customer");
+
+              dispatch(
+                web3Init({
+                  web3: null,
+                  account: "",
+                  chainId: "",
+                })
+              );
+
+              // return thunkApi.rejectWithValue("You are disconnected");
+            }
+          }
+        }
+      } catch (err) {
+        console.log("ERROR");
+        console.log(err);
+      }
+    })();
+  }, [typeof window !== "undefined", dispatch]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const nftPrice: number = 1;
+
+        const maitccprice = await maticToUSD(nftPrice);
+        dispatch(setMaticToUsdProcess(maitccprice));
+      } catch (e) {
+        console.log(e, "consvertion error front-end");
+      }
+    })();
+  }, []);
 
   const { account } = useSelector((state: RootState) => state.web3);
+  const loginConnect = useMutation({
+    mutationFn: async (payload) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await response.json();
+      return result;
+    },
+  });
 
   // connect wallet
   const connectMetamask = async () => {
-    let data: any = await initWeb3();
-    if (data?.success !== false) {
-      toast({
-        title: "Wallet connected",
-        status: "success",
+    //
 
-        isClosable: true,
-        position: "top-left",
-      });
+    try {
+      let data: any = await initWeb3();
 
-      dispatch(
-        web3Init({
-          web3: data?.web3,
-          account: data?.account,
-          chainId: data?.chainId,
-        })
-      );
-    } else {
-      data && data.message.message
-        ? toast({
-            title: data.message.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
-          })
-        : toast({
-            title: data.message,
-            status: "error",
-            isClosable: true,
-            position: "top-left",
+      const payload: any = {
+        store_id: process.env.NEXT_PUBLIC_STORE_ID,
+        wallet_address: data?.account,
+      };
+
+      const response = await loginConnect.mutateAsync(payload);
+
+      console.log(response?.storeCustomer, { response }, "response");
+      if (response?.data === null) {
+        setShowPop(true);
+      } else {
+        if (data?.success !== false) {
+          addToast({
+            id: "connect-wallet",
+            message: "Wallet connected",
+            type: "success",
           });
+          dispatch(
+            web3Init({
+              web3: data?.web3,
+              account: data?.account,
+              chainId: data?.chainId,
+            })
+          );
+
+          localStorage.setItem(
+            "store_customer",
+            JSON.stringify(response.storeCustomer)
+          );
+          dispatch(setUserProcess(response.storeCustomer));
+        } else {
+          data && data.message.message
+            ? addToast({
+                id: "connect-wallet",
+                message: data.message.message,
+                type: "error",
+                position: "top-right",
+              })
+            : addToast({
+                id: "connect-wallet",
+                message: data.message,
+                type: "error",
+                position: "top-right",
+              });
+        }
+        dispatch(
+          web3Init({
+            web3: data?.web3,
+            account: data?.account,
+            chainId: data?.chainId,
+          })
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   if (typeof window !== "undefined") {
-    window?.ethereum?.on("accountsChanged", function (accounts: String) {
+    window?.ethereum?.on("accountsChanged", async function (accounts: String) {
       if (account !== "") {
-        dispatch(setAccount(accounts[0]));
-      }
+        const payload: any = {
+          store_id: process.env.NEXT_PUBLIC_STORE_ID,
+          wallet_address: accounts[0],
+        };
 
-      // else{
-      // if no extension found?
-      // toast({
-      //   title: "Please Install Metamask",
-      //   status: "error",
-      //   isClosable: true,
-      //   position: "top-left",
-      // });
-      // }
+        const changed_response = await loginConnect.mutateAsync(payload);
+        console.log({ changed_response });
+        if (changed_response?.storeCustomer === null) {
+          setShowPop(true);
+        } else {
+          dispatch(setAccount(accounts[0]));
+          console.log(changed_response.store_customer);
+          localStorage.setItem(
+            "store_customer",
+            JSON.stringify(changed_response.storeCustomer)
+          );
+
+          dispatch(setUserProcess(changed_response.storeCustomer));
+          addToast({
+            id: "acc-changed",
+            type: "success",
+            message: "Account Changed!",
+          });
+        }
+      }
     });
 
     window?.ethereum?.on("chainChanged", function (chainId: String) {
@@ -115,11 +254,11 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         >
           <div className="mr-4 mt-4 flex items-center justify-between">
             <div className="relative ml-4  h-8 w-8 sm:flex">
-              <Link href={"/"}>
+              <a href={"/"}>
                 {webprops && (
                   <Image src={renderNFTIcon(webprops)} alt="/logo" fill />
                 )}
-              </Link>
+              </a>
             </div>
 
             <div
@@ -179,7 +318,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
               .map((list: any, i: number) => (
                 <a
                   href={`${
-                    list.link === "/" ? list.link : list.link + ".html"
+                    list.link === "/"
+                      ? list.link
+                      : list.link +
+                        (process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : "")
                   }`}
                   key={i}
                 >
@@ -189,10 +331,11 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         </ul>
 
         <div className="mr-2">
+          {/* Connect Wallet */}
           {account != "" ? (
             <button
               type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75"
+              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
             >
               {customTruncateHandler(account, 8)}
             </button>
@@ -207,6 +350,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           )}
         </div>
       </div>
+      {showPop && <NewUser open={showPop} setOpen={setShowPop} />}
     </>
   );
 };

@@ -11,7 +11,6 @@ const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   
-
   return (
     <QueryClientProvider client={queryClient}>
       <ChakraProvider>

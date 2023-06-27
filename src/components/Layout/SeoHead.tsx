@@ -11,42 +11,70 @@ const SeoHead = ({ ...props }: any) => {
 
   return (
     <Head>
-      <link rel="canonical" href={`https://${props?.domain_name}.${process.env.NEXT_PUBLIC_LIVE_URL}/${props?.canonical_url}`} />
-      <title>{props?.name}</title>
-      <meta property="og:title" content={props?.title} key="title" />
-      <meta name="description" content={`${props?.description} Store`} />
-      <meta property="og:title" content={props?.title} />
-      <meta
-        property="og:site_name"
-        content={`${props?.domain_name} Store`}
-      ></meta>
-      <meta name="og:description" content={props?.description}></meta>
-      <meta
-        property="og:image"
-        content={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.banner_image}`}
-      ></meta>
+      {props?.domain_name && (
+        <link
+          rel="canonical"
+          href={`https://${props?.domain_name}.${process.env.NEXT_PUBLIC_LIVE_URL}/${props?.canonical_url}`}
+        />
+      )}
+      {props?.name && <title>{props?.name}</title>}
+      {props?.title && (
+        <meta property="og:title" content={props?.title} key="title" />
+      )}
+      {props?.title && <meta property="og:title" content={props?.title} />}
+      <meta name="robots" content="noindex,nofollow" />
+      {props?.description && (
+        <meta name="description" content={`${props?.description} Store`} />
+      )}
+      {props?.domain_name && (
+        <meta
+          property="og:site_name"
+          content={`${props?.domain_name} Store`}
+        ></meta>
+      )}
+      {props?.description && (
+        <meta name="og:description" content={props?.description}></meta>
+      )}
+      {props?.banner_image && (
+        <meta
+          property="og:image"
+          content={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.banner_image}`}
+        ></meta>
+      )}
       <meta property="og:image:height" content="1260" />
       <meta property="og:image:width" content="2400" />
       <meta property="og:title" content="Xoltan Marketplace" />
-      <meta property="og:url" content={`${props?.domain_name}`}></meta>
+      {props?.domain_name && (
+        <meta property="og:url" content={`${props?.domain_name}`}></meta>
+      )}
       <meta property="og:type" content="website"></meta>
-      <meta
-        name="keywords"
-        content={`${props?.domain_name}, ${props?.name} xoltan, nft, nft marketplace`}
-      ></meta>
+      {props?.domain_name && props?.name && (
+        <meta
+          name="keywords"
+          content={`${props?.domain_name}, ${props?.name} xoltan, nft, nft marketplace`}
+        ></meta>
+      )}
       <meta property="og:site_name" content="Xoltan Marketplace" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:creator" content="@AlchemyPlatform" />
-      <meta name="twitter:description" content={`${props?.description}`} />
-      <meta name="twitter:title" content={`${props?.name} title`} />
-      <meta
-        name="twitter:image"
-        content={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.banner_image}`}
-      />
-      <link
-        rel="icon"
-        href={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.icon}`}
-      />
+      {props?.description && (
+        <meta name="twitter:description" content={`${props?.description}`} />
+      )}
+      {props?.description && (
+        <meta name="twitter:title" content={`${props?.name} title`} />
+      )}
+      {props?.banner_image && (
+        <meta
+          name="twitter:image"
+          content={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.banner_image}`}
+        />
+      )}
+      {props?.icon && (
+        <link
+          rel="icon"
+          href={`${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${props?.icon}`}
+        />
+      )}
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"

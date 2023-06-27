@@ -4,6 +4,7 @@ import { useNode } from "@craftjs/core";
 import { FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { isValidImageType } from "~/utils/helper";
 import imageCompression from "browser-image-compression";
+import Link from "next/link";
 const Images = ({
   upload,
   src,

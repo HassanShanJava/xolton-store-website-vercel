@@ -5,13 +5,16 @@ import { useRouter } from "next/router";
 
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useSelector } from "react-redux";
 
 const NFTListing = ({ contract_id }: any) => {
   const router = useRouter();
+  const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
-  
+
   const {
     isLoading,
     isError,
@@ -25,7 +28,9 @@ const NFTListing = ({ contract_id }: any) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&${new URLSearchParams(sortFilter).toString()}`
+        }&${new URLSearchParams(sortFilter).toString()}${
+          user ? "&store_customer_id=" + user?.id : ""
+        }`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -76,6 +81,17 @@ const NFTListing = ({ contract_id }: any) => {
   useEffect(() => {
     refetch();
   }, [sortFilter]);
+  useEffect(() => {
+    let timeout: any;
+    timeout = setTimeout(() => {
+      if (user?.id !== undefined) {
+        refetch();
+      }
+    }, 2000);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [user]);
 
   useEffect(() => {
     if (storeNfts?.data.length > 0) {
@@ -125,7 +141,7 @@ const NFTListing = ({ contract_id }: any) => {
       searchQuery: "",
     }));
   }
- 
+
   return (
     <>
       <div className=" h-full  w-full ">
@@ -194,7 +210,7 @@ const NFTListing = ({ contract_id }: any) => {
         </div>
 
         {/* nfts list */}
-        {nfts?.length ? (
+        {nfts?.length > 0 ? (
           <div className="w-full">
             <InfiniteScroll
               dataLength={nfts.length > 0 && nfts.length}
@@ -212,21 +228,22 @@ const NFTListing = ({ contract_id }: any) => {
               }
             >
               {nfts?.map((nft: any, i: number) => (
-                <NFTCard nft={nft} key={i} />
+                <NFTCard nft={nft} key={i} refetch={refetch} />
               ))}
             </InfiniteScroll>
           </div>
         ) : (
-          <div className="flex min-h-[40vh] items-center justify-center">
-            <p className="text-center text-4xl">No NFT's found</p>
-          </div>
+          <>
+            <LoadingSkeleton data={4} nft={nfts} />
+          </>
         )}
 
-        {isError && nfts.length == 0 && (
-          <div className="flex min-h-[40vh] items-center justify-center">
-            <h1 className="text-2xl ">No NFT's available yet</h1>
-          </div>
-        )}
+        {isError ||
+          (nfts.length == 0 && (
+            <div className="flex min-h-[40vh] items-center justify-center">
+              <h1 className="text-2xl ">No NFT's available yet</h1>
+            </div>
+          ))}
       </div>
     </>
   );
@@ -235,7 +252,6 @@ const NFTListing = ({ contract_id }: any) => {
 export default NFTListing;
 
 const LoadingSkeleton = ({ data, nft }: any) => {
-
   return (
     <>
       {nft.length > 0

@@ -10,7 +10,9 @@ import { useRouter } from "next/router";
 
 import { checkTargetForNewValues } from "framer-motion";
 
-import { useMutation } from "@tanstack/react-query";
+import { UseQueryResult, useMutation } from "@tanstack/react-query";
+import { CustomToast } from "../globalToast";
+import { customTruncateHandler } from "~/utils/helper";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -18,6 +20,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
+  refetch?:any;
 }
 
 const Popup = ({
@@ -27,14 +30,17 @@ const Popup = ({
   price,
   tax,
   accountBalance,
+  refetch
 }: PopUpType) => {
   const router = useRouter();
 
   const [isPurchase, setIsPurchase] = useState<any>("");
-  const toast = useToast();
+  const { addToast } = CustomToast();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
+
+  
 
   const total: any = Number(+price + +tax);
 
@@ -50,6 +56,7 @@ const Popup = ({
       });
     },
   });
+
   const nftOrder = useMutation({
     mutationFn: (newTodo) => {
       return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
@@ -65,11 +72,10 @@ const Popup = ({
 
   const purchaseNFT = async () => {
     if (accountBalance < total) {
-      toast({
-        title: "Not Enough Balance",
-        status: "error",
-        isClosable: true,
-        position: "top-left",
+      addToast({
+        id: "transaction-id",
+        message: "Not Enough Balance",
+        type: "error",
       });
       return;
     } else {
@@ -79,14 +85,15 @@ const Popup = ({
         web3,
         account,
         total,
-        nft?.store_makerorder[0]
+        nft?.store_makerorder
       );
 
+      console.log(nft?.store_makerorder,{nft},"nft payload")
       if (buyData?.success) {
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
         const payload: any = {
-          id: nft.id,
+          id: nft._id.$oid,
           owner: buyData.owner,
           transaction_id: buyData.transaction_id,
           is_listed: false,
@@ -95,8 +102,8 @@ const Popup = ({
         };
 
         const payloadOrder: any = {
-          store_id: nft.store_id,
-          nft_id: nft.id,
+          store_id: nft.store_id.$oid,
+          nft_id: nft._id.$oid,
           owner_address: buyData?.owner,
           transaction_id: buyData?.transaction_id,
           nft_name: nft.name,
@@ -107,25 +114,27 @@ const Popup = ({
           previous_owner_address: buyData?.previous_owner,
         };
 
+
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
-        toast({
-          title: "Transaction Completed",
-          status: "success",
-          isClosable: true,
-          position: "top-left",
+        addToast({
+          id: "transaction-id",
+          message: "Transaction Completed",
+          type: "success",
         });
 
+
+
+        refetch()
         setIsPurchase(true);
         setBuy(false);
-        router.push("/");
+
       } else {
-        toast({
-          title: buyData.msg as string,
-          status: "error",
-          isClosable: true,
-          position: "top-left",
+        addToast({
+          id: "transaction-id",
+          message: buyData.msg as string,
+          type: "error",
         });
 
         setBuy(false);
@@ -139,8 +148,8 @@ const Popup = ({
       {open ? (
         <>
           {/* overlay */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
-            <div className="relative mx-auto my-6  w-full max-w-[450px] ">
+          <div className="fixed backdrop-blur inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+            <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
@@ -153,10 +162,28 @@ const Popup = ({
                     }}
                     className="my-auto "
                   >
-                    <i className="fa-regular fa-circle-xmark cursor-pointer text-2xl hover:text-gray-600"></i>
+                    <i className="fas fa-xmark cursor-pointer text-2xl hover:text-gray-600"></i>
                   </div>
                 </div>
                 {/*body*/}
+                <div className="mx-3 p-3">
+                  <div className="flex items-center justify-center gap-3 rounded-full border border-gray-700 p-4">
+                    {/* eth logo */}
+                    <div className="flex items-center rounded-full bg-gray-300">
+                      <i className="fa-brands fa-ethereum h-8 w-8 py-1.5 text-center "></i>
+                    </div>
+
+                    {/* account */}
+                    <p>{customTruncateHandler(account, 15)}</p>
+
+                    {/* connected */}
+                    <div className="rounded-3xl bg-green-200 p-0.5 text-center">
+                      <p className="px-1 text-[10px] text-green-900">
+                        Connected
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
                   <div className="relative flex items-center justify-between ">
