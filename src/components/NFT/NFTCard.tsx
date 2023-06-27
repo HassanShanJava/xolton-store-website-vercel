@@ -31,8 +31,6 @@ const NFTCard = ({ nft, refetch }: any) => {
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  console.log(nft?.is_offered, "nft?.is_offered");
-
   const [filter, setFilter] = useState({
     take: 5,
     skip: 0,

@@ -28,6 +28,7 @@ import { CustomToast } from "../globalToast";
 import NewUser from "../Ui/NewUser";
 import { setUserProcess } from "~/store/slices/authSlice";
 import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
+import Web3 from "web3";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
@@ -36,15 +37,63 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const dispatch = useDispatch();
   const { addToast } = CustomToast();
   useEffect(() => {
-    const localStore = localStorage.getItem("store_customer");
-    console.log(localStore, "localStore");
-    if (localStore !== null) {
-      let store = JSON.parse(localStore ? localStore : "");
-      if (store !== undefined) {
-        dispatch(setUserProcess(store));
+    (async () => {
+      try {
+        const localStore: any = localStorage.getItem("store_customer");
+        console.log(localStore, "localStore");
+        if (localStore !== null) {
+          let store = JSON.parse(localStore ? localStore : "");
+          if (store !== undefined) {
+            dispatch(setUserProcess(store));
+            const web3 = new Web3(window.ethereum);
+
+            let account = await window.ethereum.request({
+              method: "eth_requestAccounts",
+            });
+            console.log("Account : ", account);
+            console.log("localStore?.wallet_address : ", store?.wallet_address);
+
+            if (
+              account[0]?.toLowerCase() === store?.wallet_address?.toLowerCase()
+            ) {
+              account = account[0];
+              const chainId = await window.ethereum.request({
+                method: "eth_chainId",
+              });
+
+              console.log("If Condition configWeb3");
+              dispatch(
+                web3Init({
+                  web3: web3,
+                  account: account,
+                  chainId: chainId,
+                })
+              );
+
+              return { account, web3 };
+            } else {
+              console.log("ERROR");
+              console.log("ELSE Condition configWeb3");
+      localStorage.removeItem("store_customer");
+
+              dispatch(
+                web3Init({
+                  web3: null,
+                  account: "",
+                  chainId: "",
+                })
+              );
+
+              // return thunkApi.rejectWithValue("You are disconnected");
+            }
+          }
+        }
+      } catch (err) {
+        console.log("ERROR");
+        console.log(err);
       }
-    }
-  }, []);
+    })();
+  }, [typeof window !== "undefined", dispatch]);
   useEffect(() => {
     (async () => {
       try {

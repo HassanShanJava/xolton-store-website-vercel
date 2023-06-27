@@ -8,7 +8,7 @@ export default {
   ],
   theme: {
     fontFamily: {
-      storeFont: ["poppins", "inter"],
+      storeFont: ["inter", "sans-serif"],
     },
     extend: {
       colors: {
@@ -22,9 +22,9 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": "#C8B8A8",
-        "bg-2": "#AD8D98",
-        "bg-3": "#9A9AAB",
+        "bg-1": "#8B8BBC",
+        "bg-2": "#ACCAC9",
+        "bg-3": "#8ABDCB",
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
         "tx-2":"rgba(0,0,0,0.24)",

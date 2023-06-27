@@ -67,20 +67,20 @@ const Footer = ({ webData }: any) => {
                     </span>
                     <ul className="list-unstyled">
                       <li>
-                        <Link
+                        <a
                           className="text-blueGray-600 block   pb-2 text-sm hover:underline"
                           href="/about-us"
                         >
                           About Us
-                        </Link>
+                        </a>
                       </li>
                       <li>
-                        <Link
+                        <a
                           className="text-blueGray-600 block   pb-2 text-sm hover:underline"
                           href="/blogs"
                         >
                           Blogs
-                        </Link>
+                        </a>
                       </li>
                     </ul>
                   </div>
@@ -94,7 +94,7 @@ const Footer = ({ webData }: any) => {
                         {webData.socials.map((item: any, i: any) => (
                           <ul key={i}>
                             <li className="hover:underline">
-                              <Link
+                              <a
                                 className="text-blueGray-600 flex items-center gap-2  pb-2 text-sm capitalize "
                                 href={item.url}
                               >
@@ -102,7 +102,7 @@ const Footer = ({ webData }: any) => {
                                   <i className={`fa-brands fa-${item.social_type} w-4 h-4 text-center`}></i>
                                 </span>
                                 {item.social_type}
-                              </Link>
+                              </a>
                             </li>
                           </ul>
                         ))}

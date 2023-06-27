@@ -41,7 +41,7 @@ import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 import CancelOfferModal from "../Modal/UpdateModal";
 
-const NFTDetail = () => {
+const NFTDetail = ({}: any) => {
   const { user }: any = useSelector((state: RootState) => state.user);
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
@@ -65,7 +65,7 @@ const NFTDetail = () => {
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
   //
-
+  console.log(user?.id, "user?.id");
   // nft detail api
   const {
     isLoading,
@@ -75,12 +75,12 @@ const NFTDetail = () => {
     refetch,
     error,
   } = useQuery(
-    ["nftDetail"],
+    ["nftDetails"],
     async () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }${user ? "&store_customer_id=" + user?.id : ""}`
+        }${user?.id ? "&store_customer_id=" + user?.id : ""}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -90,7 +90,7 @@ const NFTDetail = () => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: id || user?.id ? true : false,
+      enabled: id ? true : false,
     }
   );
   // nft offers
@@ -130,10 +130,12 @@ const NFTDetail = () => {
     ["nftCollection"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/nft?contract_id=${
-          nftDetail?.contract_id.$oid
-        }&store_id=${process.env.NEXT_PUBLIC_STORE_ID}${
-          user ? "&store_customer_id=" + user?.id : ""
+        `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
+          process.env.NEXT_PUBLIC_STORE_ID
+        }${user ? "&store_customer_id=" + user?.id : ""}${
+          nftDetail?.contract_id?.$oid
+            ? "&contract_id=" + nftDetail?.contract_id?.$oid
+            : ""
         }`
       );
       if (!response.ok) {
@@ -147,11 +149,7 @@ const NFTDetail = () => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-  useEffect(() => {
-    refetch();
-    CollectionRefetch();
-    NFTOfferRefetch();
-  }, [user?.id]);
+  console.log(nftDetail?.contract_id, "nftDetail?.contract_id");
 
   // buy nft
   const buyNFT = async () => {
@@ -211,11 +209,24 @@ const NFTDetail = () => {
     }
   };
   const AllRefetch = async () => {
-    refetch();
-    CollectionRefetch();
-    NFTOfferRefetch();
+    await refetch();
+    await CollectionRefetch();
+    await NFTOfferRefetch();
   };
-
+  useEffect(() => {
+    let timeout: any;
+    timeout = setTimeout(() => {
+      if (user?.id !== undefined) {
+        AllRefetch();
+      }
+    }, 2000);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [user?.id]);
+  useEffect(() => {
+    AllRefetch();
+  }, [typeof window !== "undefined"]);
   const modalParam: any = {
     filter,
     setFilter,
@@ -230,6 +241,7 @@ const NFTDetail = () => {
     addToast,
     offerNFT,
     refetch,
+    AllRefetch,
   };
   return (
     <div className="bg-bg-1">
@@ -297,7 +309,7 @@ const NFTDetail = () => {
                       </span>
                       <p className="text-xs lowercase text-slate-500">
                         {`$ ${
-                          nftDetail.highest_offer
+                          nftDetail?.highest_offer
                             ? (
                                 +nftDetail?.highest_offer *
                                 (+maticToUsd as number)
@@ -329,7 +341,7 @@ const NFTDetail = () => {
                       className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
                       onClick={(e) => {
                         e.preventDefault();
-                        nftDetail.is_offered
+                        nftDetail?.is_offered
                           ? offerNFT(updateOffer)
                           : offerNFT();
                       }}
@@ -399,7 +411,7 @@ const NFTDetail = () => {
                       <div className="md:text-md   text-xs text-slate-500  sm:text-sm">
                         <div className="flex justify-between p-3">
                           <p>Contract Address</p>
-                          <Link
+                          <a
                             href={`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS_POLYGON}/address/${nftDetail?.contract_address}`}
                             target="_blank"
                           >
@@ -408,7 +420,7 @@ const NFTDetail = () => {
                                 nftDetail?.contract_address
                               )}
                             </p>
-                          </Link>
+                          </a>
                         </div>
                         {/*divider  */}
                         <div className=" border-t border-tx-2" />
@@ -470,7 +482,7 @@ const CollectionList: any = ({ id, contract_id, NFTCollection }: any) => {
             type="button"
             className="md:text-md rounded-lg border-b border-transparent p-1 px-4 text-sm duration-300 hover:border-black hover:bg-white lg:text-lg "
             onClick={() => {
-              router.push(`/?contract_id=${contract_id.$oid} `);
+              router.push(`/?contract_id=${contract_id} `);
             }}
           >
             View More
@@ -505,6 +517,7 @@ const OfferList: any = ({
   nftDetail,
   offerNFT,
   refetch,
+  AllRefetch,
 }: any) => {
   const { user }: any = useSelector((state: RootState) => state.user);
 
@@ -535,7 +548,7 @@ const OfferList: any = ({
   const defaultModalParams = {
     selectedOffer,
     setSelectedOffer,
-    refetch: NFTOfferRefetch,
+    refetch: AllRefetch,
     detailReftch: refetch,
   };
   const featureModalParams = {
@@ -547,7 +560,7 @@ const OfferList: any = ({
 
   useEffect(() => {
     NFTOfferRefetch();
-  }, [filter?.take, user.id]);
+  }, [filter?.take, user?.id]);
 
   const handleFilter = () => {
     setFilter((prevFilters: any) => ({

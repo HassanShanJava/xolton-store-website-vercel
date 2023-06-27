@@ -80,7 +80,18 @@ const NFTListing = ({ contract_id }: any) => {
 
   useEffect(() => {
     refetch();
-  }, [sortFilter,user?.id]);
+  }, [sortFilter]);
+  useEffect(() => {
+    let timeout: any;
+    timeout = setTimeout(() => {
+      if (user?.id !== undefined) {
+        refetch();
+      }
+    }, 2000);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [user]);
 
   useEffect(() => {
     if (storeNfts?.data.length > 0) {

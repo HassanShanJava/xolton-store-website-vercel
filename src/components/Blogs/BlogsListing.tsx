@@ -40,7 +40,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                     <div key={i} className="group w-full max-w-lg px-4">
                       <div className="mx-auto mb-10 max-w-[370px] rounded-md bg-white p-2 group-hover:bg-pm-11">
                         <div className="mb-2 h-[240px] w-full overflow-hidden rounded">
-                          <Link
+                          <a
                             href={`/blogs/${store?.meta}${
                               process.env.NEXT_PUBLIC_ENV !== "DEV"
                                 ? ".html"
@@ -56,7 +56,7 @@ const BlogsListing = ({ storeBlogsData }: any) => {
                               className="h-[240px] w-full object-cover"
                               priority
                             />
-                          </Link>
+                          </a>
                         </div>
                         <div>
                           <h3>
