@@ -31,7 +31,7 @@ const Footer = ({ webData }: any) => {
                   Enter the Gateway to Exclusive Digital Masterpieces: Your
                   Ultimate NFT Marketplace
                 </p>
-                <div className="mb-6 mt-6 lg:mb-0">
+                {/* <div className="mb-6 mt-6 lg:mb-0">
                   <button
                     className="text-lightBlue-400 align-center mr-2 h-10 w-10 items-center justify-center rounded-full bg-white font-normal shadow-lg outline-none hover:bg-gray-300 focus:outline-none"
                     type="button"
@@ -56,7 +56,7 @@ const Footer = ({ webData }: any) => {
                   >
                     <i className="fab fa-github text-xl text-black "></i>
                   </button>
-                </div>
+                </div> */}
               </div>
 
               <div className="px-4  md:w-1/2">
