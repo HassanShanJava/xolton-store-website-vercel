@@ -34,7 +34,7 @@ export async function initWeb3() {
       const account = accounts[0];
 
       // return { web3, account,chainId };
-      return { success: true, web3: web3, account: account, chainId: chainId };
+      return { success: true, web3: web3, account: account, chainId: maticChainId };
     }
   } catch (err) {
     console.log("ERR : ", err);

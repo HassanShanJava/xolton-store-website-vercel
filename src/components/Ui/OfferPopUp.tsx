@@ -375,6 +375,7 @@ const OfferPopUp = ({
                   </div>
                 </div>
                 {/*body*/}
+                
                 <div className="mx-3 p-3">
                   <div className="flex items-center justify-center gap-3 rounded-full border border-gray-700 p-4">
                     {/* eth logo */}
