@@ -5,14 +5,16 @@ import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 
 import { checkTargetForNewValues } from "framer-motion";
 
-import { UseQueryResult, useMutation } from "@tanstack/react-query";
+import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { customTruncateHandler } from "~/utils/helper";
+import { StripeModal } from "./stripeModal";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -20,7 +22,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
-  refetch?:any;
+  refetch?: any;
 }
 
 const Popup = ({
@@ -30,17 +32,35 @@ const Popup = ({
   price,
   tax,
   accountBalance,
-  refetch
+  refetch,
 }: PopUpType) => {
   const router = useRouter();
-
+  const {
+    data: Stripetoken,
+    isLoading,
+    isFetched,
+    refetch: TokenRefetch,
+  } = useQuery(
+    ["tokenApi"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const [isPurchase, setIsPurchase] = useState<any>("");
   const { addToast } = CustomToast();
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
-
-  
 
   const total: any = Number(+price + +tax);
 
@@ -81,14 +101,9 @@ const Popup = ({
     } else {
       setIsPurchase(false);
 
-      const buyData = await buyNFT(
-        web3,
-        account,
-        total,
-        nft?.store_makerorder
-      );
+      const buyData = await buyNFT(web3, account, total, nft?.store_makerorder);
 
-      console.log(nft?.store_makerorder,{nft},"nft payload")
+      console.log(nft?.store_makerorder, { nft }, "nft payload");
       if (buyData?.success) {
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
@@ -114,7 +129,6 @@ const Popup = ({
           previous_owner_address: buyData?.previous_owner,
         };
 
-
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
@@ -124,12 +138,9 @@ const Popup = ({
           type: "success",
         });
 
-
-
-        refetch()
+        refetch();
         setIsPurchase(true);
         setBuy(false);
-
       } else {
         addToast({
           id: "transaction-id",
@@ -142,13 +153,24 @@ const Popup = ({
       }
     }
   };
+  const featureModelParam: any = {
+    open,
+    setBuy,
+    price,
+    account,
+    refetch,
+  };
+  const stripePromise =
+    !isLoading && isFetched
+      ? loadStripe(Stripetoken?.public_key as string)
+      : null;
 
   return (
     <>
       {open ? (
         <>
           {/* overlay */}
-          <div className="fixed backdrop-blur inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur focus:outline-none">
             <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
@@ -227,7 +249,7 @@ const Popup = ({
                   </div>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
+                <div className="flex flex-col items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                   <button
                     className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
@@ -247,6 +269,13 @@ const Popup = ({
                       </>
                     )}
                   </button>
+                  {+accountBalance < +price && !isLoading && isFetched && (
+                    <>
+                      <Elements stripe={stripePromise}>
+                        <StripeModal {...featureModelParam} />
+                      </Elements>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
