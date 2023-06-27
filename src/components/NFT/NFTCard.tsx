@@ -93,7 +93,19 @@ const NFTCard = ({ nft, refetch }: any) => {
   console.log({ nft });
 
   const offerNFT = async (offerid?: any) => {
-    if (account != "") {
+    if (account === null || account === "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    } else if (account == nft?.creator_id) {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      });
+    } else {
       setShowOfferPop(true);
       if (offerid !== "") {
         setUpdateOffer(offerid);
@@ -105,20 +117,6 @@ const NFTCard = ({ nft, refetch }: any) => {
       wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
       setWmaticBalance(wmaticBalance);
       setAccountBalance(accountBalance);
-    } else if (account == nft?.creator_id) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Owner cannot buy there own NFT",
-        type: "error",
-      });
-    } else if (account === null || account === "") {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-    } else {
-      return;
     }
   };
 

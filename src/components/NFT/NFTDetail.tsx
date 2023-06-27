@@ -153,15 +153,15 @@ const NFTDetail = ({}: any) => {
 
   // buy nft
   const buyNFT = async () => {
-    if (account != "") {
+    if (account !== "") {
       setShowPop(true);
-    } else if (account == nftDetail?.creator_id) {
+    } else if (account === nftDetail?.creator_id) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
         type: "error",
       });
-    } else if (account == "") {
+    } else if (account === "") {
       addToast({
         id: "connect-wallet-buy",
         message: "Connect Wallet",
@@ -179,12 +179,23 @@ const NFTDetail = ({}: any) => {
 
   // offer nft
   const offerNFT = async (offerid?: any) => {
-    if (account != "") {
+    if (account === null || account === "") {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    } else if (account == nftDetail?.creator_id) {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Owner cannot buy there own NFT",
+        type: "error",
+      });
+    } else {
+      setShowOfferPop(true);
       if (offerid !== "") {
         setUpdateOffer(offerid);
       }
-
-      setShowOfferPop(true);
 
       const balance = await web3?.eth.getBalance(account);
       const accountBalance = web3?.utils.fromWei(balance, "ether");
@@ -192,20 +203,6 @@ const NFTDetail = ({}: any) => {
       wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
       setWmaticBalance(wmaticBalance);
       setAccountBalance(accountBalance);
-    } else if (account == nftDetail?.creator_id) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Owner cannot buy there own NFT",
-        type: "error",
-      });
-    } else if (account === null || account === "") {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-    } else {
-      return;
     }
   };
   const AllRefetch = async () => {
