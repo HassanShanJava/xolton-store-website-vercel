@@ -269,13 +269,16 @@ const Popup = ({
                       </>
                     )}
                   </button>
-                  {+accountBalance < +price && !isLoading && isFetched && (
-                    <>
-                      <Elements stripe={stripePromise}>
-                        <StripeModal {...featureModelParam} />
-                      </Elements>
-                    </>
-                  )}
+                  {+accountBalance < +price &&
+                    !isLoading &&
+                    isFetched &&
+                    Stripetoken && (
+                      <>
+                        <Elements stripe={stripePromise}>
+                          <StripeModal {...featureModelParam} />
+                        </Elements>
+                      </>
+                    )}
                 </div>
               </div>
             </div>
