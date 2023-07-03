@@ -423,7 +423,7 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
       {userInfo?.wallet_address !== "" && (
         <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
           <DrawerOverlay />
-          <DrawerContent>
+          <DrawerContent className="!bg-bg-2">
             <DrawerCloseButton />
             <DrawerHeader>
               <div className="flex w-fit items-center justify-between  gap-2">
@@ -437,9 +437,9 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
               </div>
             </DrawerHeader>
 
-            <DrawerBody mx={0} px={2} w="full">
+            <DrawerBody mx={0} px={2} w="full ">
               <div className="">
-                <div className="rounded-xl border border-gray-200 p-3 ">
+                <div className="rounded-xl border border-gray-300 p-3 ">
                   <div className="flex justify-between ">
                     <div className="flex w-full items-center ">
                       <div className="relative h-12 w-12">
@@ -460,7 +460,7 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
 
                     {/* power-off logo */}
                     <div
-                      className="my-2 ml-4 flex cursor-pointer items-center rounded-lg bg-gray-200 hover:bg-gray-200 "
+                      className="my-2 ml-4 flex cursor-pointer items-center rounded-lg bg-gray-300 hover:bg-gray-300 "
                       onClick={logout}
                     >
                       <i className="fas fa-power-off h-7 w-7 py-1.5  text-center "></i>
@@ -473,7 +473,7 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={MaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.accountBalance} MATIC</p>
+                        <p>{userInfo?.accountBalance} <span className="text-xs">MATIC</span></p>
                       </div>
                       <p>${userInfo?.maticUSD}</p>
                     </div>
@@ -485,7 +485,7 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={WmaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.wmaticBalance} wMATIC</p>
+                        <p>{userInfo?.wmaticBalance} <span className="text-xs">wMATIC</span></p>
                       </div>
                       <p>${userInfo?.wmaticUSD}</p>
                     </div>
