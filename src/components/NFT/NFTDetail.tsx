@@ -355,6 +355,7 @@ const NFTDetail = ({}: any) => {
                       price={+nftDetail?.price}
                       tax={+nftDetail?.tax}
                       accountBalance={+accountBalance}
+                      setAccountBalance={setAccountBalance}
                       refetch={refetch}
                     />
                   )}

@@ -22,6 +22,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
+  setAccountBalance?: any;
   refetch?: any;
 }
 
@@ -32,6 +33,7 @@ const Popup = ({
   price,
   tax,
   accountBalance,
+  setAccountBalance,
   refetch,
 }: PopUpType) => {
   const router = useRouter();
@@ -159,9 +161,10 @@ const Popup = ({
     price,
     account,
     refetch,
+    setAccountBalance,
   };
   const stripePromise =
-    !isLoading && isFetched
+    !isLoading && isFetched && Stripetoken?.public_key
       ? loadStripe(Stripetoken?.public_key as string)
       : null;
 
@@ -270,8 +273,8 @@ const Popup = ({
                     )}
                   </button>
                   {+accountBalance < +price &&
-                    !isLoading &&
                     isFetched &&
+                    !isLoading &&
                     Stripetoken && (
                       <>
                         <Elements stripe={stripePromise}>

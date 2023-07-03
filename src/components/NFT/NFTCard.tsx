@@ -205,6 +205,7 @@ const NFTCard = ({ nft, refetch }: any) => {
                 price={+nft.price}
                 tax={+nft.tax}
                 accountBalance={+accountBalance}
+                setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}
@@ -219,6 +220,7 @@ const NFTCard = ({ nft, refetch }: any) => {
                 wmaticBalance={+wmaticBalance}
                 id={updateOffer}
                 is_updated={nft?.is_offered ? true : false}
+                setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}

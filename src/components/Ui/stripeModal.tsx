@@ -34,9 +34,12 @@ import {
 
 import { customTruncateHandler } from "~/utils/helper";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "~/store/store";
 import { CustomToast } from "../globalToast";
+import OfferSignModal from "../Modal/OfferSign";
+import { setNftOfferCreateProcess } from "~/store/slices/offerSteps";
+import Web3 from "web3";
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -60,20 +63,55 @@ const CARD_ELEMENT_OPTIONS = {
 export const StripeModal = (props: any) => {
   const { user } = useSelector((state: any) => state.user);
   const { maticToUsd }: any = useSelector((state: RootState) => state.matic);
+  const { account } = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
 
+  const [isModal, setIsModal] = useState(false); //for loader
+  const dispatch = useDispatch();
+
+  const offerStepsData = [
+    {
+      heading: "Stripe Payment",
+      text: "Send transaction data for stripe payment.",
+    },
+    {
+      heading: "Sending Matic to Wallet",
+      text: "Sending Matic to your wallet address.",
+    },
+
+    {
+      heading: "Storing Data",
+      text: "Storing transaction information.",
+    },
+  ];
   // STRIPE
   const stripe = useStripe();
   const elements = useElements();
   const { addToast } = CustomToast();
 
   // states
-  const [inputOffer, setInputOffer] = useState("5");
+  const [inputOffer, setInputOffer] = useState(+(11 * (+maticToUsd as number)));
+  console.log({maticToUsd});
   const [stripeModalState, setStripeModalState] = useState(false);
   // queries for api
   const stripeConnect = useMutation({
     mutationFn: async (payload) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/token/checkout`,
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await response.json();
+      return result;
+    },
+  });
+  const web3Connect = useMutation({
+    mutationFn: async (payload) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/token/transfer-token`,
         {
           method: "POST",
           body: JSON.stringify(payload),
@@ -98,6 +136,8 @@ export const StripeModal = (props: any) => {
         // Stripe.js hasn't yet loaded.
         throw new Error("Stripe.js hasn't yet loaded");
       }
+      setIsModal(true);
+      dispatch(setNftOfferCreateProcess(1)); //signature
 
       // const card: any = elements.getElement(CardNumberElement);
       const cardNumberElement: any = elements.getElement(CardNumberElement);
@@ -116,29 +156,68 @@ export const StripeModal = (props: any) => {
             token: result?.token?.id,
             store_customer_id: user?.id,
             wallet_address: props?.account,
-            amount: +inputOffer * +maticToUsd * 100,
-            //   amount: +inputOffer * 100,
+            dollar_amount: +(+inputOffer * (+maticToUsd as number)).toFixed(2),
+            stripe_tax_amount: +(
+              (2.9 / 100) * (+inputOffer * (+maticToUsd as number)) +
+              0.3
+            ).toFixed(2),
+            matic_amount: +(
+              (+inputOffer * (+maticToUsd as number) -
+                +((2.9 / 100) * +inputOffer + 0.3)) /
+              +maticToUsd
+            ).toFixed(2),
           };
           const res = await stripeConnect.mutateAsync(payload);
-          if (res) {
-            props?.refetch();
+          dispatch(setNftOfferCreateProcess(2)); //signature
+
+          if (res?.success) {
+            const webPayload: any = {
+              token: res?.data as string,
+            };
+            const matic_res: any = await web3Connect.mutateAsync(webPayload);
+            dispatch(setNftOfferCreateProcess(3)); //signature
+
+            console.log(matic_res);
+            if (matic_res?.success) {
+              setTimeout(async () => {
+                const balance = await web3?.eth.getBalance(account);
+                const accountBalance = await web3?.utils.fromWei(
+                  balance,
+                  "ether"
+                );
+                console.log({ accountBalance });
+                props?.setAccountBalance(accountBalance);
+                props?.refetch();
+                setStripeModalState(false);
+                setIsModal(false);
+                dispatch(setNftOfferCreateProcess(4)); //signature
+              }, 6000);
+            } else {
+              throw new Error("Api is not responding");
+            }
+
             addToast({
               id: "transaction-id",
               message: "Your Transaction Completed Successfully",
               type: "success",
             });
           } else {
-            throw new Error("Something Went Wrong!");
+            throw new Error(
+              res?.message ? res.message : "Something went wrong!"
+            );
           }
         } else {
           throw new Error("The Amount should be greater than or equal to 5");
         }
-
         // Send the token to your server.
         // This function does not exist yet; we will define it in the next step.
         //    stripeTokenHandler(result.token);
       }
     } catch (e: any) {
+      // props?.setBuy(false);
+      // setStripeModalState(false);
+      setIsModal(false);
+
       addToast({
         id: "transaction-id",
         message: e?.message,
@@ -196,8 +275,8 @@ export const StripeModal = (props: any) => {
                   {/* <InputLeftAddon children="https://" /> */}
                   <Input
                     placeholder="Offer Price"
-                    defaultValue={5}
-                    min={5}
+                    defaultValue={(+inputOffer).toFixed(2)}
+                    min={7}
                     type="number"
                     step={"any"}
                     required
@@ -289,12 +368,22 @@ export const StripeModal = (props: any) => {
               >
                 Close
               </ChakraButton> */}
-              <button className="ml-4 mr-4 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600">
+              <button
+                disabled={!stripe}
+                className="ml-4 mr-4 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+              >
                 Pay Amount
               </button>
             </ModalFooter>
           </ModalContent>
         </form>
+        <OfferSignModal
+          modalState={isModal}
+          title={"Stripe Transaction"}
+          setModalState={setIsModal}
+          offerStepsData={offerStepsData}
+          type={"offerNft"}
+        />
       </Modal>
     </>
   );
