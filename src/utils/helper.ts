@@ -77,7 +77,7 @@ export async function websiteInfo() {
       {
         headers: {
           "Content-Type": "application/json",
-          // referer: "xoltanmarketplace.com",
+          referer: "xoltanmarketplace.com",
         },
       }
     );
