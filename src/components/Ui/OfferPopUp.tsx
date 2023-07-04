@@ -242,7 +242,7 @@ const OfferPopUp = ({
 
           const payload: any = {
             store_id: process.env.NEXT_PUBLIC_STORE_ID,
-            nft_id: nft?.id,
+            nft_id: nft?._id.$oid,
             offer_amount: +inputOffer,
             store_customer_id: user?.id,
             sell_type: "offer",
