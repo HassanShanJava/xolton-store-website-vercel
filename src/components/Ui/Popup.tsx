@@ -12,7 +12,8 @@ import { checkTargetForNewValues } from "framer-motion";
 
 import { UseQueryResult, useMutation } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
-import { customTruncateHandler } from "~/utils/helper";
+import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
+import Image from "next/image";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -20,7 +21,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
-  refetch?:any;
+  refetch?: any;
 }
 
 const Popup = ({
@@ -30,7 +31,7 @@ const Popup = ({
   price,
   tax,
   accountBalance,
-  refetch
+  refetch,
 }: PopUpType) => {
   const router = useRouter();
 
@@ -39,8 +40,6 @@ const Popup = ({
 
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
-
-  
 
   const total: any = Number(+price + +tax);
 
@@ -81,14 +80,9 @@ const Popup = ({
     } else {
       setIsPurchase(false);
 
-      const buyData = await buyNFT(
-        web3,
-        account,
-        total,
-        nft?.store_makerorder
-      );
+      const buyData = await buyNFT(web3, account, total, nft?.store_makerorder);
 
-      console.log(nft?.store_makerorder,{nft},"nft payload")
+      console.log(nft?.store_makerorder, { nft }, "nft payload");
       if (buyData?.success) {
         // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
@@ -114,7 +108,6 @@ const Popup = ({
           previous_owner_address: buyData?.previous_owner,
         };
 
-
         const data = await nftUpdate.mutateAsync(payload);
         const dataOrder = await nftOrder.mutateAsync(payloadOrder);
 
@@ -124,12 +117,9 @@ const Popup = ({
           type: "success",
         });
 
-
-
-        refetch()
+        refetch();
         setIsPurchase(true);
         setBuy(false);
-
       } else {
         addToast({
           id: "transaction-id",
@@ -148,7 +138,7 @@ const Popup = ({
       {open ? (
         <>
           {/* overlay */}
-          <div className="fixed backdrop-blur inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none backdrop-blur focus:outline-none">
             <div className="relative mx-auto my-6  w-full max-w-[350px] ">
               {/*content*/}
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
@@ -181,6 +171,26 @@ const Popup = ({
                       <p className="px-1 text-[10px] text-green-900">
                         Connected
                       </p>
+                    </div>
+                  </div>
+                </div>
+                {/* nft detail */}
+                <div className="mx-3 p-3">
+                  <div className="flex items-center justify-center gap-3 rounded-xl border border-gray-700 p-2">
+                    <div className="relative h-20 w-16">
+                      <Image
+                        src={renderNFTImage(nft)}
+                        alt="/"
+                        fill
+                        priority
+                        quality={100}
+                        className="mx-auto rounded-xl "
+                      />
+                    </div>
+                    <div className=" w-full">
+                      <p>{nft.name}</p>
+                      <p className="text-xs">Owner Address: {customTruncateHandler(nft.creator_id,15)}</p>
+
                     </div>
                   </div>
                 </div>
