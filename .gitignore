@@ -39,6 +39,7 @@ yarn-error.log*
 
 robot.txt
 sitemap.xml
+sitemap-0.xml
 
 next-sitemap.config.js
 

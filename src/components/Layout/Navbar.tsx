@@ -1,5 +1,8 @@
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import MetaFox from "../../public/images/MetaMask_Fox.png";
+import MaticLogo from "../../public/images/polygon.png";
+import WmaticLogo from "../../public/images/Wmatic.png";
 
 import Logo from "../../public/images/logo.png";
 import MenuIcon from "../../public/icons/hamburger.svg";
@@ -16,7 +19,7 @@ import { initWeb3 } from "~/utils/web3/web3Init";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "~/store/store";
-import { useToast } from "@chakra-ui/react";
+import { Button, Input, useDisclosure, useToast } from "@chakra-ui/react";
 import { setAccount } from "~/store/slices/web3Slice";
 
 import { storeWebPageData } from "~/store/slices/pageSlice";
@@ -30,9 +33,23 @@ import { setUserProcess } from "~/store/slices/authSlice";
 import { setMaticToUsdProcess } from "~/store/slices/maticSlice";
 import Web3 from "web3";
 
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from "@chakra-ui/react";
+import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
   const [showPop, setShowPop] = useState(false);
+  const [userInfo, setUserInfo] = useState<any>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = useRef();
   const handleNav = () => setNav(!nav);
   const dispatch = useDispatch();
   const { addToast } = CustomToast();
@@ -74,7 +91,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             } else {
               console.log("ERROR");
               console.log("ELSE Condition configWeb3");
-      localStorage.removeItem("store_customer");
+              localStorage.removeItem("store_customer");
 
               dispatch(
                 web3Init({
@@ -108,6 +125,11 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   }, []);
 
   const { account } = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
+  const { chainId } = useSelector((state: any) => state.web3);
+  const { user } = useSelector((state: RootState) => state.user);
+  const { maticToUsd } = useSelector((state: RootState) => state.matic);
+
   const loginConnect = useMutation({
     mutationFn: async (payload) => {
       const response = await fetch(
@@ -225,6 +247,30 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     });
   }
 
+  const openUserDrawer = async () => {
+    const balance = await web3?.eth.getBalance(account);
+    const accountBalance = web3?.utils.fromWei(balance, "ether");
+    let wmaticBalance: any = await getBalance(web3, account);
+    wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+
+    console.log({ wmaticBalance, chainId });
+
+    setUserInfo({
+      ...user,
+      chainId,
+      wmaticBalance: parseFloat(wmaticBalance).toFixed(3),
+      accountBalance: parseFloat(accountBalance).toFixed(3),
+      maticUSD: (parseFloat(maticToUsd) * parseFloat(accountBalance)).toFixed(
+        3
+      ),
+      wmaticUSD: (parseFloat(maticToUsd) * parseFloat(wmaticBalance)).toFixed(
+        3
+      ),
+    });
+
+    onOpen();
+  };
+
   return (
     <>
       {/* for mobile menu state */}
@@ -333,12 +379,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         <div className="mr-2">
           {/* Connect Wallet */}
           {account != "" ? (
-            <button
-              type="button"
-              className=" sm:text-md rounded-3xl bg-bg-3 p-1.5 font-storeFont text-sm text-white hover:bg-bg-3/75 sm:px-3"
-            >
-              {customTruncateHandler(account, 8)}
-            </button>
+            <div
+              onClick={openUserDrawer}
+              className="photo-wrapper cursor-pointer  h-8 w-8 rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"
+            ></div>
           ) : (
             <button
               type="button"
@@ -350,9 +394,113 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           )}
         </div>
       </div>
+
+      <WalletDrawer isOpen={isOpen} onClose={onClose} userInfo={userInfo} />
       {showPop && <NewUser open={showPop} setOpen={setShowPop} />}
     </>
   );
 };
+
+function WalletDrawer({ isOpen, onClose, userInfo }: any) {
+  console.log({ userInfo });
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    dispatch(setUserProcess(null));
+    dispatch(
+      web3Init({
+        web3: null,
+        account: "",
+        chainId: "",
+      })
+    );
+    localStorage.removeItem("store_customer");
+    onClose();
+  };
+
+  return (
+    <>
+      {userInfo?.wallet_address !== "" && (
+        <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+          <DrawerOverlay />
+          <DrawerContent className="!bg-bg-2">
+            <DrawerCloseButton />
+            <DrawerHeader>
+              <div className="flex w-fit items-center justify-between  gap-2">
+                <div className="photo-wrapper   h-12 w-12 rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"></div>
+                <div className="text-sm">
+                  <p>{userInfo?.full_name}</p>
+                  <p className="text-xs">
+                    {customTruncateHandler(userInfo?.wallet_address, 20)}
+                  </p>
+                </div>
+              </div>
+            </DrawerHeader>
+
+            <DrawerBody mx={0} px={2} w="full ">
+              <div className="">
+                <div className="rounded-xl border border-gray-300 p-3 ">
+                  <div className="flex justify-between ">
+                    <div className="flex w-full items-center ">
+                      <div className="relative h-12 w-12">
+                        <Image src={MetaFox} alt="/" fill />
+                      </div>
+
+                      <div className="text-sm">
+                        <p>
+                          {userInfo?.chainId === "0x13881"
+                            ? "Polygon - Matic"
+                            : "Different Network"}
+                        </p>
+                        <p className="text-xs">
+                          {customTruncateHandler(userInfo?.wallet_address, 16)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* power-off logo */}
+                    <div
+                      className="my-2 ml-4 flex cursor-pointer items-center rounded-lg bg-gray-300 hover:bg-gray-300 "
+                      onClick={logout}
+                    >
+                      <i className="fas fa-power-off h-7 w-7 py-1.5  text-center "></i>
+                    </div>
+                  </div>
+
+                  <div className="mx-0.5 my-6 rounded-xl border border-gray-200 p-3">
+                    <p className="w-full text-center pb-3">Your Account Balance</p>
+                    <div className="flex justify-between">
+                      <div className="flex">
+                        <div className="relative mr-2 h-6 w-6">
+                          <Image src={MaticLogo} alt="/" fill />
+                        </div>
+                        <p>{userInfo?.accountBalance} <span className="text-xs">MATIC</span></p>
+                      </div>
+                      <p>${userInfo?.maticUSD}</p>
+                    </div>
+
+                    <div className="py-2"></div>
+
+                    <div className="flex justify-between ">
+                      <div className="flex">
+                        <div className="relative mr-2 h-6 w-6">
+                          <Image src={WmaticLogo} alt="/" fill />
+                        </div>
+                        <p>{userInfo?.wmaticBalance} <span className="text-xs">wMATIC</span></p>
+                      </div>
+                      <p>${userInfo?.wmaticUSD}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DrawerBody>
+
+
+          </DrawerContent>
+        </Drawer>
+      )}
+    </>
+  );
+}
 
 export default Navbar;
