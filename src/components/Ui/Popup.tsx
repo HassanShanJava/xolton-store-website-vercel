@@ -224,7 +224,7 @@ const Popup = ({
                         className="mx-auto rounded-xl "
                       />
                     </div>
-                    <div >
+                    <div>
                       <p className="font-bold">NFT Info</p>
                       <p>{nft.name}</p>
                       <p className="text-xs">

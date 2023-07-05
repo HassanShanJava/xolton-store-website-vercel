@@ -90,8 +90,10 @@ export const StripeModal = (props: any) => {
   const { addToast } = CustomToast();
 
   // states
-  const [inputOffer, setInputOffer] = useState(+(11 * (+maticToUsd as number)));
-  console.log({maticToUsd});
+  const [inputOffer, setInputOffer] = useState(
+    (11 * (+maticToUsd as number)).toString()
+  );
+  console.log({ maticToUsd });
   const [stripeModalState, setStripeModalState] = useState(false);
   // queries for api
   const stripeConnect = useMutation({
@@ -191,16 +193,15 @@ export const StripeModal = (props: any) => {
                 setStripeModalState(false);
                 setIsModal(false);
                 dispatch(setNftOfferCreateProcess(4)); //signature
+                addToast({
+                  id: "transaction-id",
+                  message: "Your Transaction Completed Successfully",
+                  type: "success",
+                });
               }, 6000);
             } else {
               throw new Error("Api is not responding");
             }
-
-            addToast({
-              id: "transaction-id",
-              message: "Your Transaction Completed Successfully",
-              type: "success",
-            });
           } else {
             throw new Error(
               res?.message ? res.message : "Something went wrong!"
