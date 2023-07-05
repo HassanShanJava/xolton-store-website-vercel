@@ -469,6 +469,7 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                   </div>
 
                   <div className="mx-0.5 my-6 rounded-xl border border-gray-200 p-3">
+                    <p className="w-full text-center pb-3">Your Account Balance</p>
                     <div className="flex justify-between">
                       <div className="flex">
                         <div className="relative mr-2 h-6 w-6">

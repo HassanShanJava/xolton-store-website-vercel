@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { useForm } from "react-hook-form";
 import { Input, NumberInput, NumberInputField } from "@chakra-ui/react";
-import { customTruncateHandler } from "~/utils/helper";
+import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 import OfferSignModal from "../Modal/OfferSign";
 import {
   finishNftOfferCreateProcess,
@@ -26,6 +26,7 @@ import NFTDetail from "../NFT/NFTDetail";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { StripeModal } from "./stripeModal";
+import Image from "next/image";
 
 interface OfferPopUpType {
   open: boolean;
@@ -266,7 +267,7 @@ const OfferPopUp = ({
 
           const payload: any = {
             store_id: process.env.NEXT_PUBLIC_STORE_ID,
-            nft_id: nft?.id,
+            nft_id: nft?._id.$oid,
             offer_amount: +inputOffer,
             store_customer_id: user?.id,
             sell_type: "offer",
@@ -426,6 +427,29 @@ const OfferPopUp = ({
                     <div className="rounded-3xl bg-green-200 p-0.5 text-center">
                       <p className="px-1 text-[10px] text-green-900">
                         Connected
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* nft detail */}
+                <div className="mx-3 p-3">
+                  <div className="flex items-center justify-start gap-3 rounded-xl border border-gray-700 p-2">
+                    <div className="relative h-20 w-16">
+                      <Image
+                        src={renderNFTImage(nft)}
+                        alt="/"
+                        fill
+                        priority
+                        quality={100}
+                        className="mx-auto rounded-xl "
+                      />
+                    </div>
+                    <div className="w-fit">
+                      <p className="font-bold">NFT Info</p>
+                      <p>{nft.name}</p>
+                      <p className="text-xs">
+                        {customTruncateHandler(nft.creator_id, 20)}
                       </p>
                     </div>
                   </div>
