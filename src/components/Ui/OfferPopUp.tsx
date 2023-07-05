@@ -25,7 +25,7 @@ import { signSignature } from "~/utils/web3/offer/offerNft";
 import NFTDetail from "../NFT/NFTDetail";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { StripeModal } from "./stripeModal";
+import { StripeModal } from "./StripeModal";
 import Image from "next/image";
 
 interface OfferPopUpType {

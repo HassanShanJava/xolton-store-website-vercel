@@ -8,7 +8,6 @@ const NFTDetails = dynamic(() => import("../../components/NFT/NFTDetail"), {
 });
 
 export async function getStaticPaths() {
-
   const response: any = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&rows=50`,
     {
@@ -25,7 +24,7 @@ export async function getStaticPaths() {
   // console.log(result.data)
 
   const paths = result?.data?.map((post: any) => ({
-    params: { id: post?._id['$oid'] },
+    params: { id: post?._id["$oid"] },
   }));
 
   return { paths, fallback: false };
@@ -72,12 +71,14 @@ export default function detailPage({ navData, webData, storeBlogsData }: any) {
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
       />
-      <NFTDetails
-        navData={navData}
-        webData={webData}
-        NFTDetail={storeBlogsData}
-      />
-      <Footer webData={webData}/>
+      <main className=" min-h-screen">
+        <NFTDetails
+          navData={navData}
+          webData={webData}
+          NFTDetail={storeBlogsData}
+        />
+      </main>
+      <Footer webData={webData} />
     </>
   );
 }

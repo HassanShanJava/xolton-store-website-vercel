@@ -40,6 +40,7 @@ import { CustomToast } from "../globalToast";
 import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 import CancelOfferModal from "../Modal/UpdateModal";
+import { LoadingeModal } from "../Ui/LoadingModal";
 
 const NFTDetail = ({}: any) => {
   const { user }: any = useSelector((state: RootState) => state.user);
@@ -68,7 +69,7 @@ const NFTDetail = ({}: any) => {
   console.log(user?.id, "user?.id");
   // nft detail api
   const {
-    isLoading,
+    isLoading: nftLoading,
     isError,
     isFetched,
     data: nftDetail,
@@ -126,7 +127,12 @@ const NFTDetail = ({}: any) => {
     }
   );
   // nft collection api
-  const { data: NFTCollection, refetch: CollectionRefetch } = useQuery(
+  const {
+    data: NFTCollection,
+    refetch: CollectionRefetch,
+    isLoading,
+    isFetching,
+  } = useQuery(
     ["nftCollection"],
     async () => {
       const response: any = await fetch(
@@ -149,7 +155,6 @@ const NFTDetail = ({}: any) => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-  console.log(nftDetail?.contract_id, "nftDetail?.contract_id");
 
   // buy nft
   const buyNFT = async () => {
@@ -462,6 +467,7 @@ const NFTDetail = ({}: any) => {
           />
         </div>
       )}
+      <LoadingeModal modalState={isLoading || nftLoading || offerLoading} />
     </div>
   );
 };

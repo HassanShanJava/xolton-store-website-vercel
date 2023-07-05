@@ -18,10 +18,10 @@ const Home: NextPage = ({ navData, webData, seoData }: any) => {
         icon={webData?.logo_image}
         canonical_url={""}
       />
-      <main>
+      <main className=" min-h-screen">
         <Homepage webData={webData} navData={navData} />
       </main>
-      <Footer webData={webData}/>
+      <Footer webData={webData} />
     </>
   );
 };
@@ -41,5 +41,5 @@ export async function getStaticProps() {
   const webData = result?.data?.website || {};
   const seoData = result?.data?.seo[0] || {};
 
-  return { props: { navData, webData,seoData } };
+  return { props: { navData, webData, seoData } };
 }

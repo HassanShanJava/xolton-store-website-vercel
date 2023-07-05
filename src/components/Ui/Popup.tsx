@@ -14,7 +14,7 @@ import { checkTargetForNewValues } from "framer-motion";
 import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 // import { customTruncateHandler } from "~/utils/helper";
-import { StripeModal } from "./stripeModal";
+import { StripeModal } from "./StripeModal";
 import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
 interface PopUpType {
