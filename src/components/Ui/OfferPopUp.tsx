@@ -11,7 +11,7 @@ import {
 } from "~/utils/web3/offer/wmaticFunction";
 import { useRouter } from "next/router";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
 import { useForm } from "react-hook-form";
 import { Input, NumberInput, NumberInputField } from "@chakra-ui/react";
@@ -23,6 +23,9 @@ import {
 } from "~/store/slices/offerSteps";
 import { signSignature } from "~/utils/web3/offer/offerNft";
 import NFTDetail from "../NFT/NFTDetail";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { StripeModal } from "./StripeModal";
 import Image from "next/image";
 
 interface OfferPopUpType {
@@ -35,6 +38,7 @@ interface OfferPopUpType {
   wmaticBalance: number;
   id?: string;
   is_updated: boolean;
+  setAccountBalance?: any;
   refetch?: any;
 }
 
@@ -45,14 +49,34 @@ const OfferPopUp = ({
   price,
   tax,
   accountBalance,
+  setAccountBalance,
   wmaticBalance,
   id,
   is_updated,
   refetch,
 }: OfferPopUpType) => {
+  const {
+    data: Stripetoken,
+    isLoading,
+    isFetched,
+    refetch: TokenRefetch,
+  } = useQuery(
+    ["tokenApi"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const { user }: any = useSelector((state: RootState) => state.user);
-  console.log({ id }, "ididididid");
-
   const router = useRouter();
   const { handleSubmit, register, setValue, getValues } = useForm<any>();
 
@@ -325,18 +349,18 @@ const OfferPopUp = ({
     {
       title: "Min Price:",
       values: nft?.highest_offer
-        ? (nft?.highest_offer + 0.1 * nft?.highest_offer).toFixed(5)
-        : (nft?.min_price).toFixed(5),
+        ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(5)
+        : nft?.min_price?.toFixed(5),
       symbol: "matic",
     },
     {
       title: "Your balance",
-      values: (+accountBalance).toFixed(5),
+      values: (+accountBalance)?.toFixed(5),
       symbol: "matic",
     },
     {
       title: "Your Wmatic balance",
-      values: (+wmaticBalance).toFixed(5),
+      values: (+wmaticBalance)?.toFixed(5),
       symbol: "wmatic",
     },
     {
@@ -352,6 +376,18 @@ const OfferPopUp = ({
       symbol: "matic",
     },
   ];
+  const featureModelParam: any = {
+    open,
+    setBuy,
+    price,
+    account,
+    refetch,
+    setAccountBalance,
+  };
+  const stripePromise =
+    !isLoading && isFetched && Stripetoken?.public_key
+      ? loadStripe(Stripetoken?.public_key as string)
+      : null;
 
   return (
     <>
@@ -460,7 +496,7 @@ const OfferPopUp = ({
                     </div>
                   ))}
                   {/*footer*/}
-                  <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
+                  <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 px-6 pt-2">
                     <button
                       className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                       type="submit"
@@ -481,6 +517,18 @@ const OfferPopUp = ({
                     </button>
                   </div>
                 </form>
+                <div className="flex items-center justify-end rounded-b border-solid border-slate-200 px-6 py-2">
+                  {+accountBalance < +price &&
+                    isFetched &&
+                    !isLoading &&
+                    Stripetoken && (
+                      <>
+                        <Elements stripe={stripePromise}>
+                          <StripeModal {...featureModelParam} />
+                        </Elements>
+                      </>
+                    )}
+                </div>
               </div>
             </div>
           </div>

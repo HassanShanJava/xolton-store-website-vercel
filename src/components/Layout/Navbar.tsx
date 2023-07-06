@@ -117,6 +117,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         const nftPrice: number = 1;
 
         const maitccprice = await maticToUSD(nftPrice);
+        console.log({ maitccprice });
         dispatch(setMaticToUsdProcess(maitccprice));
       } catch (e) {
         console.log(e, "consvertion error front-end");

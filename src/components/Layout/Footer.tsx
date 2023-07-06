@@ -17,7 +17,7 @@ const Footer = ({ webData }: any) => {
                 >
                   <Image
                     src={renderNFTIcon(webData)}
-                    className="h-8 w-8"
+                    className="h-8 w-8 rounded-full"
                     alt={"company logo"}
                     width={16}
                     height={16}
@@ -99,7 +99,9 @@ const Footer = ({ webData }: any) => {
                                 href={item.url}
                               >
                                 <span>
-                                  <i className={`fa-brands fa-${item.social_type} w-4 h-4 text-center`}></i>
+                                  <i
+                                    className={`fa-brands fa-${item.social_type} h-4 w-4 text-center`}
+                                  ></i>
                                 </span>
                                 {item.social_type}
                               </a>

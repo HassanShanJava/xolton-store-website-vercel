@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const NFTCard = ({ nft, refetch }: any) => {
   const [showPop, setShowPop] = useState(false);
+  const [showStripePop, setShowStripePop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [accountBalance, setAccountBalance] = useState("");
   const [wmaticBalance, setWmaticBalance] = useState("");
@@ -202,9 +203,12 @@ const NFTCard = ({ nft, refetch }: any) => {
                 nft={nft}
                 open={showPop}
                 setBuy={setShowPop}
+                // showStripePop={showStripePop}
+                // setShowStripePop={setShowStripePop}
                 price={+nft.price}
                 tax={+nft.tax}
                 accountBalance={+accountBalance}
+                setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}
@@ -219,9 +223,11 @@ const NFTCard = ({ nft, refetch }: any) => {
                 wmaticBalance={+wmaticBalance}
                 id={updateOffer}
                 is_updated={nft?.is_offered ? true : false}
+                setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}
+            
           </div>
         </div>
       </div>

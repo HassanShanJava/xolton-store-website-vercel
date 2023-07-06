@@ -7,6 +7,8 @@ specifiers:
   '@emotion/styled': ^11.10.6
   '@next/env': ^13.3.2
   '@reduxjs/toolkit': 1.9.3
+  '@stripe/react-stripe-js': ^2.1.1
+  '@stripe/stripe-js': ^1.54.1
   '@tanstack/react-query': ^4.28.0
   '@types/eslint': ^8.21.3
   '@types/node': ^18.15.5
@@ -36,6 +38,7 @@ specifiers:
   react-redux: 8.0.5
   serve: ^14.2.0
   sharp: ^0.32.1
+  stripe: ^12.10.0
   tailwindcss: ^3.3.0
   typescript: ^5.0.2
   web3: ^1.9.0
@@ -47,6 +50,8 @@ dependencies:
   '@emotion/styled': 11.10.6_wk7udrqmfetfur7bcmggr6k6fm
   '@next/env': 13.3.2
   '@reduxjs/toolkit': 1.9.3_k4ae6lp43ej6mezo3ztvx6pykq
+  '@stripe/react-stripe-js': 2.1.1_l52agfnny5gsgnugli43vfmq5m
+  '@stripe/stripe-js': 1.54.1
   '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
   axios: 1.4.0
   browser-image-compression: 2.0.2
@@ -62,6 +67,7 @@ dependencies:
   react-redux: 8.0.5_ddal5w4bzhvnvvplv3twufcima
   serve: 14.2.0
   sharp: 0.32.1
+  stripe: 12.10.0
   web3: 1.9.0
 
 devDependencies:
@@ -1760,6 +1766,23 @@ packages:
   /@sindresorhus/is/4.6.0:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
+    dev: false
+
+  /@stripe/react-stripe-js/2.1.1_l52agfnny5gsgnugli43vfmq5m:
+    resolution: {integrity: sha512-aHm6cWOqmOyq3eKKlR42hgvrcZhzc9ijL+BeXJ5H3uaWUKKcooSsBys0tiKl0gLxYQHUjUCvrRSX8fYaPBmAKg==}
+    peerDependencies:
+      '@stripe/stripe-js': ^1.44.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@stripe/stripe-js': 1.54.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@stripe/stripe-js/1.54.1:
+    resolution: {integrity: sha512-smEXPu1GKMcAj9g2luT16+oXfg2jAwyc68t2Dm5wdtYl3p8PqQaZEiI8tQmboaQAjgF8pIGma6byz1T1vgmpbA==}
     dev: false
 
   /@swc/helpers/0.4.14:
@@ -6316,6 +6339,14 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
     dev: true
+
+  /stripe/12.10.0:
+    resolution: {integrity: sha512-JJS4Bzx4LAzS8cTy26wqCdRQmhUtyV2XjFXfFTXa+W+Won2PXEWu85RpROi1ZN6pNFcWH7xrhXVW0OfCxUmwwA==}
+    engines: {node: '>=12.*'}
+    dependencies:
+      '@types/node': 18.15.11
+      qs: 6.11.0
+    dev: false
 
   /styled-jsx/5.1.1_react@18.2.0:
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}

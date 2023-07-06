@@ -5,13 +5,16 @@ import { useSelector } from "react-redux";
 import { web3Init } from "~/store/slices/web3Slice";
 import { RootState } from "~/store/store";
 import { buyNFT } from "~/utils/web3/buyNFT";
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "next/router";
 
 import { checkTargetForNewValues } from "framer-motion";
 
-import { UseQueryResult, useMutation } from "@tanstack/react-query";
+import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
 import { CustomToast } from "../globalToast";
+// import { customTruncateHandler } from "~/utils/helper";
+import { StripeModal } from "./StripeModal";
 import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
 interface PopUpType {
@@ -21,6 +24,7 @@ interface PopUpType {
   tax: number;
   nft: any;
   accountBalance: number;
+  setAccountBalance?: any;
   refetch?: any;
 }
 
@@ -31,10 +35,31 @@ const Popup = ({
   price,
   tax,
   accountBalance,
+  setAccountBalance,
   refetch,
 }: PopUpType) => {
   const router = useRouter();
-
+  const {
+    data: Stripetoken,
+    isLoading,
+    isFetched,
+    refetch: TokenRefetch,
+  } = useQuery(
+    ["tokenApi"],
+    async () => {
+      const response: any = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      return data?.data;
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const [isPurchase, setIsPurchase] = useState<any>("");
   const { addToast } = CustomToast();
 
@@ -132,6 +157,18 @@ const Popup = ({
       }
     }
   };
+  const featureModelParam: any = {
+    open,
+    setBuy,
+    price,
+    account,
+    refetch,
+    setAccountBalance,
+  };
+  const stripePromise =
+    !isLoading && isFetched && Stripetoken?.public_key
+      ? loadStripe(Stripetoken?.public_key as string)
+      : null;
 
   return (
     <>
@@ -187,7 +224,7 @@ const Popup = ({
                         className="mx-auto rounded-xl "
                       />
                     </div>
-                    <div >
+                    <div>
                       <p className="font-bold">NFT Info</p>
                       <p>{nft.name}</p>
                       <p className="text-xs">
@@ -239,7 +276,7 @@ const Popup = ({
                   </div>
                 </div>
                 {/*footer*/}
-                <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
+                <div className="flex flex-col items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
                   <button
                     className="mb-1 mr-1 w-full rounded bg-bg-3 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
@@ -259,6 +296,16 @@ const Popup = ({
                       </>
                     )}
                   </button>
+                  {+accountBalance < +price &&
+                    isFetched &&
+                    !isLoading &&
+                    Stripetoken && (
+                      <>
+                        <Elements stripe={stripePromise}>
+                          <StripeModal {...featureModelParam} />
+                        </Elements>
+                      </>
+                    )}
                 </div>
               </div>
             </div>
