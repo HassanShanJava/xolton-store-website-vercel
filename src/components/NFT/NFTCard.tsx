@@ -121,17 +121,22 @@ const NFTCard = ({ nft, refetch }: any) => {
     }
   };
 
-  console.log(nft._id.$oid);
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  const firstDate: any = nft?.end_date && new Date(nft?.updated_at?.$date);
+  const secondDate: any = nft?.end_date && new Date(nft?.end_date?.$date);
 
+  const diffDays =
+    nft?.end_date && Math.floor((secondDate - firstDate) / oneDay);
+  console.log({ diffDays });
   return (
     <>
-      <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" group mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <a
           href={`/nft-details/${nft._id.$oid}${
             process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
           }`}
         >
-          <div className={" relative h-80 max-h-[290px]  w-full"}>
+          <div className={" relative h-80 max-h-[290px]  w-full "}>
             <Image
               src={renderNFTImage(nft)}
               alt="/nft"
@@ -140,6 +145,14 @@ const NFTCard = ({ nft, refetch }: any) => {
               quality={100}
               className="mx-auto rounded-xl  object-cover "
             />
+            {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
+              <div className="absolute bottom-2 w-full pl-2 pr-2 opacity-0 transition duration-75 ease-in-out  group-hover:opacity-100 ">
+                <div className=" z-50  flex w-fit flex-col items-center  justify-end rounded-md bg-white pb-1 pl-2 pr-2 pt-1    opacity-70">
+                  <span className="text-xs">Days Left</span>
+                  <span className="text-sm  font-bold">{diffDays}</span>
+                </div>
+              </div>
+            )}
           </div>
         </a>
 
@@ -185,6 +198,18 @@ const NFTCard = ({ nft, refetch }: any) => {
                 Offer Now
               </button>
             )}
+            {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  offerNFT();
+                }}
+                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+              >
+                {!nft?.is_offered ? "Bid Now" : "Update Bid"}
+              </button>
+            )}
             {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
               <button
                 type="button"
@@ -223,11 +248,11 @@ const NFTCard = ({ nft, refetch }: any) => {
                 wmaticBalance={+wmaticBalance}
                 id={updateOffer}
                 is_updated={nft?.is_offered ? true : false}
+                is_offer={nft?.sell_type?.includes("auction") ? false : true}
                 setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}
-            
           </div>
         </div>
       </div>

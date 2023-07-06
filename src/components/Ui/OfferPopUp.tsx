@@ -33,6 +33,7 @@ interface OfferPopUpType {
   setBuy: Function;
   price: number;
   tax: number;
+  is_offer: boolean;
   nft: any;
   accountBalance: number;
   wmaticBalance: number;
@@ -47,6 +48,7 @@ const OfferPopUp = ({
   setBuy,
   nft,
   price,
+  is_offer,
   tax,
   accountBalance,
   setAccountBalance,
@@ -133,7 +135,9 @@ const OfferPopUp = ({
 
     {
       heading: "Signature",
-      text: "Sign the message to place your offer on this NFT.",
+      text: `Sign the message to place your ${
+        is_offer ? "offer" : "bid"
+      }  on this NFT.`,
     },
   ];
 
@@ -193,7 +197,7 @@ const OfferPopUp = ({
           nft_id: nft?._id.$oid,
           offer_amount: +inputOffer,
           store_customer_id: user?.id,
-          sell_type: "offer",
+          sell_type: is_offer ? "offer" : "auction",
           is_order_ask: true,
           nft_owner: nft.store_makerorder?.signer,
           base_account: nft.store_makerorder?.baseAccount,
@@ -228,8 +232,8 @@ const OfferPopUp = ({
           addToast({
             id: "offer-error",
             message: is_updated
-              ? "Your Offer Updated Successfully!"
-              : "Your Offer Uploaded Successfully!",
+              ? `Your ${is_offer ? "Offer" : "Bid"} Updated Successfully!`
+              : `Your ${is_offer ? "Offer" : "Bid"} Placed Successfully!`,
 
             type: "success",
           });
@@ -270,7 +274,8 @@ const OfferPopUp = ({
             nft_id: nft?._id.$oid,
             offer_amount: +inputOffer,
             store_customer_id: user?.id,
-            sell_type: "offer",
+            sell_type: is_offer ? "offer" : "auction",
+
             // sell_type: "fixed-offer",
             is_order_ask: true,
             nft_owner: nft.store_makerorder?.signer,
@@ -306,8 +311,8 @@ const OfferPopUp = ({
             addToast({
               id: "offer-error",
               message: is_updated
-                ? "Your Offer Updated Successfully!"
-                : "Your Offer Uploaded Successfully!",
+                ? `Your ${is_offer ? "Offer" : "Bid"} Updated Successfully!`
+                : `Your ${is_offer ? "Offer" : "Bid"} Placed Successfully!`,
               type: "success",
             });
           } else {
@@ -400,7 +405,9 @@ const OfferPopUp = ({
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="mb-3 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl ">Place an Offer</h3>
+                  <h3 className="text-3xl ">
+                    Place {is_offer ? "an Offer" : "a Bid"}
+                  </h3>
                   <div
                     onClick={(e) => {
                       e.preventDefault();
@@ -462,7 +469,7 @@ const OfferPopUp = ({
                 >
                   <div className="m-4">
                     <Input
-                      placeholder="Offer Price"
+                      placeholder={`${is_offer ? "Offer" : "Bid"} Price`}
                       defaultValue={
                         nft.is_offered
                           ? nft?.highest_offer + 0.1 * nft?.highest_offer //10% higher than previous highest bid
@@ -503,7 +510,11 @@ const OfferPopUp = ({
                       disabled={isPurchase}
                     >
                       {isPurchase !== false ? (
-                        "OFFER NOW"
+                        is_offer ? (
+                          "OFFER NOW"
+                        ) : (
+                          "BID NOW"
+                        )
                       ) : (
                         <>
                           <div className="flex items-center justify-center py-1.5">
@@ -539,10 +550,10 @@ const OfferPopUp = ({
       )}
       <OfferSignModal
         modalState={isModal}
-        title={"Place Offer for NFT"}
+        title={`Place ${is_offer ? "Offer" : "Bid"}  for NFT`}
         setModalState={setIsModal}
         offerStepsData={offerStepsData}
-        type={"offerNft"}
+        type={is_offer ? "offerNft" : "bidNft"}
       />
     </>
   );
