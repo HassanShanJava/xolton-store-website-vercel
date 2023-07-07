@@ -110,7 +110,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         console.log(err);
       }
     })();
-  }, [typeof window !== "undefined", dispatch]);
+  }, [typeof window !== "undefined"]);
   useEffect(() => {
     (async () => {
       try {
@@ -161,7 +161,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
       const response = await loginConnect.mutateAsync(payload);
 
       console.log(response?.storeCustomer, { response }, "response");
-      if (response?.data === null) {
+      if (response?.storeCustomer === null) {
         setShowPop(true);
       } else {
         if (data?.success !== false) {
@@ -382,7 +382,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           {account != "" ? (
             <div
               onClick={openUserDrawer}
-              className="photo-wrapper cursor-pointer  h-8 w-8 rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"
+              className="photo-wrapper h-8  w-8 cursor-pointer rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"
             ></div>
           ) : (
             <button
@@ -469,13 +469,18 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                   </div>
 
                   <div className="mx-0.5 my-6 rounded-xl border border-gray-200 p-3">
-                    <p className="w-full text-center pb-3">Your Account Balance</p>
+                    <p className="w-full pb-3 text-center">
+                      Your Account Balance
+                    </p>
                     <div className="flex justify-between">
                       <div className="flex">
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={MaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.accountBalance} <span className="text-xs">MATIC</span></p>
+                        <p>
+                          {userInfo?.accountBalance}{" "}
+                          <span className="text-xs">MATIC</span>
+                        </p>
                       </div>
                       <p>${userInfo?.maticUSD}</p>
                     </div>
@@ -487,7 +492,10 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={WmaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.wmaticBalance} <span className="text-xs">wMATIC</span></p>
+                        <p>
+                          {userInfo?.wmaticBalance}{" "}
+                          <span className="text-xs">wMATIC</span>
+                        </p>
                       </div>
                       <p>${userInfo?.wmaticUSD}</p>
                     </div>
@@ -495,8 +503,6 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                 </div>
               </div>
             </DrawerBody>
-
-
           </DrawerContent>
         </Drawer>
       )}

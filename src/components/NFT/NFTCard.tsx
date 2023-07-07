@@ -122,11 +122,12 @@ const NFTCard = ({ nft, refetch }: any) => {
   };
 
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  const firstDate: any = nft?.end_date && new Date(nft?.updated_at?.$date);
+  const firstDate: any = nft?.end_date && new Date();
   const secondDate: any = nft?.end_date && new Date(nft?.end_date?.$date);
 
   const diffDays =
-    nft?.end_date && Math.floor((secondDate - firstDate) / oneDay);
+    nft?.end_date &&
+    Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
   console.log({ diffDays });
   return (
     <>
