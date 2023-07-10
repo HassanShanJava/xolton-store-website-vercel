@@ -79,7 +79,8 @@ const NFTCard = ({ nft, refetch }: any) => {
           message: "Connect Wallet",
           type: "error",
         })
-      : account == nft.creator_id
+      : account == nft.creator_id ||
+        account == nft?.store_makerorder?.baseAccount
       ? addToast({
           id: "connect-wallet-buy",
           message: "Owner cannot buy there own NFT",
@@ -100,7 +101,10 @@ const NFTCard = ({ nft, refetch }: any) => {
         message: "Connect Wallet",
         type: "error",
       });
-    } else if (account == nft?.creator_id) {
+    } else if (
+      account == nft?.creator_id ||
+      account == nft?.store_makerorder?.baseAccount
+    ) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",

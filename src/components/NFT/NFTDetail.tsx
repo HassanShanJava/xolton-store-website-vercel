@@ -156,12 +156,15 @@ const NFTDetail = ({}: any) => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-
+  console.log({ nftDetail });
   // buy nft
   const buyNFT = async () => {
     if (account !== "") {
       setShowPop(true);
-    } else if (account === nftDetail?.creator_id) {
+    } else if (
+      account === nftDetail?.creator_id ||
+      account == nftDetail?.store_makerorder?.baseAccount
+    ) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
@@ -191,7 +194,8 @@ const NFTDetail = ({}: any) => {
         message: "Connect Wallet",
         type: "error",
       });
-    } else if (account == nftDetail?.creator_id) {
+    } else if (account == nftDetail?.creator_id ||
+      account == nftDetail?.store_makerorder?.baseAccount) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
