@@ -59,11 +59,11 @@ export default {
       : `"#F1F3F5"`
     },
         "bg-2": ${header
-      ?  JSON.stringify(header) 
+      ? JSON.stringify(header)
       : `"#F1F3F5"`
     },
         "bg-3": ${button
-      ?  JSON.stringify(button)
+      ? JSON.stringify(button)
       : `"#000000"`
     },
         "gt-1": "#A0AEC0",
@@ -186,6 +186,9 @@ const runDocument = async () => {
   const storeDetail = result?.data;
   const siteAnalytics = storeDetail?.analytics;
   const tagmanager = siteAnalytics?.tag_manager?.tag_manager_id;
+  const gtag = siteAnalytics?.google_analytics?.google_analytics;
+  const googleAnalytics = `https://www.googletagmanager.com/gtag/js?id=${gtag}`;
+
   console.log(siteAnalytics, tagmanager, "siteAnalytics tagmanager")
 
 
@@ -216,6 +219,26 @@ const runDocument = async () => {
           }}
           />
           `: ""}
+
+          {/* Google Analytics Measurement ID*/}
+          ${gtag ? `
+          <script async src={"${googleAnalytics}"} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: ${"`" +
+      `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gtag}', {
+                  page_path: window.location.pathname
+                });
+              `+ "`"
+      },
+            }}
+            />
+          `: ""}
+
           <meta name="description" content={"Store"} />
           <meta property="og:title" content={"store detail"} key="title" />
           
