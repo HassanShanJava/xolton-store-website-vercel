@@ -1,18 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
-  import { Html, Head, Main, NextScript } from "next/document";
-  
-  import React from "react";
-  
-  import { renderNFTIcon } from "~/utils/helper";
-  
-  export default function Document() {
-    return (
-      <>
+import { Html, Head, Main, NextScript } from "next/document";
+
+import React from "react";
+
+import { renderNFTIcon } from "~/utils/helper";
+
+export default function Document() {
+  return (
+    <>
       <Html>
         <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            <!-- Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','testing');</script>
+            <!-- End Google Tag Manager -->`,
+            }}
+          />
+
           <meta name="description" content={"Store"} />
           <meta property="og:title" content={"store detail"} key="title" />
-          
+
           <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
@@ -26,40 +39,22 @@ import { useQuery } from "@tanstack/react-query";
             href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Ubuntu:wght@300;400;500;700&display=swap"
             rel="stylesheet"
           />
-  
-
-          <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            <!-- Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id=%27+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','testing');</script>
-            <!-- End Google Tag Manager -->`,
-          }}
-        />
         </Head>
         <body className="font-storeFont">
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+            <!-- Google Tag Manager (noscript) -->
+              <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=testing"
+              height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->`,
+            }}
+          />
+
           <Main />
           <NextScript />
-
-          <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            <!-- Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','testing');</script>
-            <!-- End Google Tag Manager -->`,
-          }}
-        />
         </body>
       </Html>
-      </>
-    );
-  }
-  
+    </>
+  );
+}

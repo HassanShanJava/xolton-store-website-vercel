@@ -38,6 +38,7 @@ yarn-error.log*
 # sitemap
 
 robot.txt
+robots.txt
 sitemap.xml
 sitemap-0.xml
 
