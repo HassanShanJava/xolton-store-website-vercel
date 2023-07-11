@@ -231,9 +231,7 @@ const runDocument = async () => {
         />
         </Head>
         <body className="font-storeFont">
-          <Main />
-          <NextScript />
-
+        
         ${tagmanager ? `          
         <script
           dangerouslySetInnerHTML={{
@@ -244,6 +242,10 @@ const runDocument = async () => {
             <!-- End Google Tag Manager (noscript) -->`+ "`"},
           }}
         />`: ""}
+        
+          <Main />
+          <NextScript />
+
         </body>
       </Html>
       </>
