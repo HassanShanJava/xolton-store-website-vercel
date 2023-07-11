@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import NFTCard from "./NFTCard";
 
 import { useRouter } from "next/router";
 
 import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
+import NFTCard from "../NFT/NFTCard";
 
-const NFTListing = ({ contract_id }: any) => {
+const UserNFTListing = ({ is_purchase }: any) => {
   const router = useRouter();
   const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
@@ -28,9 +28,7 @@ const NFTListing = ({ contract_id }: any) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&${new URLSearchParams(sortFilter).toString()}${
-          user ? "&store_customer_id=" + user?.id : ""
-        }`
+        }&${new URLSearchParams(sortFilter).toString()}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -39,23 +37,7 @@ const NFTListing = ({ contract_id }: any) => {
     },
     {
       refetchOnWindowFocus: false,
-    }
-  );
-
-  const { data: NFTCollectionDetail } = useQuery(
-    ["nftsCollectionDetail"],
-    async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/collection?id=${contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    },
-    {
-      refetchOnWindowFocus: false,
-      enabled: contract_id ? true : false,
+      enabled: user?.id ? true : false,
     }
   );
 
@@ -70,14 +52,15 @@ const NFTListing = ({ contract_id }: any) => {
 
     return () => clearTimeout(timeout);
   }, [searchQuery]);
-
   useEffect(() => {
-    setSortFilter((prevFilters: any) => ({
-      ...prevFilters,
-      contract_id: contract_id ?? "",
-    }));
-  }, [contract_id]);
-
+    if (user?.id) {
+      setSortFilter((prevFilters: any) => ({
+        ...prevFilters,
+        store_customer_id: user?.id ?? "",
+        is_purchase,
+      }));
+    }
+  }, [user]);
   useEffect(() => {
     refetch();
   }, [sortFilter]);
@@ -110,6 +93,8 @@ const NFTListing = ({ contract_id }: any) => {
       }
     } else {
       if (sortFilter.searchQuery?.length) {
+        setNfts([]);
+      } else {
         setNfts([]);
       }
     }
@@ -146,92 +131,86 @@ const NFTListing = ({ contract_id }: any) => {
     <>
       <div className=" h-full  w-full ">
         {/* search and sort */}
-        <div
-          className={
-            "my-4 flex flex-col items-center justify-between md:flex-row"
-          }
-        >
-          <div>
-            {contract_id !== undefined && (
-              <h1 className="text-2xl">{NFTCollectionDetail?.data?.name}</h1>
-            )}
-          </div>
-
-          <div
-            className={`flex  flex-col ${
-              NFTCollectionDetail?.data || nfts ? "w-full md:w-[50%]" : "w-full"
-            } items-center gap-2 xs:flex-row-reverse`}
-          >
-            <div className=" mx-auto flex w-full flex-row-reverse items-center justify-between xs:w-fit md:mx-0">
-              <button
-                onClick={clearFilter}
-                className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
-              >
-                <i className="fa fa-undo scale-x-[-1] p-2  text-pm-12 group-hover:text-white"></i>
-              </button>
-              <div className="mr-2 flex w-full flex-col items-center justify-between xs:mr-0 xs:flex-row">
-                <div className="md:w-68 w-full ">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    placeholder="Search by NFT Name"
-                    className=" md:w-68 w-full rounded-lg bg-white p-2 font-storeFont text-xs focus:outline-none sm:text-sm "
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-
-                <div className="m-2 w-full xs:w-56 md:my-0">
-                  <select
-                    data-te-select-init
-                    className="w-full rounded-lg bg-white p-2 font-storeFont text-xs text-tx-3 focus:outline-none sm:text-sm"
-                    onChange={(e) => sorNFT(e.target.value)}
-                    value={sortFilter.orderBy}
-                  >
-                    <option value="" className="bg-white font-storeFont ">
-                      Sort By
-                    </option>
-                    <option value="name-asc" className="font-storeFont">
-                      A to Z
-                    </option>
-                    <option value="name-desc" className="font-storeFont">
-                      Z to A
-                    </option>
-                    <option value="price-desc" className="font-storeFont">
-                      Price Highest to Lowest
-                    </option>
-                    <option value="price-asc" className="font-storeFont">
-                      Price Lowest to Highest
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* nfts list */}
         {nfts?.length > 0 ? (
-          <div className="w-full">
-            <InfiniteScroll
-              dataLength={nfts.length > 0 && nfts.length}
-              next={onFilter}
-              hasMore={true}
-              loader={
-                isFetching ? (
-                  <>{<LoadingSkeleton data={4} nft={nfts} />}</>
-                ) : (
-                  <></>
-                )
-              }
+          <>
+            <div
               className={
-                "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2  lg:grid-cols-4 2xl:grid-cols-5"
+                "my-4 flex flex-col items-center justify-between md:flex-row"
               }
             >
-              {nfts?.map((nft: any, i: number) => (
-                <NFTCard nft={nft} key={i} refetch={refetch} is_purchase ={false}/>
-              ))}
-            </InfiniteScroll>
-          </div>
+              <div
+                className={`flex  flex-col ${"w-full "} items-center gap-2 xs:flex-row-reverse`}
+              >
+                <div className=" mx-auto flex w-full flex-row-reverse items-center justify-between xs:w-fit md:mx-0">
+                  <button
+                    onClick={clearFilter}
+                    className="color group h-8 w-8 rounded-full bg-white ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-bg-3/75 hover:ring-bg-3/75"
+                  >
+                    <i className="fa fa-undo scale-x-[-1] p-2  text-pm-12 group-hover:text-white"></i>
+                  </button>
+                  <div className="mr-2 flex w-full flex-col items-center justify-between xs:mr-0 xs:flex-row">
+                    <div className="md:w-68 w-full ">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        placeholder="Search by NFT Name"
+                        className=" md:w-68 w-full rounded-lg bg-white p-2 font-storeFont text-xs focus:outline-none sm:text-sm "
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="m-2 w-full xs:w-56 md:my-0">
+                      <select
+                        data-te-select-init
+                        className="w-full rounded-lg bg-white p-2 font-storeFont text-xs text-tx-3 focus:outline-none sm:text-sm"
+                        onChange={(e) => sorNFT(e.target.value)}
+                        value={sortFilter.orderBy}
+                      >
+                        <option value="" className="bg-white font-storeFont ">
+                          Sort By
+                        </option>
+                        <option value="name-asc" className="font-storeFont">
+                          A to Z
+                        </option>
+                        <option value="name-desc" className="font-storeFont">
+                          Z to A
+                        </option>
+                        <option value="price-desc" className="font-storeFont">
+                          Price Highest to Lowest
+                        </option>
+                        <option value="price-asc" className="font-storeFont">
+                          Price Lowest to Highest
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full">
+              <InfiniteScroll
+                dataLength={nfts.length > 0 && nfts.length}
+                next={onFilter}
+                hasMore={true}
+                loader={
+                  isFetching ? (
+                    <>{<LoadingSkeleton data={4} nft={nfts} />}</>
+                  ) : (
+                    <></>
+                  )
+                }
+                className={
+                  "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2  lg:grid-cols-4 2xl:grid-cols-5"
+                }
+              >
+                {nfts?.map((nft: any, i: number) => (
+                  <NFTCard nft={nft} key={i} refetch={refetch} is_purchase={true} />
+                ))}
+              </InfiniteScroll>
+            </div>
+          </>
         ) : (
           <>
             <LoadingSkeleton data={4} nft={nfts} />
@@ -249,7 +228,7 @@ const NFTListing = ({ contract_id }: any) => {
   );
 };
 
-export default NFTListing;
+export default UserNFTListing;
 
 const LoadingSkeleton = ({ data, nft }: any) => {
   return (

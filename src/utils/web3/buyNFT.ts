@@ -9,10 +9,10 @@ export async function buyNFT(
   web3: any,
   account: string,
   totalPrice: Int16Array,
-  makerOrder: any
+  makerOrder: any,
+  royalty: Int16Array
 ) {
-
-  console.log({makerOrder},"buyNFT payload")
+  console.log({ makerOrder }, "buyNFT payload");
   const makeArr: any = [];
   const takeArr: any = [];
   // make contract Instance
@@ -22,7 +22,7 @@ export async function buyNFT(
   ); //Contract Address
 
   try {
-    console.log("Maker Order :: ",makerOrder)
+    console.log("Maker Order :: ", makerOrder);
     makeArr.push(
       makerOrder?.isOrderAsk,
       makerOrder?.signer,
@@ -32,6 +32,7 @@ export async function buyNFT(
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId,
       toWei(makerOrder?.tax).toString(),
+      toWei(royalty).toString(),
       makerOrder?.nonce,
       makerOrder?.signed_v,
       makerOrder?.signed_r,
@@ -43,7 +44,6 @@ export async function buyNFT(
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId
     );
-
 
     let transaction_id;
     const result = await marketPlacecContract.methods

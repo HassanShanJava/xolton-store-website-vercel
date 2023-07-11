@@ -18,7 +18,7 @@ import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 import { useQuery } from "@tanstack/react-query";
 
-const NFTCard = ({ nft, refetch }: any) => {
+const NFTCard = ({ nft, refetch, is_purchase }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [showStripePop, setShowStripePop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
@@ -180,52 +180,56 @@ const NFTCard = ({ nft, refetch }: any) => {
           </div>
 
           <div className="flex items-center justify-between gap-2 px-2">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                buyNFT();
-              }}
-              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-            >
-              Buy
-            </button>
+            {!is_purchase && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    buyNFT();
+                  }}
+                  className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                >
+                  Buy
+                </button>
 
-            {nft?.sell_type?.includes("-offer") && !nft?.is_offered && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  offerNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                Offer Now
-              </button>
-            )}
-            {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  offerNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                {!nft?.is_offered ? "Bid Now" : "Update Bid"}
-              </button>
-            )}
-            {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  offerNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                Update Offer
-              </button>
+                {nft?.sell_type?.includes("-offer") && !nft?.is_offered && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    Offer Now
+                  </button>
+                )}
+                {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    {!nft?.is_offered ? "Bid Now" : "Update Bid"}
+                  </button>
+                )}
+                {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    Update Offer
+                  </button>
+                )}
+              </>
             )}
 
             {showPop && (

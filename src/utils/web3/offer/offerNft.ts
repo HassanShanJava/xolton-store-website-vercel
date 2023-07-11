@@ -25,7 +25,7 @@ async function generateUniqueRandomNumbers(
 
 export const signSignature = async (payload: any, web3: any) => {
   try {
-    console.log({payload})
+    console.log({ payload });
     const toWei = (num: any) => Web3.utils.toWei(num.toString(), "ether");
     const min = 2;
     const max = +generateOTP(5);
@@ -51,6 +51,7 @@ export const signSignature = async (payload: any, web3: any) => {
           { name: "price", type: "uint" },
           { name: "nonce", type: "uint" },
           { name: "tokenId", type: "uint" },
+          { name: "royalty", type: "uint" },
         ],
       },
       //make sure to replace verifyingContract with address of deployed contract
@@ -69,6 +70,7 @@ export const signSignature = async (payload: any, web3: any) => {
         price: toWei(payload?.sign_price).toString(),
         nonce: parseInt(random_nonce),
         tokenId: parseInt(payload.tokenId),
+        royalty: toWei(payload?.royalty).toString(),
       },
     });
     const from = payload.signer;
@@ -76,7 +78,7 @@ export const signSignature = async (payload: any, web3: any) => {
     const method = "eth_signTypedData_v3";
 
     const sign: any = await window?.ethereum.request({ method, params, from });
-    return { sign, nonce: random_nonce,success: true };
+    return { sign, nonce: random_nonce, success: true };
   } catch (e: any) {
     return { success: false, msg: e?.message as string };
   }

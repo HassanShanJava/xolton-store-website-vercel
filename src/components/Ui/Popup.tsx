@@ -39,6 +39,8 @@ const Popup = ({
   refetch,
 }: PopUpType) => {
   const router = useRouter();
+  const { user }: any = useSelector((state: RootState) => state.user);
+
   const {
     data: Stripetoken,
     isLoading,
@@ -67,6 +69,7 @@ const Popup = ({
   const { web3 } = useSelector((state: any) => state.web3);
 
   const total: any = Number(+price + +tax);
+  const royalty: any = Number(+((+nft.royalties / 100) * price));
 
   const nftUpdate = useMutation({
     mutationFn: (newTodo) => {
@@ -105,7 +108,13 @@ const Popup = ({
     } else {
       setIsPurchase(false);
 
-      const buyData = await buyNFT(web3, account, total, nft?.store_makerorder);
+      const buyData = await buyNFT(
+        web3,
+        account,
+        total,
+        nft?.store_makerorder,
+        royalty
+      );
 
       console.log(nft?.store_makerorder, { nft }, "nft payload");
       if (buyData?.success) {
@@ -117,6 +126,7 @@ const Popup = ({
           transaction_id: buyData.transaction_id,
           is_listed: false,
           status: "Purchase",
+          store_customer_id: user?.id,
           store_id: process.env.NEXT_PUBLIC_STORE_ID,
         };
 

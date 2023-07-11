@@ -152,6 +152,7 @@ const OfferPopUp = ({
       baseAccount: nft.store_makerorder?.baseAccount,
       tokenId: nft.store_makerorder?.tokenId,
       sign_price: parseFloat(inputOffer).toFixed(5),
+      royalty: +((+nft.royalties / 100) * +inputOffer).toFixed(5),
     };
 
     console.log({ sign_payload }, "sign_payload");

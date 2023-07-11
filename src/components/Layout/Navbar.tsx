@@ -440,6 +440,17 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
 
             <DrawerBody mx={0} px={2} w="full ">
               <div className="">
+                <div className=" flex flex-col  gap-4 p-4 text-xl font-semibold">
+                  <a
+                    className="cursor-pointer"
+                    href={`/user${
+                      process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+                    }`}
+                  >
+                    My NFTs
+                  </a>
+                  <p className="cursor-pointer">Orders</p>
+                </div>
                 <div className="rounded-xl border border-gray-300 p-3 ">
                   <div className="flex justify-between ">
                     <div className="flex w-full items-center ">
