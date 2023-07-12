@@ -25,6 +25,11 @@ const runAsync = async () => {
   const primaryFont = storeThemeData?.website?.theme?.fonts?.primary ?? "inter";
   const secondaryFont =
     storeThemeData?.website?.theme?.fonts?.secondary ?? "san-serif";
+
+  const header = storeThemeData?.website?.theme?.colors.header
+  const button = storeThemeData?.website?.theme?.colors.button
+  const background = storeThemeData?.website?.theme?.colors.background
+
   const tailwindData = `import { type Config } from "tailwindcss";
 
 export default {
@@ -49,17 +54,17 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": ${storeThemeData?.website?.theme?.colors.background
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.background)
-      : "#F1F3F5"
+        "bg-1": ${background
+      ? JSON.stringify(background)
+      : `"#F1F3F5"`
     },
-        "bg-2": ${storeThemeData?.website?.theme?.colors.header
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.header)
-      : "#F1F3F5"
+        "bg-2": ${header
+      ? JSON.stringify(header)
+      : `"#F1F3F5"`
     },
-        "bg-3": ${storeThemeData?.website?.theme?.colors.button
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.button)
-      : "#000"
+        "bg-3": ${button
+      ? JSON.stringify(button)
+      : `"#000000"`
     },
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
@@ -181,7 +186,10 @@ const runDocument = async () => {
   const storeDetail = result?.data;
   const siteAnalytics = storeDetail?.analytics;
   const tagmanager = siteAnalytics?.tag_manager?.tag_manager_id;
-  console.log(siteAnalytics, "siteAnalytics")
+  const gtag = siteAnalytics?.google_analytics?.google_analytics;
+  const googleAnalytics = `https://www.googletagmanager.com/gtag/js?id=${gtag}`;
+
+  console.log(siteAnalytics, tagmanager, "siteAnalytics tagmanager")
 
 
 
@@ -197,6 +205,40 @@ const runDocument = async () => {
       <>
       <Html>
         <Head>
+        ${tagmanager ? `
+          <script
+          dangerouslySetInnerHTML={{
+            __html: ${"`" + `
+            <!-- Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${tagmanager}');</script>
+            <!-- End Google Tag Manager -->`+ "`"},
+          }}
+          />
+          `: ""}
+
+          {/* Google Analytics Measurement ID*/}
+          ${gtag ? `
+          <script async src={"${googleAnalytics}"} />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: ${"`" +
+      `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gtag}', {
+                  page_path: window.location.pathname
+                });
+              `+ "`"
+      },
+            }}
+            />
+          `: ""}
+
           <meta name="description" content={"Store"} />
           <meta property="og:title" content={"store detail"} key="title" />
           
@@ -215,35 +257,24 @@ const runDocument = async () => {
           />
   
 
-          <script
-          dangerouslySetInnerHTML={{
-            __html: ${"`"+ `
-            <!-- Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${tagmanager}');</script>
-            <!-- End Google Tag Manager -->`+"`"},
-          }}
-        />
+          
         </Head>
         <body className="font-storeFont">
+        
+        ${tagmanager ? `          
+        <script
+          dangerouslySetInnerHTML={{
+            __html: ${"`" + `
+            <!-- Google Tag Manager (noscript) -->
+              <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${tagmanager}"
+              height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->`+ "`"},
+          }}
+        />`: ""}
+
           <Main />
           <NextScript />
 
-          <script
-          dangerouslySetInnerHTML={{
-            __html: ${"`"+ `
-            <!-- Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${tagmanager}');</script>
-            <!-- End Google Tag Manager -->`+"`"},
-          }}
-        />
         </body>
       </Html>
       </>
