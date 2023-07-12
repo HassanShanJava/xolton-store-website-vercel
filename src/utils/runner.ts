@@ -161,7 +161,7 @@ module.exports = {
 
 // Self-invocation async function
 (async () => {
-  await Promise.all([runAsync(), runSiteAsync()]);
+  await Promise.all([runAsync, runSiteAsync]);
 })().catch((err) => {
   console.error(err);
   throw err;
