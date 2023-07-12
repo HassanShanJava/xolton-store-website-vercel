@@ -5,15 +5,15 @@ import Layout from "../components/Layout";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { websiteInfo } from "~/utils/helper";
+import { theme } from "~/components/theme";
 
 // This gets called on every request
 const queryClient = new QueryClient();
 
 const MyApp: AppType = ({ Component, pageProps }) => {
-  
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <Layout {...pageProps}>
           <Component {...pageProps} />
         </Layout>
@@ -21,7 +21,5 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     </QueryClientProvider>
   );
 };
-
-
 
 export default MyApp;

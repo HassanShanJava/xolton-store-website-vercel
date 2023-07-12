@@ -43,6 +43,7 @@ import {
   DrawerCloseButton,
 } from "@chakra-ui/react";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+import { useRouter } from "next/router";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
@@ -405,6 +406,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 function WalletDrawer({ isOpen, onClose, userInfo }: any) {
   console.log({ userInfo });
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const logout = () => {
     dispatch(setUserProcess(null));
@@ -415,6 +417,8 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
         chainId: "",
       })
     );
+    router.push("/");
+
     localStorage.removeItem("store_customer");
     onClose();
   };

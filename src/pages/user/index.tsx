@@ -28,7 +28,7 @@ export default function FaqPage({ navData, webData }: any) {
   return (
     <div className="bg-bg-1">
       <SeoHead
-        name={`Privacy | ${webData?.name}`}
+        name={`Profile | ${webData?.name}`}
         title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
         description={webData.description}
         domain_name={webData?.domain_name}

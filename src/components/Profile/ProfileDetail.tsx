@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { customTruncateHandler, renderBanner } from "~/utils/helper";
 import BannerImage from "~/public/images/banner.png";
 
@@ -14,6 +14,7 @@ import UserNFTListing from "./UserNFTListing";
 
 const ProfileDetail = ({ storeBlogsData }: any) => {
   const { user } = useSelector((state: RootState) => state.user);
+  const router = useRouter();
 
   return (
     <div className="w-full ">
@@ -32,7 +33,7 @@ const ProfileDetail = ({ storeBlogsData }: any) => {
 
             <TabPanels>
               <TabPanel>
-                <UserNFTListing  is_purchase="owned"/>
+                <UserNFTListing is_purchase="owned" />
               </TabPanel>
               <TabPanel>
                 <UserNFTListing is_purchase="listed" />

@@ -159,30 +159,25 @@ const NFTDetail = ({}: any) => {
   console.log({ nftDetail });
   // buy nft
   const buyNFT = async () => {
-    if (account !== "") {
-      setShowPop(true);
-    } else if (
-      account === nftDetail?.creator_id ||
-      account == nftDetail?.store_makerorder?.baseAccount
-    ) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Owner cannot buy there own NFT",
-        type: "error",
-      });
-    } else if (account === "") {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-    } else {
-      return;
-    }
+    account == ""
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Connect Wallet",
+          type: "error",
+        })
+      : user !== null && user?.wallet_address !== nftDetail?.owner_id
+      ? setShowPop(true)
+      : account == nftDetail.creator_id ||
+        account == nftDetail?.store_makerorder?.baseAccount
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Owner cannot buy there own NFT",
+          type: "error",
+        })
+      : setShowPop(true);
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
-
     setAccountBalance(accountBalance);
   };
 
@@ -194,8 +189,10 @@ const NFTDetail = ({}: any) => {
         message: "Connect Wallet",
         type: "error",
       });
-    } else if (account == nftDetail?.creator_id ||
-      account == nftDetail?.store_makerorder?.baseAccount) {
+    } else if (
+      account == nftDetail?.creator_id ||
+      account == nftDetail?.store_makerorder?.baseAccount
+    ) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
@@ -381,80 +378,104 @@ const NFTDetail = ({}: any) => {
                       </div>
                     ))}
                 </div>
-                <div className="mb-3 flex flex-col gap-2 md:flex-row">
-                  {nftDetail?.sell_type?.includes("fixed") && (
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        buyNFT();
-                      }}
-                    >
-                      BUY
-                    </button>
-                  )}
-                  {nftDetail?.sell_type?.includes("offer") && (
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        nftDetail?.is_offered
-                          ? offerNFT(updateOffer)
-                          : offerNFT();
-                      }}
-                    >
-                      {nftDetail.is_offered ? "Update Offer" : "Offer"}
-                    </button>
-                  )}
-                  {nftDetail?.sell_type?.includes("auction") &&
-                    remainingTime && (
-                      <button
-                        type="button"
-                        className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          nftDetail?.is_offered
-                            ? offerNFT(updateOffer)
-                            : offerNFT();
-                        }}
-                      >
-                        {nftDetail.is_offered ? "Update Bid" : "Bid Now"}
-                      </button>
-                    )}
+                {user == null ||
+                user?.id !== nftDetail?.store_customer_id?.$oid ? (
+                  <>
+                    <div className="mb-3 flex flex-col gap-2 md:flex-row">
+                      {nftDetail?.sell_type?.includes("fixed") && (
+                        <button
+                          type="button"
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            buyNFT();
+                          }}
+                        >
+                          BUY
+                        </button>
+                      )}
+                      {nftDetail?.sell_type?.includes("offer") && (
+                        <button
+                          type="button"
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            nftDetail?.is_offered
+                              ? offerNFT(updateOffer)
+                              : offerNFT();
+                          }}
+                        >
+                          {nftDetail.is_offered ? "Update Offer" : "Offer"}
+                        </button>
+                      )}
+                      {nftDetail?.sell_type?.includes("auction") &&
+                        remainingTime && (
+                          <button
+                            type="button"
+                            className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              nftDetail?.is_offered
+                                ? offerNFT(updateOffer)
+                                : offerNFT();
+                            }}
+                          >
+                            {nftDetail.is_offered ? "Update Bid" : "Bid Now"}
+                          </button>
+                        )}
 
-                  {showPop && nftDetail && (
-                    <Popup
-                      open={showPop}
-                      nft={nftDetail}
-                      setBuy={setShowPop}
-                      price={+nftDetail?.price}
-                      tax={+nftDetail?.tax}
-                      accountBalance={+accountBalance}
-                      setAccountBalance={setAccountBalance}
-                      refetch={refetch}
-                    />
-                  )}
+                      {showPop && nftDetail && (
+                        <Popup
+                          open={showPop}
+                          nft={nftDetail}
+                          setBuy={setShowPop}
+                          price={+nftDetail?.price}
+                          tax={+nftDetail?.tax}
+                          accountBalance={+accountBalance}
+                          setAccountBalance={setAccountBalance}
+                          refetch={refetch}
+                        />
+                      )}
 
-                  {showOfferPop && (
-                    <OfferPopUp
-                      nft={nftDetail}
-                      open={showOfferPop}
-                      setBuy={setShowOfferPop}
-                      price={+nftDetail?.price}
-                      tax={+nftDetail?.tax}
-                      accountBalance={+accountBalance}
-                      wmaticBalance={+wmaticBalance}
-                      id={updateOffer}
-                      is_updated={nftDetail?.is_offered ? true : false}
-                      is_offer={
-                        nftDetail?.sell_type?.includes("auction") ? false : true
-                      }
-                      refetch={AllRefetch}
-                    />
-                  )}
-                </div>
+                      {showOfferPop && (
+                        <OfferPopUp
+                          nft={nftDetail}
+                          open={showOfferPop}
+                          setBuy={setShowOfferPop}
+                          price={+nftDetail?.price}
+                          tax={+nftDetail?.tax}
+                          accountBalance={+accountBalance}
+                          wmaticBalance={+wmaticBalance}
+                          id={updateOffer}
+                          is_updated={nftDetail?.is_offered ? true : false}
+                          is_offer={
+                            nftDetail?.sell_type?.includes("auction")
+                              ? false
+                              : true
+                          }
+                          refetch={AllRefetch}
+                        />
+                      )}
+                    </div>
+                  </>
+                ) : user !== null ||
+                  user?.id === nftDetail?.store_customer_id?.$oid ? (
+                  <>
+                    <div className="mb-3 flex flex-col gap-2 md:flex-row">
+                      {nftDetail?.sell_type?.includes("fixed") && (
+                        <button
+                          type="button"
+                          disabled={true}
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                        >
+                          Already Owned
+                        </button>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
 
               {/* nft detail */}

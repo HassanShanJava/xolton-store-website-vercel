@@ -6,14 +6,17 @@ import { useQuery } from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import NFTCard from "../NFT/NFTCard";
+import ListingPopup from "./ListingPopup";
 
 const UserNFTListing = ({ is_purchase }: any) => {
   const router = useRouter();
   const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
+  // const listing data information
+  const [openListing, setOpenListing] = useState(false);
+  const [selectNftListing, setSelectNftListing] = useState({});
 
   const {
     isLoading,
@@ -40,6 +43,13 @@ const UserNFTListing = ({ is_purchase }: any) => {
       enabled: user?.id ? true : false,
     }
   );
+  const featureModelParam: any = {
+    openListing,
+    setOpenListing,
+    selectNftListing,
+    setSelectNftListing,
+    refetch,
+  };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -206,7 +216,13 @@ const UserNFTListing = ({ is_purchase }: any) => {
                 }
               >
                 {nfts?.map((nft: any, i: number) => (
-                  <NFTCard nft={nft} key={i} refetch={refetch} is_purchase={true} />
+                  <NFTCard
+                    nft={nft}
+                    key={i}
+                    refetch={refetch}
+                    is_purchase={true}
+                    {...featureModelParam}
+                  />
                 ))}
               </InfiniteScroll>
             </div>
@@ -224,6 +240,7 @@ const UserNFTListing = ({ is_purchase }: any) => {
             </div>
           ))}
       </div>
+      <ListingPopup {...featureModelParam}/>
     </>
   );
 };
