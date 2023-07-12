@@ -131,10 +131,10 @@ const runSiteAsync = async () => {
   let robotFlag;
   let robotContentFlag;
   let sitemapFlag;
-  if (storeDetail?.seo[0]) {
-    robotFlag = storeDetail?.seo[0]?.robot?.robot
-    robotContentFlag = storeDetail?.seo[0]?.robot?.robot_content
-    sitemapFlag = storeDetail?.seo[0]?.sitemap
+  if (storeDetail?.seo) {
+    robotFlag = storeDetail?.seo?.robot?.robot
+    robotContentFlag = storeDetail?.seo?.robot?.robot_content
+    sitemapFlag = storeDetail?.seo?.sitemap
   }
 
   const sitemapData = `/** @type {import('next-sitemap').IConfig} */
