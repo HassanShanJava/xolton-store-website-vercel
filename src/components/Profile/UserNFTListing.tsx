@@ -7,11 +7,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import NFTCard from "../NFT/NFTCard";
 import ListingPopup from "./ListingPopup";
+import UpdateNftModal from "./UpdateNftModal";
+import { LoadingeModal } from "../Ui/LoadingModal";
 
 const UserNFTListing = ({ is_purchase }: any) => {
   const router = useRouter();
   const { user } = useSelector((state: any) => state.user);
   const [nfts, setNfts] = useState<any>([]);
+  const [title, setTitle] = useState<any>("");
+  const [isModal, setIsModal] = useState<any>(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortFilter, setSortFilter] = useState<any>({ rows: 8, first: 0 });
   // const listing data information
@@ -48,6 +52,19 @@ const UserNFTListing = ({ is_purchase }: any) => {
     setOpenListing,
     selectNftListing,
     setSelectNftListing,
+    refetch,
+    title,
+    setTitle,
+    isModal,
+    setIsModal,
+  };
+  const featureUpdateParam: any = {
+    isModal,
+    setIsModal,
+    selectNftListing,
+    setSelectNftListing,
+    title,
+    setTitle,
     refetch,
   };
 
@@ -240,7 +257,9 @@ const UserNFTListing = ({ is_purchase }: any) => {
             </div>
           ))}
       </div>
-      <ListingPopup {...featureModelParam}/>
+      <ListingPopup {...featureModelParam} />
+      <UpdateNftModal {...featureUpdateParam} />
+      <LoadingeModal modalState={isLoading} />
     </>
   );
 };

@@ -141,6 +141,12 @@ const Popup = ({
           total_tax: 2 * +nft.tax, // 0.08
           sell_type: "fixed",
           previous_owner_address: buyData?.previous_owner,
+          store_customer_id: user?.id,
+          cancel:
+            nft?.sell_type?.includes("offer") ||
+            nft?.sell_type?.includes("auction")
+              ? true
+              : false,
         };
 
         const data = await nftUpdate.mutateAsync(payload);

@@ -37,7 +37,7 @@ export default function FaqPage({ navData, webData }: any) {
         canonical_url={"privacy"}
       />
       <div className="mx-auto max-w-[1600px]">
-        <ProfileFunc navData={navData} webData={webData} />;
+        <ProfileFunc navData={navData} webData={webData} />
       </div>
       <Footer webData={webData} />
     </div>

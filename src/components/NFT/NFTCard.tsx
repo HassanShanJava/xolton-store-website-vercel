@@ -132,6 +132,15 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
       wmaticBalance,
     });
   };
+  const updateNft = () => {
+    payload.setIsModal(true);
+    payload.setTitle("Unlist");
+    payload.setSelectNftListing({
+      ...nft,
+      accountBalance,
+      wmaticBalance,
+    });
+  };
 
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
   const firstDate: any = nft?.end_date && new Date();
@@ -265,7 +274,7 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        buyNFT();
+                        updateNft();
                       }}
                       className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
                     >

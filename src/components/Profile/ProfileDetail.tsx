@@ -2,7 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { customTruncateHandler, renderBanner } from "~/utils/helper";
+import {
+  customTruncateHandler,
+  renderBanner,
+  renderImage,
+} from "~/utils/helper";
 import BannerImage from "~/public/images/banner.png";
 
 import { displayDate, renderNFTImage } from "~/utils/helper";
@@ -53,7 +57,7 @@ const ProfileSection = ({ user }: any) => {
     <div className=" bg-light/30 draggable relative mb-6 flex w-full min-w-0 flex-col break-words rounded-2xl border border-dashed border-stone-200 bg-clip-border">
       <div className=" relative min-h-[280px] flex-auto bg-transparent px-9  pb-0 pt-9">
         <Image
-          src={BannerImage.src}
+          src={user?.cover_pic ? renderImage(user?.cover_pic) : BannerImage.src}
           alt="/banner"
           fill
           priority
@@ -61,8 +65,17 @@ const ProfileSection = ({ user }: any) => {
           className={` rounded-lg object-cover`}
         />
       </div>
-      <div className="absolute -bottom-8 left-2 flex h-[120px]  w-[120px] items-center justify-center rounded-full bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500 text-center text-4xl text-white">
-        SM
+      <div className="absolute -bottom-8 left-2 flex h-[120px] w-[120px] items-center  justify-center rounded-full bg-white bg-gradient-to-r text-center  text-4xl text-white shadow-md">
+        <Image
+          src={
+            user?.profile_pic ? renderImage(user?.profile_pic) : BannerImage.src
+          }
+          alt="/banner"
+          fill
+          priority
+          quality={100}
+          className={`rounded-full object-contain p-2`}
+        />
       </div>
     </div>
   );
@@ -103,11 +116,52 @@ const ProfileInformation = ({ user }: any) => {
                     {user?.email}
                   </a>
                 </div>
+                <div className="mb-4 flex flex-wrap pr-2 font-medium">
+                  {user?.twitter && (
+                    <a
+                      className="text-lightBlue-600 align-center mr-2 flex h-10 w-10 items-center justify-center rounded-full  bg-white text-center font-normal shadow-lg outline-none hover:bg-gray-300 focus:outline-none"
+                      href={`https://www.facebook.com/${user?.twitter}`}
+                      target="_blank"
+                    >
+                      <i className="fab fa-twitter text-xl text-black"></i>
+                    </a>
+                  )}
+                  {user?.facebook && (
+                    <a
+                      className="text-lightBlue-600 align-center mr-2 flex h-10 w-10 items-center justify-center rounded-full  bg-white text-center font-normal shadow-lg outline-none hover:bg-gray-300 focus:outline-none"
+                      href={`https://www.facebook.com/${user?.facebook}`}
+                      target="_blank"
+                    >
+                      <i className="fab fa-facebook-square text-xl text-black"></i>
+                    </a>
+                  )}
+                  {user?.instagram && (
+                    <a
+                      className="text-lightBlue-600 align-center mr-2 flex h-10 w-10 items-center justify-center rounded-full  bg-white text-center font-normal shadow-lg outline-none hover:bg-gray-300 focus:outline-none"
+                      href={`https://www.facebook.com/${user?.instagram}`}
+                      target="_blank"
+                    >
+                      <i className="fab fa-instagram text-xl"></i>
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="my-auto flex flex-wrap">
-                <div className="rounded-md  p-2 text-sm">Wallet Address:</div>
-                <div className="rounded-md  p-2 text-sm">
-                  {customTruncateHandler(user?.wallet_address)}
+              <div className="my-auto  flex-wrap space-y-2">
+                <div className="flex gap-2">
+                  <div className="rounded-md  text-sm">Wallet Address:</div>
+                  <div className="rounded-md  text-sm">
+                    {customTruncateHandler(user?.wallet_address)}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    className="mb-1 mr-1 w-full cursor-pointer rounded bg-bg-3 px-6 py-3 text-center text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+                    href={`/user/setting${
+                      process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+                    }`}
+                  >
+                    Edit Profile
+                  </a>
                 </div>
               </div>
             </div>

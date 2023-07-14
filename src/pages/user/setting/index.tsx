@@ -6,9 +6,11 @@ import { websiteInfo } from "~/utils/helper";
 
 export async function getStaticProps() {
   const response: any = await websiteInfo();
+
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+
   const result: any = await response.json();
 
   const navData = result?.data?.navbar || [];
@@ -16,23 +18,23 @@ export async function getStaticProps() {
 
   return { props: { navData, webData } };
 }
-const FaqFunc = dynamic(() => import("~/components/Faq/Faqs"), {
+const SettingFunc = dynamic(() => import("~/components/Ui/SettingForm"), {
   ssr: true,
 });
 export default function FaqPage({ navData, webData }: any) {
   return (
     <div className="bg-bg-1">
       <SeoHead
-        name={`FAQ | ${webData?.name}`}
+        name={`Profile Setting | ${webData?.name}`}
         title={`The No.1 NFT Marketplace Solution - ${webData?.name} `}
         description={webData.description}
         domain_name={webData?.domain_name}
         banner_image={webData?.banner_image}
         icon={webData?.logo_image}
-        canonical_url={"faq"}
+        canonical_url={"privacy"}
       />
-      <div className="mx-auto max-w-[1600px] ">
-        <FaqFunc navData={navData} webData={webData} />
+      <div className="mx-auto max-w-[1600px]">
+        <SettingFunc navData={navData} webData={webData} />
       </div>
       <Footer webData={webData} />
     </div>

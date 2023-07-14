@@ -9,7 +9,7 @@ const Footer = ({ webData }: any) => {
       <footer id="Contact" className={"w-full bg-bg-2"}>
         {/* <div className={styles.gradient_cover}></div> */}
         <div>
-          <div className="relative  mx-auto pb-6 pt-8 md:px-14">
+          <div className="relative  mx-auto pb-6 pt-8 xss:px-4 md:px-14">
             <div className="flex flex-col justify-between text-left md:!flex-row ">
               <div className="gap-4 md:w-1/2">
                 <h4
@@ -114,6 +114,13 @@ const Footer = ({ webData }: any) => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div>
+          <div className="flex p-2 items-center justify-center bg-bg-1 text-left md:!flex-row ">
+            All Copyrights &nbsp; <i className="fas  fa-copyright fa-solid"></i>{" "}
+            &nbsp; reserverd by&nbsp;
+            <a href="http://www.blockchain.com"> Xoltan Blockchain</a>
           </div>
         </div>
       </footer>

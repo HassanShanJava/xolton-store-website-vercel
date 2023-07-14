@@ -453,7 +453,14 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                   >
                     My NFTs
                   </a>
-                  <p className="cursor-pointer">Orders</p>
+                  <a
+                    className="cursor-pointer"
+                    href={`/orders${
+                      process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+                    }`}
+                  >
+                    Orders
+                  </a>
                 </div>
                 <div className="rounded-xl border border-gray-300 p-3 ">
                   <div className="flex justify-between ">
