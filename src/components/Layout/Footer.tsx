@@ -120,7 +120,7 @@ const Footer = ({ webData }: any) => {
           <div className="flex p-2 items-center justify-center bg-bg-1 text-left md:!flex-row ">
             All Copyrights &nbsp; <i className="fas  fa-copyright fa-solid"></i>{" "}
             &nbsp; reserverd by&nbsp;
-            <a href="http://www.blockchain.com"> Xoltan Blockchain</a>
+            <a href="https://www.xoltanblockchain.com/" target="_blanks"> Xoltan Blockchain</a>
           </div>
         </div>
       </footer>

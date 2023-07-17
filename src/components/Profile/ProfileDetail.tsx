@@ -155,7 +155,7 @@ const ProfileInformation = ({ user }: any) => {
                 </div>
                 <div className="flex gap-2">
                   <a
-                    className="mb-1 mr-1 w-full cursor-pointer rounded bg-bg-3 px-6 py-3 text-center text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+                    className="mb-1 mr-1 w-full cursor-pointer rounded bg-black px-6 py-3 text-center text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     href={`/user/setting${
                       process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
                     }`}

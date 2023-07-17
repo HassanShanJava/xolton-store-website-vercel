@@ -72,105 +72,123 @@ const Popup = ({
   const royalty: any = Number(+((+nft.royalties / 100) * price));
 
   const nftUpdate = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
+    mutationFn: async (newTodo) => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
+        method: "POST",
+        body: JSON.stringify(newTodo),
       });
+
+      const result = await response.json();
+      return result;
     },
   });
 
   const nftOrder = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
+    mutationFn: async (newTodo) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-nft`,
+        {
+          method: "POST",
+          body: JSON.stringify(newTodo),
+        }
+      );
+
+      const result = await response.json();
+      return result;
     },
   });
 
   const purchaseNFT = async () => {
-    if (accountBalance < total) {
-      addToast({
-        id: "transaction-id",
-        message: "Not Enough Balance",
-        type: "error",
-      });
-      return;
-    } else {
-      setIsPurchase(false);
-
-      const buyData = await buyNFT(
-        web3,
-        account,
-        total,
-        nft?.store_makerorder,
-        royalty
-      );
-
-      console.log(nft?.store_makerorder, { nft }, "nft payload");
-      if (buyData?.success) {
-        // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
-
-        const payload: any = {
-          id: nft._id.$oid,
-          owner: buyData.owner,
-          transaction_id: buyData.transaction_id,
-          is_listed: false,
-          status: "Purchase",
-          store_customer_id: user?.id,
-          store_id: process.env.NEXT_PUBLIC_STORE_ID,
-        };
-
-        const payloadOrder: any = {
-          store_id: nft.store_id.$oid,
-          nft_id: nft._id.$oid,
-          owner_address: buyData?.owner,
-          transaction_id: buyData?.transaction_id,
-          nft_name: nft.name,
-          total_amount: total, // 2.04
-          net_amount: total - 2 * +nft.tax, // 1.96
-          total_tax: 2 * +nft.tax, // 0.08
-          sell_type: "fixed",
-          previous_owner_address: buyData?.previous_owner,
-          store_customer_id: user?.id,
-          cancel:
-            nft?.sell_type?.includes("offer") ||
-            nft?.sell_type?.includes("auction")
-              ? true
-              : false,
-        };
-
-        const data = await nftUpdate.mutateAsync(payload);
-        const dataOrder = await nftOrder.mutateAsync(payloadOrder);
-
+    try {
+      if (accountBalance < total) {
         addToast({
           id: "transaction-id",
-          message: "Transaction Completed",
-          type: "success",
-        });
-
-        refetch();
-        setIsPurchase(true);
-        setBuy(false);
-      } else {
-        addToast({
-          id: "transaction-id",
-          message: buyData.msg as string,
+          message: "Not Enough Balance",
           type: "error",
         });
+        return;
+      } else {
+        setIsPurchase(false);
 
-        setBuy(false);
-        router.push("/");
+        const buyData = await buyNFT(
+          web3,
+          account,
+          total,
+          nft?.store_makerorder,
+          royalty
+        );
+
+        console.log(nft?.store_makerorder, { nft }, "nft payload");
+        if (buyData?.success || true) {
+          // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
+
+          const payload: any = {
+            id: nft._id.$oid,
+            owner: buyData.owner,
+            transaction_id: buyData.transaction_id,
+            is_listed: false,
+            status: "Purchase",
+            store_customer_id: user?.id,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
+          };
+
+          const payloadOrder: any = {
+            store_id: nft.store_id.$oid,
+            nft_id: nft._id.$oid,
+            owner_address: buyData?.owner,
+            transaction_id: buyData?.transaction_id,
+            nft_name: nft.name,
+            total_amount: total, // 2.04
+            net_amount: total - 2 * +nft.tax, // 1.96
+            total_tax: 2 * +nft.tax, // 0.08
+            sell_type: "fixed",
+            amount: +(+(total - tax).toFixed(4)),
+            previous_owner_address: buyData?.previous_owner,
+            total_royalty: royalty,
+            is_store_admin:
+              process.env.NEXT_PUBLIC_STORE_ID !== nft.store_customer_id?.$oid
+                ? false
+                : true,
+            store_customer_id: user?.id,
+            cancel:
+              nft?.sell_type?.includes("offer") ||
+              nft?.sell_type?.includes("auction")
+                ? true
+                : false,
+          };
+
+          const dataOrder: any = await nftOrder.mutateAsync(payloadOrder);
+          console.log({ dataOrder });
+          if (dataOrder.success) {
+            const data: any = await nftUpdate.mutateAsync(payload);
+            console.log({ data }, "NFT data");
+            if (data.success) {
+              addToast({
+                id: "transaction-id",
+                message: "Transaction Completed",
+                type: "success",
+              });
+
+              refetch();
+              setIsPurchase(true);
+              setBuy(false);
+            }
+          } else {
+            throw new Error("NFT update failed");
+          }
+        } else {
+          throw new Error(buyData.msg as string);
+        }
       }
+    } catch (e: any) {
+      addToast({
+        id: "transaction-id",
+        message: e.message,
+        type: "error",
+      });
+
+      setBuy(false);
+      router.push("/");
     }
   };
   const featureModelParam: any = {
