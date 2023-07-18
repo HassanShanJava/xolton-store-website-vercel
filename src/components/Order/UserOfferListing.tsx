@@ -33,6 +33,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { LoadingeModal } from "../Ui/LoadingModal";
 import { Input } from "../Ui/Input";
+import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+import { RootState } from "~/store/store";
+import { CustomToast } from "../globalToast";
+import UpdateModal from "./nftModal";
 
 const emptyMessage = (
   <p className="py-8 text-center text-2xl font-semibold">No Bids found!</p>
@@ -40,11 +44,20 @@ const emptyMessage = (
 
 const OfferTable = ({ bid_type }: any) => {
   const { user } = useSelector((state: any) => state.user);
+  const { account } = useSelector((state: RootState) => state.web3);
+  const { web3 } = useSelector((state: any) => state.web3);
+
+  const { addToast } = CustomToast();
+
+  const [remainingTime, setRemainingTime] = useState<any>(null);
+  const [isModal, setIsModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [sellType, setSetSellType] = useState("");
+  const [selectNft, setSelectNft] = useState({});
   console.log({ user });
   const initialOrderFilters = {
     store_id: process.env.NEXT_PUBLIC_STORE_ID,
-    startDate: null,
-    endDate: null,
+
     searchQuery: "",
     rows: 10,
     first: 0,
@@ -98,6 +111,13 @@ const OfferTable = ({ bid_type }: any) => {
   //     }));
   //   }
   // }, [user]);
+
+  const startDate: any =
+    orderData?.store_nfts?.end_date &&
+    new Date(orderData?.store_nfts?.updated_at);
+  const endDate: any =
+    orderData?.store_nfts?.end_date &&
+    new Date(orderData?.store_nfts?.end_date);
   useEffect(() => {
     let timeout: any;
     timeout = setTimeout(() => {
@@ -141,7 +161,117 @@ const OfferTable = ({ bid_type }: any) => {
       page: data.page,
     }));
   }
+  const handleOfferClick = async (data: any, type: string) => {
+    try {
+      if (type == "reject") {
+        setSelectNft(data);
+        setSetSellType(data?.store_nft?.sell_type);
+        setTitle("Reject");
+        setIsModal(true);
+      } else {
+        // router.push(`/store/nfts/list/${data?.id}`);
+        if (account !== "") {
+          if (account === data?.StoreMakerOffer[0]?.nft_owner) {
+            const price =
+              data?.StoreMakerOffer[0]?.price + data?.StoreMakerOffer[0]?.tax;
+            const Walletbalance = await getBalance(
+              web3,
+              data?.StoreMakerOffer[0]?.signer
+            );
+            console.log({ Walletbalance });
+            if (+Walletbalance?.amount >= price) {
+              setSelectNft(data);
+              setTitle("Accept");
+              setSetSellType(data?.store_nft?.sell_type);
 
+              setIsModal(true);
+            } else {
+              throw new Error("Customer Wallet Balance is Insufficient!");
+            }
+          } else {
+            throw new Error(
+              `Connect to provided wallet address in order to accept offer \n ${data?.StoreMakerOffer[0]?.nft_owner}`
+            );
+          }
+        } else {
+          throw new Error("Connect Meta Mask Wallet");
+        }
+      }
+    } catch (e: any) {
+      addToast({
+        id: "list-toast",
+        message: e?.message,
+        type: "error",
+      });
+    }
+  };
+  function displayAction(data = {} as any) {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    const firstDate: any = data?.store_nfts?.end_date && new Date();
+    const secondDate: any =
+      data?.store_nfts?.end_date && new Date(data?.store_nfts?.end_date);
+    const diffDays =
+      data?.store_nfts?.end_date &&
+      Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
+    // const formattedAmount = new Intl.NumberFormat('en-us').format(amount);
+console.log({secondDate})
+    return (
+      <div className="inline-flex rounded-md shadow-sm" role="group">
+        {data?.store_nfts?.sell_type?.includes("offer") ? (
+          <>
+            <button
+              type="button"
+              onClick={() => handleOfferClick(data, "accept")}
+              className="rounded-l-lg border border-gray-200 bg-green-500  px-4 py-2 text-sm font-medium text-white opacity-70 hover:opacity-100  focus:z-10 focus:ring-0   dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white  dark:focus:text-white"
+            >
+              Accept
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOfferClick(data, "reject")}
+              className="rounded-r-md border border-gray-200 bg-red-500 px-4 py-2  text-sm font-medium text-white opacity-70 hover:opacity-100  focus:z-10 focus:ring-0   dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white  dark:focus:text-white"
+            >
+              Reject
+            </button>
+          </>
+        ) : data?.store_nfts.sell_type?.includes("auction") && diffDays <= 0 ? (
+          <>
+            <button
+              type="button"
+              onClick={() => handleOfferClick(data, "accept")}
+              className="rounded-l-lg border border-gray-200 bg-green-500  px-4 py-2 text-sm font-medium text-white opacity-70 hover:opacity-100  focus:z-10 focus:ring-0   dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white  dark:focus:text-white"
+            >
+              Accept
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOfferClick(data, "reject")}
+              className="rounded-r-md border border-gray-200 bg-red-500 px-4 py-2  text-sm font-medium text-white opacity-70 hover:opacity-100  focus:z-10 focus:ring-0   dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:hover:text-white  dark:focus:text-white"
+            >
+              Reject
+            </button>
+          </>
+        ) : (
+          <> - </>
+        )}
+      </div>
+    );
+  }
+  const defaultModalParams = {
+    selectNft,
+    setSelectNft,
+    refetch,
+  };
+  const featureModalParams = {
+    ...defaultModalParams,
+    isModal,
+    setIsModal,
+    title,
+    sell_type: sellType,
+    setSetSellType,
+  };
   return (
     <div className="mx-auto  h-full min-h-screen w-full max-w-[90%] space-y-6 py-10">
       <div className="xsss:flex-col flex items-end justify-between gap-2 md:flex-row ">
@@ -266,6 +396,15 @@ const OfferTable = ({ bid_type }: any) => {
             header="Date"
             sortable
           ></Column>
+          {bid_type === "received" ? (
+            <Column
+              body={(nft) => displayAction(nft)}
+              field="Actions"
+              header="Actions"
+            ></Column>
+          ) : (
+            ""
+          )}
           {/* <Column
             body={(nft) => displayAction(nft)}
             field="Actions"
@@ -279,6 +418,8 @@ const OfferTable = ({ bid_type }: any) => {
           onPageChange={onPageChange}
         />
       </div>
+      <UpdateModal {...featureModalParams} />
+
       <LoadingeModal modalState={isLoading} />
     </div>
   );
@@ -296,7 +437,7 @@ function displayNFT(nft: any = {}) {
         height={32}
       />
       <Tooltip label={nft?.name} placement="bottom-start">
-        <Link href={`/store/nfts/detail/${nft?.id}`}>
+        <Link href={`/nft-details/${nft?.id}`}>
           <p>{customTruncateHandler(nft?.name, 15)}</p>
         </Link>
       </Tooltip>

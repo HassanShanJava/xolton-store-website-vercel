@@ -68,7 +68,9 @@ const OrderTable = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/order-nft?&${new URLSearchParams(
           orderFilters
-        ).toString()}${user !== null ? "&store_customer_id=" + user?.id : ""}`
+        ).toString()}${user !== null ? "&store_customer_id=" + user?.id : ""}${
+          user !== null ? "&wallet_address=" + user?.wallet_address : ""
+        }`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -252,6 +254,12 @@ const OrderTable = () => {
             sortable
           ></Column>
           <Column
+            body={(order) => displayType(order, user)}
+            field="owner_address"
+            header="Order Type"
+            sortable
+          ></Column>
+          <Column
             body={(order) => displayAmount(order?.total_amount)}
             field="total_amount"
             header="Total Amount"
@@ -326,7 +334,17 @@ function displayAmount(amount = 0 as number) {
     </div>
   );
 }
-
+function displayType(data: any, user: any) {
+  return (
+    <div className="text-center">
+      {data?.previous_owner_address == user?.wallet_address ? (
+        <p className=" text-center  ">Received</p>
+      ) : (
+        <p className=" text-center ">Made</p>
+      )}
+    </div>
+  );
+}
 function diplayTransactionHash(transaction_id = "" as string) {
   const transationUrl = `${process.env.NEXT_PUBLIC_POLYGON_TESTNET_URL}/tx/${transaction_id}`;
   return (

@@ -23,7 +23,7 @@ export const theme = extendTheme({
               zIndex: 2,
               position: "absolute",
               pointerEvents: "none",
-              color: "temp-10 !important",
+              color: "black !important",
               mx: 2,
               my: 2,
               px: 1,
@@ -33,6 +33,7 @@ export const theme = extendTheme({
             },
             input: {
               mt: 1,
+              color: "black !important",
             },
           },
         },

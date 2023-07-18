@@ -422,7 +422,7 @@ const ListingPopup = ({ ...payload }: any) => {
                                   isInvalid={errors.price ? true : false}
                                 >
                                   <div className="!flex w-full !items-center justify-between rounded-md border bg-white p-1 transition ease-in-out">
-                                    <InputGroup className="flex w-full items-center justify-between rounded-md bg-white p-1 transition ease-in-out">
+                                    <InputGroup className="flex w-full items-center justify-between rounded-md bg-white p-1 text-black transition ease-in-out">
                                       <Input
                                         autoComplete="off"
                                         placeholder=" "
@@ -445,14 +445,11 @@ const ListingPopup = ({ ...payload }: any) => {
                                           },
                                         })}
                                         step={0.1}
-                                        className="flex-1 !border-none text-black/90 placeholder:text-gt-1 focus:!ring-0"
+                                        className="flex-1 !border-none !text-black  focus:!ring-0"
                                         _focusVisible={{
                                           borderTop: "none",
                                           borderRight: "none",
                                           borderLeft: "none",
-                                          background: "temp-3",
-                                          borderBottomColor: "green-75",
-                                          borderBottomWidth: "sm",
                                         }}
                                       />
 
@@ -544,14 +541,11 @@ const ListingPopup = ({ ...payload }: any) => {
                                             })}
                                             step={0.001}
                                             // required
-                                            className="flex-1 !border-none text-black/90 placeholder:text-gt-1 focus:!ring-0"
+                                            className="flex-1 !border-none !text-black focus:!ring-0"
                                             _focusVisible={{
                                               borderTop: "none",
                                               borderRight: "none",
                                               borderLeft: "none",
-                                              background: "temp-3",
-                                              borderBottomColor: "green-75",
-                                              borderBottomWidth: "sm",
                                             }}
                                           />
 
