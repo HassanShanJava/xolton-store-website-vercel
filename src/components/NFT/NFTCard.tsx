@@ -10,7 +10,7 @@ import { web3Init } from "~/store/slices/web3Slice";
 import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
-import { Tooltip, useToast } from "@chakra-ui/react";
+import { Tag, TagLabel, Tooltip, useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
 import { CustomToast } from "../globalToast";
@@ -166,7 +166,7 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
               fill
               priority
               quality={100}
-              className="mx-auto rounded-xl  object-cover "
+              className="mx-auto rounded-xl  object-cover  object-right"
             />
             {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
               <div className="absolute bottom-2 w-full pl-2 pr-2 opacity-0 transition duration-75 ease-in-out  group-hover:opacity-100 ">
@@ -192,8 +192,18 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
             )}
 
             <p>
+              {nft?.price > 0 ? (
+                <>
+                  {nft?.price} <span className="text-xs lowercase">MATIC</span>
+                </>
+              ) : (
+                <>
+                  <Tag size="sm" colorScheme="red" borderRadius="full">
+                    <TagLabel>Not Listed</TagLabel>
+                  </Tag>
+                </>
+              )}
               {/* {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "} */}
-              {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 

@@ -295,7 +295,7 @@ const NFTDetail = ({}: any) => {
                   height={400}
                   priority
                   quality={100}
-                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover"
+                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover object-right"
                 />
                 {nftDetail?.sell_type?.includes("auction") && (
                   <div className="rounded-md bg-white p-2 text-center  ">

@@ -27,6 +27,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { StripeModal } from "./StripeModal";
 import Image from "next/image";
+import { DetailSection } from "./ModalDetail";
 
 interface OfferPopUpType {
   open: boolean;
@@ -84,7 +85,11 @@ const OfferPopUp = ({
 
   const [isPurchase, setIsPurchase] = useState<any>(""); //for loader
   const [isModal, setIsModal] = useState(false); //for loader
-  const [inputOffer, setInputOffer] = useState("");
+  const [inputOffer, setInputOffer] = useState(
+    nft?.highest_offer
+      ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(4)
+      : nft?.min_price?.toFixed(4)
+  );
   const { addToast } = CustomToast();
   const offerUpload = useMutation({
     mutationFn: async (payload: any) => {
@@ -353,7 +358,7 @@ const OfferPopUp = ({
 
   const offerdetails = [
     {
-      title: "Min Price:",
+      title: "Min Price",
       values: nft?.highest_offer
         ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(5)
         : nft?.min_price?.toFixed(5),
@@ -373,6 +378,13 @@ const OfferPopUp = ({
       title: "Service fee 2%",
       values: inputOffer
         ? (0.02 * Number(inputOffer)).toFixed(5) //2% tax included
+        : (0).toFixed(5),
+      symbol: "matic",
+    },
+    {
+      title: "Royalty",
+      values: inputOffer
+        ? ((+nft?.royalties / 100) * Number(inputOffer)).toFixed(5) //2% tax included
         : (0).toFixed(5),
       symbol: "matic",
     },
@@ -442,25 +454,7 @@ const OfferPopUp = ({
 
                 {/* nft detail */}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-start gap-3 rounded-xl border border-gray-700 p-2">
-                    <div className="relative h-20 w-16">
-                      <Image
-                        src={renderNFTImage(nft)}
-                        alt="/"
-                        fill
-                        priority
-                        quality={100}
-                        className="mx-auto rounded-xl "
-                      />
-                    </div>
-                    <div className="w-fit">
-                      <p className="font-bold">NFT Info</p>
-                      <p>{nft.name}</p>
-                      <p className="text-xs">
-                        {customTruncateHandler(nft.creator_id, 20)}
-                      </p>
-                    </div>
-                  </div>
+                  <DetailSection nft={nft} />
                 </div>
 
                 <form
@@ -471,11 +465,7 @@ const OfferPopUp = ({
                   <div className="m-4">
                     <Input
                       placeholder={`${is_offer ? "Offer" : "Bid"} Price`}
-                      defaultValue={
-                        nft.is_offered
-                          ? nft?.highest_offer + 0.1 * nft?.highest_offer //10% higher than previous highest bid
-                          : null
-                      }
+                      defaultValue={inputOffer}
                       min={
                         nft.highest_offer
                           ? nft?.highest_offer + 0.1 * nft?.highest_offer
@@ -488,21 +478,39 @@ const OfferPopUp = ({
                       onChange={(e) => setInputOffer(e.target.value)}
                     />
                   </div>
-                  {offerdetails.map((item, i) => (
-                    <div key={i} className="mx-3   p-1 ">
-                      <div className="relative flex items-center justify-between ">
-                        <p className=" text-md leading-relaxed text-slate-500">
-                          {item.title}
-                        </p>
-                        <p className=" text-md leading-relaxed text-slate-500">
-                          {item.values}{" "}
-                          <span className="text-xs lowercase">
-                            {item.symbol}
-                          </span>
-                        </p>
+                  <div className="border-1 mx-3 mb-2    rounded-lg border p-2 ">
+                    {offerdetails.map((item, i) => (
+                      <div key={i} className="  mx-2  p-1 ">
+                        {item.values > 0 && item?.title !== "Royalty" ? (
+                          <div className="relative flex items-center justify-between ">
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.title}
+                            </p>
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.values}{" "}
+                              <span className="text-xs lowercase">
+                                {item.symbol}
+                              </span>
+                            </p>
+                          </div>
+                        ) : item.values > 0 && nft?.is_purchase ? (
+                          <div className="relative flex items-center justify-between ">
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.title}
+                            </p>
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.values}{" "}
+                              <span className="text-xs lowercase">
+                                {item.symbol}
+                              </span>
+                            </p>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 px-6 pt-2">
                     <button

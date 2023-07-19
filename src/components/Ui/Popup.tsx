@@ -17,6 +17,7 @@ import { CustomToast } from "../globalToast";
 import { StripeModal } from "./StripeModal";
 import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
+import { DetailSection } from "./ModalDetail";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -247,25 +248,7 @@ const Popup = ({
                 </div>
                 {/* nft detail */}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-start gap-3 rounded-xl border border-gray-700 p-2">
-                    <div className="relative h-20 w-16">
-                      <Image
-                        src={renderNFTImage(nft)}
-                        alt="/"
-                        fill
-                        priority
-                        quality={100}
-                        className="mx-auto rounded-xl "
-                      />
-                    </div>
-                    <div>
-                      <p className="font-bold">NFT Info</p>
-                      <p>{nft.name}</p>
-                      <p className="text-xs">
-                        {customTruncateHandler(nft.creator_id, 20)}
-                      </p>
-                    </div>
-                  </div>
+                  <DetailSection nft={nft} />
                 </div>
 
                 <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
