@@ -117,10 +117,17 @@ const Footer = ({ webData }: any) => {
           </div>
         </div>
         <div>
-          <div className="flex p-2 items-center justify-center bg-bg-1 text-left md:!flex-row ">
-            All Copyrights &nbsp; <i className="fas  fa-copyright fa-solid"></i>{" "}
-            &nbsp; reserverd by&nbsp;
-            <a href="https://www.xoltanblockchain.com/" target="_blanks"> Xoltan Blockchain</a>
+          <div className="sticky top-0 w-full  border-t-2 p-2 ">
+            <p className="text-center ">
+              A product by{" "}
+              <a
+                href="https://xoltanblockchain.com"
+                className="text-ac-2 hover:cursor-pointer "
+                target="_blank"
+              >
+                Xoltan Blockchain
+              </a>
+            </p>
           </div>
         </div>
       </footer>
