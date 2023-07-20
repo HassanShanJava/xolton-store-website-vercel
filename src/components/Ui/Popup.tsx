@@ -69,8 +69,13 @@ const Popup = ({
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  const total: any = Number(+price + +tax);
   const royalty: any = Number(+((+nft.royalties / 100) * price));
+  // const total: any = nft?.is_purchase
+  //   ? price + tax + royalty
+  //   : Number(+price + +tax);
+
+  const total: any = +price + +tax;
+  console.log({ total });
 
   const nftUpdate = useMutation({
     mutationFn: async (newTodo) => {
@@ -252,42 +257,55 @@ const Popup = ({
                 </div>
 
                 <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between text-xs ">
+                    <p className="  leading-relaxed text-slate-500">
                       Your balance
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className=" leading-relaxed text-slate-500">
                       {(+accountBalance).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between text-xs ">
+                    <p className="  leading-relaxed text-slate-500">
                       NFT Price
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className="  leading-relaxed text-slate-500">
                       {(+price).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex  items-center justify-between text-xs ">
+                    <p className=" leading-relaxed text-slate-500">
                       Service fee 2%
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className="  leading-relaxed text-slate-500">
                       {(+tax).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
+                  {nft?.is_purchase && (
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-xs leading-relaxed text-slate-500">
+                        Royalty
+                      </p>
+                      <p className=" text-xs leading-relaxed text-slate-500">
+                        {(+royalty).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
+                  )}
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between font-semibold ">
+                    <p className=" text-xs leading-relaxed text-slate-500">
                       You will pay
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)}{" "}
+                    <p className=" text-xs leading-relaxed text-slate-500">
+                      {nft?.is_purchase
+                        ? (+total + +royalty).toFixed(5)
+                        : (+total).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>

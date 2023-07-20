@@ -418,7 +418,7 @@ const ListingPopup = ({ ...payload }: any) => {
                                 <FormControl
                                   variant="floating"
                                   id="first-name"
-                                  fontWeight={100}
+                                  fontWeight={400}
                                   isInvalid={errors.price ? true : false}
                                 >
                                   <div className="!flex w-full !items-center justify-between rounded-md border bg-white p-1 transition ease-in-out">
@@ -483,7 +483,7 @@ const ListingPopup = ({ ...payload }: any) => {
                                     <FormControl
                                       variant="floating"
                                       id="first-name"
-                                      fontWeight={100}
+                                      fontWeight={400}
                                       isInvalid={
                                         errors.min_price ? true : false
                                       }
@@ -579,7 +579,7 @@ const ListingPopup = ({ ...payload }: any) => {
                                   <FormControl
                                     variant="floating"
                                     id="first-name"
-                                    fontWeight={100}
+                                    fontWeight={400}
                                   >
                                     <div className="!flex w-full !items-center justify-between rounded-md border bg-white p-2  transition ease-in-out">
                                       <Select

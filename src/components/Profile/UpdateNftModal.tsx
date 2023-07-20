@@ -90,8 +90,8 @@ export default function UpdateNftModal(props: any) {
         />
         <ModalContent>
           <ModalHeader className="text-center">
-            Are you sure you want to cancel
-            <span className="text-ac-2"> {props?.title}</span>?
+            Are you sure you want to
+            <span className="text-ac-2"> {props?.title}</span> this NFT?
           </ModalHeader>
           {/* <ModalCloseButton /> */}
           {/* <ModalBody pb={6}>Do you Really want to Unlist item?</ModalBody> */}

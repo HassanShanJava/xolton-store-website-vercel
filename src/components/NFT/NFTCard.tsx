@@ -98,28 +98,30 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
     if (offerid !== "") {
       setUpdateOffer(offerid);
     }
-    account == ""
-      ? addToast({
-          id: "connect-wallet-buy",
-          message: "Connect Wallet",
-          type: "error",
-        })
-      : user !== null && user?.wallet_address !== nft?.owner_id
-      ? setShowOfferPop(true)
-      : account == nft.creator_id ||
-        account == nft?.store_makerorder?.baseAccount
-      ? addToast({
-          id: "connect-wallet-buy",
-          message: "Owner cannot buy there own NFT",
-          type: "error",
-        })
-      : setShowOfferPop(true);
-    const balance = await web3?.eth.getBalance(account);
-    const accountBalance = web3?.utils.fromWei(balance, "ether");
-    let wmaticBalance: any = await getBalance(web3, account);
-    wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
-    setWmaticBalance(wmaticBalance);
-    setAccountBalance(accountBalance);
+    if (account !== "") {
+      user !== null && user?.wallet_address !== nft?.owner_id
+        ? setShowOfferPop(true)
+        : account == nft.creator_id ||
+          account == nft?.store_makerorder?.baseAccount
+        ? addToast({
+            id: "connect-wallet-buy",
+            message: "Owner cannot buy there own NFT",
+            type: "error",
+          })
+        : setShowOfferPop(true);
+      const balance = await web3?.eth.getBalance(account);
+      const accountBalance = web3?.utils.fromWei(balance, "ether");
+      let wmaticBalance: any = await getBalance(web3, account);
+      wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+      setWmaticBalance(wmaticBalance);
+      setAccountBalance(accountBalance);
+    } else {
+      addToast({
+        id: "connect-wallet-buy",
+        message: "Connect Wallet",
+        type: "error",
+      });
+    }
   };
   const listNft = () => {
     payload.setOpenListing(true);
