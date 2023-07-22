@@ -22,13 +22,12 @@ import { useQuery } from "@tanstack/react-query";
             })(window,document,'script','dataLayer','testing');</script>
             <!-- End Google Tag Manager -->`,
           }}
-          />
+          ></script>
           
 
           {/* Google Analytics Measurement ID*/}
-
           
-          <script async src={"https://www.googletagmanager.com/gtag/js?id=testing"} />
+          <script async src={"https://www.googletagmanager.com/gtag/js?id=testing"} ></script>
           <script
             dangerouslySetInnerHTML={{
               __html: `
@@ -40,7 +39,7 @@ import { useQuery } from "@tanstack/react-query";
                 });
               `,
             }}
-            />
+            ></script>
           
 
           <meta name="description" content={"Store"} />
@@ -74,7 +73,7 @@ import { useQuery } from "@tanstack/react-query";
               height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- End Google Tag Manager (noscript) -->`,
           }}
-        />
+        ></script>
 
           <Main />
           <NextScript />
