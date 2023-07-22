@@ -217,12 +217,12 @@ const runDocument = async () => {
             })(window,document,'script','dataLayer','${tagmanager}');</script>
             <!-- End Google Tag Manager -->`+ "`"},
           }}
-          />
+          ></script>
           `: ""}
 
           {/* Google Analytics Measurement ID*/}
           ${gtag ? `
-          <script async src={"${googleAnalytics}"} />
+          <script async src={"${googleAnalytics}"} ></script>
           <script
             dangerouslySetInnerHTML={{
               __html: ${"`" +
@@ -236,7 +236,7 @@ const runDocument = async () => {
               `+ "`"
       },
             }}
-            />
+            ></script>
           `: ""}
 
           <meta name="description" content={"Store"} />
@@ -270,7 +270,7 @@ const runDocument = async () => {
               height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- End Google Tag Manager (noscript) -->`+ "`"},
           }}
-        />`: ""}
+        ></script>`: ""}
 
           <Main />
           <NextScript />
