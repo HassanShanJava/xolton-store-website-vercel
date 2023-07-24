@@ -153,7 +153,6 @@ const UserNFTListing = ({ is_purchase }: any) => {
       searchQuery: "",
     }));
   }
-
   return (
     <>
       <div className=" h-full  w-full ">

@@ -90,7 +90,7 @@ const OfferTable = ({ bid_type }: any) => {
         `${
           process.env.NEXT_PUBLIC_API_URL
         }/offer-nft/bids?&${new URLSearchParams(orderFilters).toString()}${
-          user !== null ? "&store_customer_id=" + user?.id : ""
+          user?.id ? "&store_customer_id=" + user?.id : ""
         }`
       );
       if (!response.ok) {
@@ -100,7 +100,6 @@ const OfferTable = ({ bid_type }: any) => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: user === null ? false : true,
     }
   );
   // useEffect(() => {
@@ -214,7 +213,7 @@ const OfferTable = ({ bid_type }: any) => {
       data?.store_nfts?.end_date &&
       Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
     // const formattedAmount = new Intl.NumberFormat('en-us').format(amount);
-console.log({secondDate})
+    console.log({ secondDate });
     return (
       <div className="inline-flex rounded-md shadow-sm" role="group">
         {data?.store_nfts?.sell_type?.includes("offer") ? (
@@ -274,7 +273,7 @@ console.log({secondDate})
   };
   return (
     <div className="mx-auto  h-full min-h-screen w-full max-w-[90%] space-y-6 py-10">
-      <div className="xsss:flex-col flex items-end justify-between gap-2 md:flex-row ">
+      <div className="flex items-end justify-between gap-2 xss:flex-col md:flex-row ">
         <div className="mx-auto w-full">
           <h2 className="text-4xl">
             {bid_type === "made" ? "Bids Made" : "Bids Received"}
@@ -283,34 +282,36 @@ console.log({secondDate})
             Enhance Project Success through Activity Tracking
           </p>
         </div>
-        <div className="flex justify-end">
-          <button
-            onClick={clearFilters}
-            className="color group mr-2 w-16 rounded-full ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-ac-1 hover:ring-ac-1"
-          >
-            <i className="fa fa-undo scale-x-[-1] text-pm-12 group-hover:text-white"></i>
-          </button>
-
-          <button
-            onClick={onToggle}
-            className="color mr-2 rounded-full ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-ac-1 hover:ring-ac-1"
-          >
-            <svg
-              width="44"
-              height="44"
-              viewBox="0 0 28 28"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="fill-pm-12  p-2 hover:fill-white"
+        <div className="flex justify-end  gap-2 xss:flex-col sm:flex-row">
+          <div className="flex gap-2">
+            <button
+              onClick={clearFilters}
+              className="color group mr-2  flex h-11 w-11 items-center justify-center rounded-full text-center ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-ac-1 hover:ring-ac-1"
             >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M14.0013 17.6C15.1768 17.6 16.1769 18.3513 16.5475 19.3999L22.1007 19.3999C22.5977 19.3999 23.0006 19.8028 23.0006 20.2998C23.0006 20.7968 22.5977 21.1997 22.1007 21.1997L16.5472 21.2005C16.1763 22.2487 15.1765 22.9996 14.0013 22.9996C12.8261 22.9996 11.8263 22.2487 11.4554 21.2005L5.90189 21.1997C5.40487 21.1997 5.00195 20.7968 5.00195 20.2998C5.00195 19.8028 5.40487 19.3999 5.90189 19.3999L11.4551 19.3999C11.8257 18.3513 12.8258 17.6 14.0013 17.6ZM14.0013 19.4C13.5043 19.4 13.1014 19.8029 13.1014 20.2999C13.1014 20.7969 13.5043 21.1999 14.0013 21.1999C14.4983 21.1999 14.9012 20.7969 14.9012 20.2999C14.9012 19.8029 14.4983 19.4 14.0013 19.4ZM20.3008 11.3006C21.7919 11.3006 23.0006 12.5093 23.0006 14.0004C23.0006 15.4914 21.7919 16.7002 20.3008 16.7002C19.1256 16.7002 18.1258 15.9493 17.7549 14.9011L5.90189 14.9003C5.40487 14.9003 5.00195 14.4974 5.00195 14.0004C5.00195 13.5034 5.40487 13.1005 5.90189 13.1005L17.7546 13.1005C18.1252 12.0519 19.1253 11.3006 20.3008 11.3006ZM20.3003 13.1004C19.8033 13.1004 19.4004 13.5033 19.4004 14.0003C19.4004 14.4973 19.8033 14.9003 20.3003 14.9003C20.7974 14.9003 21.2003 14.4973 21.2003 14.0003C21.2003 13.5033 20.7974 13.1004 20.3003 13.1004ZM7.70176 5.00098C8.88229 5.00098 9.88585 5.75868 10.2527 6.8143C10.3008 6.80507 10.3507 6.80085 10.4016 6.80085H22.1007C22.5977 6.80085 23.0006 7.20376 23.0006 7.70078C23.0006 8.1978 22.5977 8.60072 22.1007 8.60072H10.4016C10.3507 8.60072 10.3008 8.59649 10.2522 8.58837C9.88585 9.64288 8.88229 10.4006 7.70176 10.4006C6.2107 10.4006 5.00195 9.19184 5.00195 7.70078C5.00195 6.20972 6.2107 5.00098 7.70176 5.00098ZM7.70226 6.80078C7.20524 6.80078 6.80232 7.2037 6.80232 7.70072C6.80232 8.19774 7.20524 8.60065 7.70226 8.60065C8.19928 8.60065 8.60219 8.19774 8.60219 7.70072C8.60219 7.2037 8.19928 6.80078 7.70226 6.80078Z"
-                // fill="black"
-              ></path>
-            </svg>
-          </button>
+              <i className="fa fa-undo scale-x-[-1] text-pm-12 group-hover:text-white"></i>
+            </button>
+
+            <button
+              onClick={onToggle}
+              className="color mr-2 w-fit rounded-full ring-1 ring-pm-11 duration-150 ease-in-out  hover:bg-ac-1 hover:ring-ac-1"
+            >
+              <svg
+                width="44"
+                height="44"
+                viewBox="0 0 28 28"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="fill-pm-12  p-2 hover:fill-white"
+              >
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M14.0013 17.6C15.1768 17.6 16.1769 18.3513 16.5475 19.3999L22.1007 19.3999C22.5977 19.3999 23.0006 19.8028 23.0006 20.2998C23.0006 20.7968 22.5977 21.1997 22.1007 21.1997L16.5472 21.2005C16.1763 22.2487 15.1765 22.9996 14.0013 22.9996C12.8261 22.9996 11.8263 22.2487 11.4554 21.2005L5.90189 21.1997C5.40487 21.1997 5.00195 20.7968 5.00195 20.2998C5.00195 19.8028 5.40487 19.3999 5.90189 19.3999L11.4551 19.3999C11.8257 18.3513 12.8258 17.6 14.0013 17.6ZM14.0013 19.4C13.5043 19.4 13.1014 19.8029 13.1014 20.2999C13.1014 20.7969 13.5043 21.1999 14.0013 21.1999C14.4983 21.1999 14.9012 20.7969 14.9012 20.2999C14.9012 19.8029 14.4983 19.4 14.0013 19.4ZM20.3008 11.3006C21.7919 11.3006 23.0006 12.5093 23.0006 14.0004C23.0006 15.4914 21.7919 16.7002 20.3008 16.7002C19.1256 16.7002 18.1258 15.9493 17.7549 14.9011L5.90189 14.9003C5.40487 14.9003 5.00195 14.4974 5.00195 14.0004C5.00195 13.5034 5.40487 13.1005 5.90189 13.1005L17.7546 13.1005C18.1252 12.0519 19.1253 11.3006 20.3008 11.3006ZM20.3003 13.1004C19.8033 13.1004 19.4004 13.5033 19.4004 14.0003C19.4004 14.4973 19.8033 14.9003 20.3003 14.9003C20.7974 14.9003 21.2003 14.4973 21.2003 14.0003C21.2003 13.5033 20.7974 13.1004 20.3003 13.1004ZM7.70176 5.00098C8.88229 5.00098 9.88585 5.75868 10.2527 6.8143C10.3008 6.80507 10.3507 6.80085 10.4016 6.80085H22.1007C22.5977 6.80085 23.0006 7.20376 23.0006 7.70078C23.0006 8.1978 22.5977 8.60072 22.1007 8.60072H10.4016C10.3507 8.60072 10.3008 8.59649 10.2522 8.58837C9.88585 9.64288 8.88229 10.4006 7.70176 10.4006C6.2107 10.4006 5.00195 9.19184 5.00195 7.70078C5.00195 6.20972 6.2107 5.00098 7.70176 5.00098ZM7.70226 6.80078C7.20524 6.80078 6.80232 7.2037 6.80232 7.70072C6.80232 8.19774 7.20524 8.60065 7.70226 8.60065C8.19928 8.60065 8.60219 8.19774 8.60219 7.70072C8.60219 7.2037 8.19928 6.80078 7.70226 6.80078Z"
+                  // fill="black"
+                ></path>
+              </svg>
+            </button>
+          </div>
 
           <Input
             ref={inputRef}
@@ -420,7 +421,7 @@ console.log({secondDate})
       </div>
       <UpdateModal {...featureModalParams} />
 
-      <LoadingeModal modalState={isLoading} />
+      <LoadingeModal modalState={isLoading || isFetching} />
     </div>
   );
 };

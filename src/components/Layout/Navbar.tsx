@@ -331,7 +331,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                   )
                   .map((list: any, i: number) => (
                     <a
-                      href={`${list.link}/index.html`}
+                      href={`${
+                        list.link === "/"
+                          ? list.link
+                          : list.link +
+                            (process.env.NEXT_PUBLIC_ENV !== "DEV"
+                              ? ".html"
+                              : "")
+                      }`}
                       key={i}
                       onClick={handleNav}
                     >
