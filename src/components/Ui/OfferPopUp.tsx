@@ -210,7 +210,7 @@ const OfferPopUp = ({
           nft_contract: nft.store_makerorder?.nftContract,
           signer: account,
           tokenId: nft?.store_makerorder?.tokenId,
-          tax: +((2 / 100) * +inputOffer),
+          tax: +((2 / 100) * +inputOffer).toFixed(5),
           nonce: data?.nonce?.toString() || "",
           signed_v: parseInt(signature.substring(128, 130), 16).toString(),
           signed_r: "0x" + signature.substring(0, 64),

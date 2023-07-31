@@ -168,7 +168,7 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
               fill
               priority
               quality={100}
-              className="mx-auto rounded-xl  object-cover  object-right"
+              className="mx-auto rounded-xl  object-cover  object-center"
             />
             {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
               <div className="absolute bottom-2 w-full pl-2 pr-2 opacity-0 transition duration-75 ease-in-out  group-hover:opacity-100 ">

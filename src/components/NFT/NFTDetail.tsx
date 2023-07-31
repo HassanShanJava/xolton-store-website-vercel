@@ -295,7 +295,7 @@ const NFTDetail = ({}: any) => {
                   height={400}
                   priority
                   quality={100}
-                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover object-right"
+                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover object-center"
                 />
                 {nftDetail?.sell_type?.includes("auction") && (
                   <div className="rounded-md bg-white p-2 text-center  ">
@@ -344,8 +344,8 @@ const NFTDetail = ({}: any) => {
                       </p>
                     </div>
                   )}
-                  {nftDetail?.sell_type?.includes("offer") ||
-                    (nftDetail?.sell_type?.includes("auction") && (
+                  {(nftDetail?.sell_type?.includes("offer") ||
+                    nftDetail?.sell_type?.includes("auction")) && (
                       <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
                         <p className="text-tx-5 text-sm">
                           Highest{" "}
@@ -376,7 +376,7 @@ const NFTDetail = ({}: any) => {
                           }`}
                         </p>
                       </div>
-                    ))}
+                    )}
                 </div>
                 {user == null ||
                 user?.id !== nftDetail?.store_customer_id?.$oid ? (
