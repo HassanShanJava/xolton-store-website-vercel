@@ -167,7 +167,7 @@ const ListingPopup = ({ ...payload }: any) => {
               const NFTpayload: any = {
                 isOrderAsk: true,
                 signer: account,
-                baseAccount: payload?.selectNftListing?.creator_id,
+                baseAccount: payload?.selectNftListing?.store_makerorder?.baseAccount,
                 nftContract: payload?.selectNftListing?.contract_address,
                 price:
                   sellType === "offer" || sellType === "auction"

@@ -95,6 +95,7 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
   console.log({ nft });
 
   const offerNFT = async (offerid?: any) => {
+    console.log( nft?.owner_id , nft?.store_makerorder?.baseAccount,'offerNFT')
     if (account === null || account === "") {
       addToast({
         id: "connect-wallet-buy",
@@ -102,8 +103,8 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
         type: "error",
       });
     } else if (
-      account == nft?.creator_id ||
-      account == nft?.store_makerorder?.baseAccount
+      account === nft?.owner_id ||
+      account === nft?.store_makerorder?.baseAccount
     ) {
       addToast({
         id: "connect-wallet-buy",

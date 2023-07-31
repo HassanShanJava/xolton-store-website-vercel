@@ -45,7 +45,7 @@ export async function approvalWMATIC(
   ); //Contract Address
   let transaction_id;
   try {
-    const price = +totalPrice?.toFixed(4);
+    const price = +totalPrice?.toFixed(5);
 
     const result = await WMATICContract.methods
       .approve(MarketPlaceAddress.address, toWei(price))
