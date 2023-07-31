@@ -44,7 +44,6 @@ const UserNFTListing = ({ is_purchase }: any) => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: user?.id ? true : false,
     }
   );
   const featureModelParam: any = {
@@ -258,7 +257,7 @@ const UserNFTListing = ({ is_purchase }: any) => {
       </div>
       <ListingPopup {...featureModelParam} />
       <UpdateNftModal {...featureUpdateParam} />
-      <LoadingeModal modalState={isLoading} />
+      <LoadingeModal modalState={isFetching} />
     </>
   );
 };
