@@ -419,7 +419,8 @@ const OfferPopUp = ({
                 {/*header*/}
                 <div className="mb-3 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
                   <h3 className="text-3xl ">
-                    Place {is_offer ? "an Offer" : "a Bid"}
+                    {is_updated ? "Update" : "Place"}{" "}
+                    {is_offer ? "an Offer" : "a Bid"}
                   </h3>
                   <div
                     onClick={(e) => {
@@ -520,7 +521,13 @@ const OfferPopUp = ({
                     >
                       {isPurchase !== false ? (
                         is_offer ? (
-                          "OFFER NOW"
+                          is_updated ? (
+                            "UPDATE OFFER"
+                          ) : (
+                            "OFFER NOW"
+                          )
+                        ) : is_updated ? (
+                          "UPDATE BID"
                         ) : (
                           "BID NOW"
                         )
