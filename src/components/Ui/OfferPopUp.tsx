@@ -264,9 +264,9 @@ const OfferPopUp = ({
       setIsModal(true);
       dispatch(setNftOfferCreateProcess(1)); //false conver first
       const remainbalance: any = total_price - wmaticBalance;
-      console.log({ remainbalance }, "remainbalance");
+      console.log( remainbalance.toFixed(5) , "remainbalance");
 
-      const result = await maticDeposit(web3, account, remainbalance);
+      const result = await maticDeposit(web3, account, +remainbalance.toFixed(5));
 
       if (result.success) {
         dispatch(setNftOfferCreateProcess(2)); //false conver first

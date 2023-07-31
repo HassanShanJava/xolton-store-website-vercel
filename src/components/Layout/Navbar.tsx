@@ -260,13 +260,13 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     setUserInfo({
       ...user,
       chainId,
-      wmaticBalance: parseFloat(wmaticBalance).toFixed(3),
-      accountBalance: parseFloat(accountBalance).toFixed(3),
+      wmaticBalance: parseFloat(wmaticBalance).toFixed(4),
+      accountBalance: parseFloat(accountBalance).toFixed(4),
       maticUSD: (parseFloat(maticToUsd) * parseFloat(accountBalance)).toFixed(
-        3
+        4
       ),
       wmaticUSD: (parseFloat(maticToUsd) * parseFloat(wmaticBalance)).toFixed(
-        3
+        4
       ),
     });
 

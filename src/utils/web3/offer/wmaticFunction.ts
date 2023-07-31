@@ -15,7 +15,7 @@ export async function maticDeposit(
   ); //Contract Address
   let transaction_id;
   try {
-    const price = +conversionPrice?.toFixed(4);
+    const price = +conversionPrice?.toFixed(5);
     console.log("convert :: ", price);
     const result = await WMATICContract.methods
       .deposit()
