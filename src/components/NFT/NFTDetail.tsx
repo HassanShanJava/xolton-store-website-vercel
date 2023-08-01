@@ -51,7 +51,6 @@ const NFTDetail = ({}: any) => {
 
   const router = useRouter();
   const { id } = router.query;
-  console.log({ id });
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [offer, setOffer] = useState<any>([]);
   const [filter, setFilter] = useState({
@@ -67,7 +66,6 @@ const NFTDetail = ({}: any) => {
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
   //
-  console.log(user?.id, "user?.id");
   // nft detail api
   const {
     isLoading: nftLoading,
@@ -156,7 +154,6 @@ const NFTDetail = ({}: any) => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-  console.log({ nftDetail });
   // buy nft
   const buyNFT = async () => {
     account == ""

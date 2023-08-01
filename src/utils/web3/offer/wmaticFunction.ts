@@ -16,7 +16,6 @@ export async function maticDeposit(
   let transaction_id;
   try {
     const price = +conversionPrice?.toFixed(5);
-    console.log("convert :: ", price);
     const result = await WMATICContract.methods
       .deposit()
       .send({ from: account, value: toWei(price) })

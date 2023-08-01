@@ -92,10 +92,8 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
-  console.log({ nft });
 
   const offerNFT = async (offerid?: any) => {
-    console.log(nft?.owner_id, nft?.store_makerorder?.baseAccount, "offerNFT");
     if (account === null || account === "") {
       addToast({
         id: "connect-wallet-buy",
@@ -150,7 +148,6 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
   const diffDays =
     nft?.end_date &&
     Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
-  console.log({ diffDays });
   return (
     <>
       <div className=" group mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">

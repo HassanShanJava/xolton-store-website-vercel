@@ -93,7 +93,6 @@ export const StripeModal = (props: any) => {
   const [inputOffer, setInputOffer] = useState(
     (11 * (+maticToUsd as number)).toString()
   );
-  console.log({ maticToUsd });
   const [stripeModalState, setStripeModalState] = useState(false);
   // queries for api
   const stripeConnect = useMutation({
@@ -179,7 +178,6 @@ export const StripeModal = (props: any) => {
             const matic_res: any = await web3Connect.mutateAsync(webPayload);
             dispatch(setNftOfferCreateProcess(3)); //signature
 
-            console.log(matic_res);
             if (matic_res?.success) {
               setTimeout(async () => {
                 const balance = await web3?.eth.getBalance(account);
@@ -187,7 +185,6 @@ export const StripeModal = (props: any) => {
                   balance,
                   "ether"
                 );
-                console.log({ accountBalance });
                 props?.setAccountBalance(accountBalance);
                 props?.refetch();
                 setStripeModalState(false);

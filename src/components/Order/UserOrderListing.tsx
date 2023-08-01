@@ -35,7 +35,6 @@ const emptyMessage = (
 
 const OrderTable = () => {
   const { user } = useSelector((state: any) => state.user);
-  console.log({ user });
   const initialOrderFilters = {
     store_id: process.env.NEXT_PUBLIC_STORE_ID,
     startDate: null,
@@ -117,7 +116,6 @@ const OrderTable = () => {
 
   function handleKeyPress(e: any) {
     const key = e.key;
-    console.log("i am here");
     if (key == "Enter") {
       setOrderFilters((prevFilters: any) => ({
         ...prevFilters,

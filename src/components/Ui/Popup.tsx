@@ -75,7 +75,6 @@ const Popup = ({
   //   : Number(+price + +tax);
 
   const total: any = +price + +tax;
-  console.log({ total });
 
   const nftUpdate = useMutation({
     mutationFn: async (newTodo) => {
@@ -124,7 +123,6 @@ const Popup = ({
           royalty
         );
 
-        console.log(nft?.store_makerorder, { nft }, "nft payload");
         if (buyData?.success || true) {
           // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
 
@@ -164,10 +162,8 @@ const Popup = ({
           };
 
           const dataOrder: any = await nftOrder.mutateAsync(payloadOrder);
-          console.log({ dataOrder });
           if (dataOrder.success) {
             const data: any = await nftUpdate.mutateAsync(payload);
-            console.log({ data }, "NFT data");
             if (data.success) {
               addToast({
                 id: "transaction-id",

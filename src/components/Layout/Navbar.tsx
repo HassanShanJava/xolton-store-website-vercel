@@ -58,7 +58,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     (async () => {
       try {
         const localStore: any = localStorage.getItem("store_customer");
-        console.log(localStore, "localStore");
         if (localStore !== null) {
           let store = JSON.parse(localStore ? localStore : "");
           if (store !== undefined) {
@@ -68,9 +67,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             let account = await window.ethereum.request({
               method: "eth_requestAccounts",
             });
-            console.log("Account : ", account);
-            console.log("localStore?.wallet_address : ", store?.wallet_address);
-
+           
             if (
               account[0]?.toLowerCase() === store?.wallet_address?.toLowerCase()
             ) {
@@ -79,7 +76,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                 method: "eth_chainId",
               });
 
-              console.log("If Condition configWeb3");
               dispatch(
                 web3Init({
                   web3: web3,
@@ -91,7 +87,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
               return { account, web3 };
             } else {
               console.log("ERROR");
-              console.log("ELSE Condition configWeb3");
               localStorage.removeItem("store_customer");
 
               dispatch(
@@ -118,7 +113,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         const nftPrice: number = 1;
 
         const maitccprice = await maticToUSD(nftPrice);
-        console.log({ maitccprice });
         dispatch(setMaticToUsdProcess(maitccprice));
       } catch (e) {
         console.log(e, "consvertion error front-end");
@@ -161,7 +155,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
       const response = await loginConnect.mutateAsync(payload);
 
-      console.log(response?.storeCustomer, { response }, "response");
       if (response?.storeCustomer === null) {
         setShowPop(true);
       } else {
@@ -221,12 +214,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         };
 
         const changed_response = await loginConnect.mutateAsync(payload);
-        console.log({ changed_response });
         if (changed_response?.storeCustomer === null) {
           setShowPop(true);
         } else {
           dispatch(setAccount(accounts[0]));
-          console.log(changed_response.store_customer);
           localStorage.setItem(
             "store_customer",
             JSON.stringify(changed_response.storeCustomer)
@@ -255,7 +246,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     let wmaticBalance: any = await getBalance(web3, account);
     wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
 
-    console.log({ wmaticBalance, chainId });
 
     setUserInfo({
       ...user,
@@ -411,7 +401,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 };
 
 function WalletDrawer({ isOpen, onClose, userInfo }: any) {
-  console.log({ userInfo });
   const dispatch = useDispatch();
   const router = useRouter();
 

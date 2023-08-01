@@ -23,7 +23,6 @@ export default function UpdateModal(props: any) {
 
   const { web3, account } = useSelector((state: RootState) => state.web3);
   const [isLoading, setIsLoading] = useState(false);
-  console.log({ props });
   // TOAST
   const toast = useToast();
   const router = useRouter();
@@ -68,7 +67,6 @@ export default function UpdateModal(props: any) {
       setIsLoading(true);
 
       const offerData: any = props?.selectNft;
-      console.log({ offerData });
 
       const payload: any = {};
       if (props?.title?.includes("Reject")) payload.offer_id = offerData?.id;
@@ -103,7 +101,6 @@ export default function UpdateModal(props: any) {
 
           ...data,
         };
-        console.log(payload, "payload");
         const Acceptdata: any = await offerAccept(
           web3,
           account as string,
@@ -148,7 +145,6 @@ export default function UpdateModal(props: any) {
           throw new Error("This is a generic error."); // Example of throwing a generic error
         }
 
-        console.log(Acceptdata, "Acceptdata");
       }
     } catch (e) {
       console.log(e);

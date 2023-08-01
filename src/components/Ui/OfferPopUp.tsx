@@ -148,7 +148,6 @@ const OfferPopUp = ({
 
   // step 3
   const signature = async () => {
-    console.log("NFT :: ", nft);
 
     const sign_payload = {
       nftContract: nft.store_makerorder?.nftContract,
@@ -160,7 +159,6 @@ const OfferPopUp = ({
       royalty: +((+nft.royalties / 100) * +inputOffer).toFixed(5),
     };
 
-    console.log({ sign_payload }, "sign_payload");
 
     const signature_result = await signSignature(sign_payload, web3);
     if (signature_result?.success) {
@@ -219,13 +217,11 @@ const OfferPopUp = ({
 
         let response;
         if (is_updated) {
-          console.log({ id, offer_id: id, ...payload }, "offer update");
           response = await offerUpdate.mutateAsync({
             // offer_id: id,
             ...payload,
           });
         } else {
-          console.log({ payload }, "offer create ");
           response = await offerUpload.mutateAsync(payload);
         }
 
@@ -264,7 +260,6 @@ const OfferPopUp = ({
       setIsModal(true);
       dispatch(setNftOfferCreateProcess(1)); //false conver first
       const remainbalance: any = total_price - wmaticBalance;
-      console.log(remainbalance.toFixed(5), "remainbalance");
 
       const result = await maticDeposit(
         web3,
@@ -276,7 +271,6 @@ const OfferPopUp = ({
         dispatch(setNftOfferCreateProcess(2)); //false conver first
         try {
           const data = await approval();
-          console.log(data, "offer");
           const signature = data?.sign.substring(2);
 
           const payload: any = {
@@ -302,13 +296,11 @@ const OfferPopUp = ({
 
           let response;
           if (is_updated) {
-            console.log({ id }, "update bro");
             response = await offerUpdate.mutateAsync({
               // offer_id: id,
               ...payload,
             });
           } else {
-            console.log({ payload }, "payload creareted");
             response = await offerUpload.mutateAsync(payload);
           }
 

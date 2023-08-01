@@ -1,5 +1,4 @@
 export async function getS3Url(file: any) {
-  console.log("file::", file);
   const fileName = file?.name
     ?.replaceAll(" ", "-")
     .replaceAll("'", "")

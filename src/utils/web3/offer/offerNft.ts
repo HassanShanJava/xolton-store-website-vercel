@@ -25,7 +25,6 @@ async function generateUniqueRandomNumbers(
 
 export const signSignature = async (payload: any, web3: any) => {
   try {
-    console.log({ payload });
     const toWei = (num: any) => Web3.utils.toWei(num.toString(), "ether");
     const min = 2;
     const max = +generateOTP(5);

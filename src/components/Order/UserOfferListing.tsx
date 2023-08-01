@@ -54,7 +54,6 @@ const OfferTable = ({ bid_type }: any) => {
   const [title, setTitle] = useState("");
   const [sellType, setSetSellType] = useState("");
   const [selectNft, setSelectNft] = useState({});
-  console.log({ user });
   const initialOrderFilters = {
     store_id: process.env.NEXT_PUBLIC_STORE_ID,
 
@@ -144,7 +143,6 @@ const OfferTable = ({ bid_type }: any) => {
 
   function handleKeyPress(e: any) {
     const key = e.key;
-    console.log("i am here");
     if (key == "Enter") {
       setOrderFilters((prevFilters: any) => ({
         ...prevFilters,
@@ -177,7 +175,6 @@ const OfferTable = ({ bid_type }: any) => {
               web3,
               data?.StoreMakerOffer[0]?.signer
             );
-            console.log({ Walletbalance });
             if (+Walletbalance?.amount >= price) {
               setSelectNft(data);
               setTitle("Accept");
@@ -213,7 +210,6 @@ const OfferTable = ({ bid_type }: any) => {
       data?.store_nfts?.end_date &&
       Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
     // const formattedAmount = new Intl.NumberFormat('en-us').format(amount);
-    console.log({ secondDate });
     return (
       <div className="inline-flex rounded-md shadow-sm" role="group">
         {data?.store_nfts?.sell_type?.includes("offer") ? (

@@ -49,7 +49,6 @@ export default function SettingsForm({}: any) {
   });
   useEffect(() => {
     if (user) {
-      console.log({ user });
       setValue("full_name", user?.full_name);
       setValue("bio", user?.bio);
       user?.profile_pic && setValue("profile_pic", user?.profile_pic);
@@ -87,7 +86,6 @@ export default function SettingsForm({}: any) {
         ...covrData,
         ...actualData,
       };
-      console.log({ payload });
       const res = await updateUser.mutateAsync(payload);
       if (res.success) {
         addToast({
@@ -96,7 +94,6 @@ export default function SettingsForm({}: any) {
           message: "Registered Successfully!",
         });
 
-        console.log(res.data);
         localStorage.setItem("store_customer", JSON.stringify(res.data));
         dispatch(setUserProcess(res.data));
         setIsLoading(false);

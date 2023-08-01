@@ -41,7 +41,6 @@ import { signSignature } from "~/utils/web3/listNft";
 import { LoadingeModal } from "../Ui/LoadingModal";
 
 const ListingPopup = ({ ...payload }: any) => {
-  console.log({ payload });
   // alert
   const { addToast } = CustomToast();
   // states
@@ -121,7 +120,6 @@ const ListingPopup = ({ ...payload }: any) => {
   }, [watch("is_listed")]);
   useEffect(() => {
     const subscription = watch("price");
-    console.log("sellType", sellType);
     if (subscription && +subscription > 0) {
       setPercentage({
         min: +((10 / 100) * +subscription),
@@ -139,8 +137,7 @@ const ListingPopup = ({ ...payload }: any) => {
   };
   async function onSubmit(values: any) {
     try {
-      console.log(values, "values?.end_date");
-      console.log(values, "values?.end_date");
+    
       // const payload = { ...values, id: index };
       if (testSellType?.fixed || testSellType?.offer || testSellType?.auction) {
         if (account !== "") {
@@ -152,7 +149,6 @@ const ListingPopup = ({ ...payload }: any) => {
               account,
               payload?.selectNftListing?.contract_address
             );
-            console.log({ isApprove });
 
             if (isApprove?.success) {
               const testSellTypeData =
@@ -219,7 +215,6 @@ const ListingPopup = ({ ...payload }: any) => {
                 NFTpayload.store_id =
                   payload?.selectNftListing?.store_id?.$oid || "";
                 // (sellType === 'auction') && payload.end_date = new Date()
-                console.log(NFTpayload, "payload?.selectNftListing");
                 if (sellType.includes("auction"))
                   NFTpayload.end_date = new Date(
                     values?.end_date == "custom"

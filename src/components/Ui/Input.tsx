@@ -228,7 +228,6 @@ export function FileInput2(props: any) {
 export function SeoImage(props: any) {
   const [image, setImage] = useState<any>(null);
   const handleChange = (e: any) => {
-    console.log(e?.target?.values, "data image uploaded");
     setImage(URL.createObjectURL(e.target.files[0]));
 
     props.setValue(props?.register.name, e.target.files[0]);
@@ -250,12 +249,7 @@ export function SeoImage(props: any) {
   //   props.setValue(props?.register.name, props?.imageState);
   // }, [props?.imageState]);
   useEffect(() => {
-    console.log(
-      props?.register?.name,
-      props?.getValues(props?.register?.name),
-      props?.seoData,
-      "linkDatalinkData"
-    );
+    
     if (
       props?.seoData &&
       typeof props?.getValues(props?.register?.name) !== "object"

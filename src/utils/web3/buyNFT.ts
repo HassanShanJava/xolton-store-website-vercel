@@ -12,7 +12,6 @@ export async function buyNFT(
   makerOrder: any,
   royalty: Int16Array
 ) {
-  console.log({ makerOrder }, "buyNFT payload");
   const makeArr: any = [];
   const takeArr: any = [];
   // make contract Instance
@@ -22,7 +21,6 @@ export async function buyNFT(
   ); //Contract Address
 
   try {
-    console.log("Maker Order :: ", makerOrder);
     makeArr.push(
       makerOrder?.isOrderAsk,
       makerOrder?.signer,

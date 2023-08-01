@@ -15,7 +15,6 @@ export async function offerAccept(web3: any, account: string, makerOrder: any) {
   ); //Contract Address
 
   try {
-    console.log("Maker Order :: ", makerOrder);
     makeArr.push(
       // makerOrder?.isOrderAsk,
       false,
@@ -32,14 +31,12 @@ export async function offerAccept(web3: any, account: string, makerOrder: any) {
       makerOrder?.signed_r,
       makerOrder?.signed_s
     );
-    console.log("Maker Order :: ", makeArr);
     takeArr.push(
       true,
       account,
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId
     );
-    console.log("Taker Order :: ", takeArr);
 
     let transaction_id: any;
     const result = await marketPlacecContract.methods

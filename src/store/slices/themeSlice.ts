@@ -16,7 +16,6 @@ export const themeSlice = createSlice({
   initialState,
   reducers: {
     storeWebThemeData: (state, action: PayloadAction<any>) => {
-        console.log("ACTION ... : ",action.payload)    
         state.themeData = action.payload;
     },
 

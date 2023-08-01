@@ -110,7 +110,6 @@ export async function loginConnectInfo(payload: any) {
       }
     ).then(res=>res.json());
 
-    console.log({response},"response login connect")
     return response;
 
   } catch (e) {
