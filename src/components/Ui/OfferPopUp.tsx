@@ -87,8 +87,8 @@ const OfferPopUp = ({
   const [isModal, setIsModal] = useState(false); //for loader
   const [inputOffer, setInputOffer] = useState(
     nft?.highest_offer
-      ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(4)
-      : nft?.min_price?.toFixed(4)
+      ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(3)
+      : nft?.min_price?.toFixed(3)
   );
   const { addToast } = CustomToast();
   const offerUpload = useMutation({
@@ -264,9 +264,13 @@ const OfferPopUp = ({
       setIsModal(true);
       dispatch(setNftOfferCreateProcess(1)); //false conver first
       const remainbalance: any = total_price - wmaticBalance;
-      console.log( remainbalance.toFixed(5) , "remainbalance");
+      console.log(remainbalance.toFixed(5), "remainbalance");
 
-      const result = await maticDeposit(web3, account, +remainbalance.toFixed(5));
+      const result = await maticDeposit(
+        web3,
+        account,
+        +remainbalance.toFixed(5)
+      );
 
       if (result.success) {
         dispatch(setNftOfferCreateProcess(2)); //false conver first
@@ -469,13 +473,16 @@ const OfferPopUp = ({
                       defaultValue={inputOffer}
                       min={
                         nft.highest_offer
-                          ? nft?.highest_offer + 0.1 * nft?.highest_offer
-                          : nft?.min_price
+                          ? +(
+                              nft?.highest_offer +
+                              0.1 * nft?.highest_offer
+                            )?.toFixed(3)
+                          : +nft?.min_price?.toFixed(3)
                       }
                       type="number"
-                      step={"any"}
+                      step={0.001}
                       required
-                      maxLength={2}
+                      // max={2}
                       onChange={(e) => setInputOffer(e.target.value)}
                     />
                   </div>

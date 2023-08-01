@@ -95,7 +95,7 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
   console.log({ nft });
 
   const offerNFT = async (offerid?: any) => {
-    console.log( nft?.owner_id , nft?.store_makerorder?.baseAccount,'offerNFT')
+    console.log(nft?.owner_id, nft?.store_makerorder?.baseAccount, "offerNFT");
     if (account === null || account === "") {
       addToast({
         id: "connect-wallet-buy",
@@ -155,13 +155,9 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
     <>
       <div className=" group mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <a
-          href={
-            !is_purchase
-              ? `/nft-details/${nft._id.$oid}${
-                  process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
-                }`
-              : "#"
-          }
+          href={`/nft-details/${nft._id.$oid}${
+            process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+          }`}
         >
           <div className={" relative h-80 max-h-[290px]  w-full "}>
             <Image

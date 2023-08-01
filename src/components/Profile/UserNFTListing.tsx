@@ -35,7 +35,9 @@ const UserNFTListing = ({ is_purchase }: any) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&${new URLSearchParams(sortFilter).toString()}`
+        }&${new URLSearchParams(
+          sortFilter
+        ).toString()}&is_purchase=${is_purchase}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -44,6 +46,7 @@ const UserNFTListing = ({ is_purchase }: any) => {
     },
     {
       refetchOnWindowFocus: false,
+      enabled: is_purchase ? true : false,
     }
   );
   const featureModelParam: any = {
@@ -78,18 +81,18 @@ const UserNFTListing = ({ is_purchase }: any) => {
 
     return () => clearTimeout(timeout);
   }, [searchQuery]);
+
   useEffect(() => {
     if (user?.id) {
       setSortFilter((prevFilters: any) => ({
         ...prevFilters,
-        store_customer_id: user?.id ?? "",
-        is_purchase,
+        store_customer_id: user?.id,
       }));
     }
-  }, [user]);
+  }, [user, is_purchase]);
   useEffect(() => {
     refetch();
-  }, [sortFilter]);
+  }, [sortFilter, is_purchase]);
   useEffect(() => {
     let timeout: any;
     timeout = setTimeout(() => {
@@ -100,7 +103,7 @@ const UserNFTListing = ({ is_purchase }: any) => {
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [user]);
+  }, [user, is_purchase]);
 
   useEffect(() => {
     if (storeNfts?.data.length > 0) {

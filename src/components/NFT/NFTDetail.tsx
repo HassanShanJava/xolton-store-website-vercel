@@ -143,7 +143,7 @@ const NFTDetail = ({}: any) => {
           nftDetail?.contract_id?.$oid
             ? "&contract_id=" + nftDetail?.contract_id?.$oid
             : ""
-        }`
+        }&rows=5&first=0`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
