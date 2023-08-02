@@ -43,6 +43,7 @@ import {
   DrawerCloseButton,
 } from "@chakra-ui/react";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
+import { useRouter } from "next/router";
 
 const Navbar = ({ navData: navprops, webData: webprops }: any) => {
   const [nav, setNav] = useState(false);
@@ -57,7 +58,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     (async () => {
       try {
         const localStore: any = localStorage.getItem("store_customer");
-        console.log(localStore, "localStore");
         if (localStore !== null) {
           let store = JSON.parse(localStore ? localStore : "");
           if (store !== undefined) {
@@ -67,9 +67,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             let account = await window.ethereum.request({
               method: "eth_requestAccounts",
             });
-            console.log("Account : ", account);
-            console.log("localStore?.wallet_address : ", store?.wallet_address);
-
+           
             if (
               account[0]?.toLowerCase() === store?.wallet_address?.toLowerCase()
             ) {
@@ -78,7 +76,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                 method: "eth_chainId",
               });
 
-              console.log("If Condition configWeb3");
               dispatch(
                 web3Init({
                   web3: web3,
@@ -90,7 +87,6 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
               return { account, web3 };
             } else {
               console.log("ERROR");
-              console.log("ELSE Condition configWeb3");
               localStorage.removeItem("store_customer");
 
               dispatch(
@@ -110,14 +106,13 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         console.log(err);
       }
     })();
-  }, [typeof window !== "undefined", dispatch]);
+  }, [typeof window !== "undefined"]);
   useEffect(() => {
     (async () => {
       try {
         const nftPrice: number = 1;
 
         const maitccprice = await maticToUSD(nftPrice);
-        console.log({ maitccprice });
         dispatch(setMaticToUsdProcess(maitccprice));
       } catch (e) {
         console.log(e, "consvertion error front-end");
@@ -160,8 +155,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 
       const response = await loginConnect.mutateAsync(payload);
 
-      console.log(response?.storeCustomer, { response }, "response");
-      if (response?.data === null) {
+      if (response?.storeCustomer === null) {
         setShowPop(true);
       } else {
         if (data?.success !== false) {
@@ -220,12 +214,10 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         };
 
         const changed_response = await loginConnect.mutateAsync(payload);
-        console.log({ changed_response });
         if (changed_response?.storeCustomer === null) {
           setShowPop(true);
         } else {
           dispatch(setAccount(accounts[0]));
-          console.log(changed_response.store_customer);
           localStorage.setItem(
             "store_customer",
             JSON.stringify(changed_response.storeCustomer)
@@ -254,18 +246,17 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     let wmaticBalance: any = await getBalance(web3, account);
     wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
 
-    console.log({ wmaticBalance, chainId });
 
     setUserInfo({
       ...user,
       chainId,
-      wmaticBalance: parseFloat(wmaticBalance).toFixed(3),
-      accountBalance: parseFloat(accountBalance).toFixed(3),
+      wmaticBalance: parseFloat(wmaticBalance).toFixed(4),
+      accountBalance: parseFloat(accountBalance).toFixed(4),
       maticUSD: (parseFloat(maticToUsd) * parseFloat(accountBalance)).toFixed(
-        3
+        4
       ),
       wmaticUSD: (parseFloat(maticToUsd) * parseFloat(wmaticBalance)).toFixed(
-        3
+        4
       ),
     });
 
@@ -330,7 +321,14 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                   )
                   .map((list: any, i: number) => (
                     <a
-                      href={`${list.link}/index.html`}
+                      href={`${
+                        list.link === "/"
+                          ? list.link
+                          : list.link +
+                            (process.env.NEXT_PUBLIC_ENV !== "DEV"
+                              ? ".html"
+                              : "")
+                      }`}
                       key={i}
                       onClick={handleNav}
                     >
@@ -382,7 +380,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           {account != "" ? (
             <div
               onClick={openUserDrawer}
-              className="photo-wrapper cursor-pointer  h-8 w-8 rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"
+              className="photo-wrapper h-8  w-8 cursor-pointer rounded-full  bg-gradient-to-r from-green-500 via-orange-500 to-yellow-500"
             ></div>
           ) : (
             <button
@@ -403,8 +401,8 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
 };
 
 function WalletDrawer({ isOpen, onClose, userInfo }: any) {
-  console.log({ userInfo });
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const logout = () => {
     dispatch(setUserProcess(null));
@@ -415,6 +413,8 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
         chainId: "",
       })
     );
+    router.push("/");
+
     localStorage.removeItem("store_customer");
     onClose();
   };
@@ -440,6 +440,24 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
 
             <DrawerBody mx={0} px={2} w="full ">
               <div className="">
+                <div className=" flex flex-col  gap-4 p-4 text-xl font-semibold">
+                  <a
+                    className="cursor-pointer"
+                    href={`/user${
+                      process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+                    }`}
+                  >
+                    My NFTs
+                  </a>
+                  <a
+                    className="cursor-pointer"
+                    href={`/orders${
+                      process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
+                    }`}
+                  >
+                    Orders
+                  </a>
+                </div>
                 <div className="rounded-xl border border-gray-300 p-3 ">
                   <div className="flex justify-between ">
                     <div className="flex w-full items-center ">
@@ -469,13 +487,18 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                   </div>
 
                   <div className="mx-0.5 my-6 rounded-xl border border-gray-200 p-3">
-                    <p className="w-full text-center pb-3">Your Account Balance</p>
+                    <p className="w-full pb-3 text-center">
+                      Your Account Balance
+                    </p>
                     <div className="flex justify-between">
                       <div className="flex">
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={MaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.accountBalance} <span className="text-xs">MATIC</span></p>
+                        <p>
+                          {userInfo?.accountBalance}{" "}
+                          <span className="text-xs">MATIC</span>
+                        </p>
                       </div>
                       <p>${userInfo?.maticUSD}</p>
                     </div>
@@ -487,7 +510,10 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                         <div className="relative mr-2 h-6 w-6">
                           <Image src={WmaticLogo} alt="/" fill />
                         </div>
-                        <p>{userInfo?.wmaticBalance} <span className="text-xs">wMATIC</span></p>
+                        <p>
+                          {userInfo?.wmaticBalance}{" "}
+                          <span className="text-xs">wMATIC</span>
+                        </p>
                       </div>
                       <p>${userInfo?.wmaticUSD}</p>
                     </div>
@@ -495,8 +521,6 @@ function WalletDrawer({ isOpen, onClose, userInfo }: any) {
                 </div>
               </div>
             </DrawerBody>
-
-
           </DrawerContent>
         </Drawer>
       )}

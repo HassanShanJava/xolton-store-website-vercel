@@ -25,6 +25,11 @@ const runAsync = async () => {
   const primaryFont = storeThemeData?.website?.theme?.fonts?.primary ?? "inter";
   const secondaryFont =
     storeThemeData?.website?.theme?.fonts?.secondary ?? "san-serif";
+
+  const header = storeThemeData?.website?.theme?.colors.header
+  const button = storeThemeData?.website?.theme?.colors.button
+  const background = storeThemeData?.website?.theme?.colors.background
+
   const tailwindData = `import { type Config } from "tailwindcss";
 
 export default {
@@ -49,17 +54,17 @@ export default {
         "pm-12": "#777E90",
         "ct-1": "#090F1B",
         "ct-2": "#030607",
-        "bg-1": ${storeThemeData?.website?.theme?.colors.background
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.background)
-      : "#F1F3F5"
+        "bg-1": ${background
+      ? JSON.stringify(background)
+      : `"#F1F3F5"`
     },
-        "bg-2": ${storeThemeData?.website?.theme?.colors.header
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.header)
-      : "#F1F3F5"
+        "bg-2": ${header
+      ? JSON.stringify(header)
+      : `"#F1F3F5"`
     },
-        "bg-3": ${storeThemeData?.website?.theme?.colors.button
-      ? JSON.stringify(storeThemeData?.website?.theme?.colors.button)
-      : "#000"
+        "bg-3": ${button
+      ? JSON.stringify(button)
+      : `"#000000"`
     },
         "gt-1": "#A0AEC0",
         "tx-1":"rgba(0,0,0,0.48)",
@@ -150,7 +155,7 @@ module.exports = {
     }
 };`
 
-  // fs.writeFileSync("../../next-sitemap.config.js", sitemapData);
+
   console.log(sitemapData, "sitemapData");
   await fs.writeFileSync("next-sitemap.config.js", sitemapData, {
     encoding: "utf8",
@@ -159,9 +164,134 @@ module.exports = {
 };
 
 
+// google tag manager script 
+// sitemapData
+const runDocument = async () => {
+  // find all scripts in subfolder
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/web?&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        referer: "xoltanmarketplace.com",
+      },
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const result = await response.json();
+
+  // console.log({ result }, "result v")
+  const storeDetail = result?.data;
+  const siteAnalytics = storeDetail?.analytics;
+  const tagmanager = siteAnalytics?.tag_manager?.tag_manager_id;
+  const gtag = siteAnalytics?.google_analytics?.google_analytics;
+  const googleAnalytics = `https://www.googletagmanager.com/gtag/js?id=${gtag}`;
+
+  console.log(siteAnalytics, tagmanager, "siteAnalytics tagmanager")
+
+
+
+  const documentData = `import { useQuery } from "@tanstack/react-query";
+  import { Html, Head, Main, NextScript } from "next/document";
+  
+  import React from "react";
+  
+  import { renderNFTIcon } from "~/utils/helper";
+  
+  export default function Document() {
+    return (
+      <>
+      <Html>
+        <Head>
+        ${tagmanager ? `
+          <script
+          dangerouslySetInnerHTML={{
+            __html: ${"`" + `
+            <!-- Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${tagmanager}');</script>
+            <!-- End Google Tag Manager -->`+ "`"},
+          }}
+          ></script>
+          `: ""}
+
+          {/* Google Analytics Measurement ID*/}
+          ${gtag ? `
+          <script async src={"${googleAnalytics}"} ></script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: ${"`" +
+      `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gtag}', {
+                  page_path: window.location.pathname
+                });
+              `+ "`"
+      },
+            }}
+            ></script>
+          `: ""}
+
+          <meta name="description" content={"Store"} />
+          <meta property="og:title" content={"store detail"} key="title" />
+          
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+            integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+            crossOrigin="anonymous"
+            referrerPolicy="no-referrer"
+          />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Ubuntu:wght@300;400;500;700&display=swap"
+            rel="stylesheet"
+          />
+  
+
+          
+        </Head>
+        <body className="font-storeFont">
+        
+        ${tagmanager ? `          
+        <script
+          dangerouslySetInnerHTML={{
+            __html: ${"`" + `
+            <!-- Google Tag Manager (noscript) -->
+              <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${tagmanager}"
+              height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->`+ "`"},
+          }}
+        ></script>`: ""}
+
+          <Main />
+          <NextScript />
+
+        </body>
+      </Html>
+      </>
+    );
+  }
+  `;
+
+  console.log(documentData, "documentData")
+  await fs.writeFileSync("src/pages/_document.tsx", documentData, {
+    encoding: "utf8",
+    flag: "w",
+  });
+};
+
 // Self-invocation async function
 (async () => {
-  await Promise.all([runAsync, runSiteAsync]);
+  await Promise.all([runAsync(), runSiteAsync(), runDocument()]);
 })().catch((err) => {
   console.error(err);
   throw err;

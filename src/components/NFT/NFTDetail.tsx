@@ -47,10 +47,10 @@ const NFTDetail = ({}: any) => {
   const { maticToUsd } = useSelector((state: RootState) => state.matic);
   const [wmaticBalance, setWmaticBalance] = useState("");
   const [updateOffer, setUpdateOffer] = useState(""); //offer id
+  const [remainingTime, setRemainingTime] = useState<any>(null);
 
   const router = useRouter();
   const { id } = router.query;
-  console.log({ id });
   const [showOfferPop, setShowOfferPop] = useState(false);
   const [offer, setOffer] = useState<any>([]);
   const [filter, setFilter] = useState({
@@ -66,7 +66,6 @@ const NFTDetail = ({}: any) => {
   const { web3 } = useSelector((state: any) => state.web3);
   const { addToast } = CustomToast();
   //
-  console.log(user?.id, "user?.id");
   // nft detail api
   const {
     isLoading: nftLoading,
@@ -106,9 +105,9 @@ const NFTDetail = ({}: any) => {
       const response: any = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/offer-nft?store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }&nft_id=${id}&sell_type=offer&${new URLSearchParams(
-          filter as any
-        ).toString()}`
+        }&nft_id=${id}&sell_type=${
+          nftDetail?.sell_type?.includes("offer") ? "offer" : "auction"
+        }&${new URLSearchParams(filter as any).toString()}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -142,7 +141,7 @@ const NFTDetail = ({}: any) => {
           nftDetail?.contract_id?.$oid
             ? "&contract_id=" + nftDetail?.contract_id?.$oid
             : ""
-        }`
+        }&rows=5&first=0`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -155,30 +154,27 @@ const NFTDetail = ({}: any) => {
       enabled: nftDetail?.contract_id.$oid ? true : false,
     }
   );
-
   // buy nft
   const buyNFT = async () => {
-    if (account !== "") {
-      setShowPop(true);
-    } else if (account === nftDetail?.creator_id) {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Owner cannot buy there own NFT",
-        type: "error",
-      });
-    } else if (account === "") {
-      addToast({
-        id: "connect-wallet-buy",
-        message: "Connect Wallet",
-        type: "error",
-      });
-    } else {
-      return;
-    }
+    account == ""
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Connect Wallet",
+          type: "error",
+        })
+      : user !== null && user?.wallet_address !== nftDetail?.owner_id
+      ? setShowPop(true)
+      : account == nftDetail.creator_id ||
+        account == nftDetail?.store_makerorder?.baseAccount
+      ? addToast({
+          id: "connect-wallet-buy",
+          message: "Owner cannot buy there own NFT",
+          type: "error",
+        })
+      : setShowPop(true);
 
     const balance = await web3?.eth.getBalance(account);
     const accountBalance = web3?.utils.fromWei(balance, "ether");
-
     setAccountBalance(accountBalance);
   };
 
@@ -190,7 +186,10 @@ const NFTDetail = ({}: any) => {
         message: "Connect Wallet",
         type: "error",
       });
-    } else if (account == nftDetail?.creator_id) {
+    } else if (
+      account == nftDetail?.creator_id ||
+      account == nftDetail?.store_makerorder?.baseAccount
+    ) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
@@ -245,14 +244,47 @@ const NFTDetail = ({}: any) => {
     refetch,
     AllRefetch,
   };
+
+  const startDate: any =
+    isFetched && nftDetail?.end_date && new Date(nftDetail?.updated_at?.$date);
+  const endDate: any =
+    isFetched && nftDetail?.end_date && new Date(nftDetail?.end_date?.$date);
+  //  calculate remaining time for nft auction
+  const calculateRemainingTime = () => {
+    const now: any = new Date();
+    if (now >= startDate && now <= endDate && isFetched) {
+      const duration: number = Math.floor((endDate - now) / 1000); // Duration in seconds
+
+      const days: number = Math.floor(duration / 86400); // Seconds in a day: 24 * 60 * 60
+      const hours: number = Math.floor((duration % 86400) / 3600); // Remaining seconds divided by seconds in an hour: 60 * 60
+      const minutes: number = Math.floor((duration % 3600) / 60); // Remaining seconds divided by seconds in a minute: 60
+      const seconds: number = Math.floor(duration % 60); // Remaining seconds
+
+      setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    } else {
+      setRemainingTime(null);
+    }
+  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (isFetched) {
+        calculateRemainingTime();
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [typeof window !== "undefined", isFetched]);
+
   return (
     <div className="bg-bg-1">
       {nftDetail && (
         <div className="mx-auto max-h-full min-h-screen w-full max-w-[1400px]   px-4 pt-12 font-storeFont ">
-          <div className=" mx-auto flex w-full max-w-7xl flex-col items-start  justify-between gap-4 sm:flex-row">
+          <div className=" mx-auto flex w-full max-w-7xl flex-col items-start justify-between  gap-4 space-y-12 sm:flex-row">
             {/* full nft image */}
             <div className="[min-w-[840px]]:mb-0  top-20  mb-4 h-full max-h-[500px] w-full max-w-xl md:sticky">
-              <div className="h-[450px] w-full  sm:px-0">
+              <div className="h-[450px] w-full  space-y-2 sm:px-0">
                 <Image
                   src={renderNFTImage(nftDetail)}
                   alt="/nft"
@@ -260,8 +292,20 @@ const NFTDetail = ({}: any) => {
                   height={400}
                   priority
                   quality={100}
-                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover"
+                  className="relative h-full  max-h-[500px] w-full  max-w-[700px] rounded-xl object-cover object-center"
                 />
+                {nftDetail?.sell_type?.includes("auction") && (
+                  <div className="rounded-md bg-white p-2 text-center  ">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-slate-500">
+                        Sale ends {endDate?.toLocaleString()}
+                      </span>
+                      <span className=" text-lg text-slate-700">
+                        {remainingTime ? remainingTime : ""}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -297,89 +341,138 @@ const NFTDetail = ({}: any) => {
                       </p>
                     </div>
                   )}
-                  {nftDetail?.sell_type?.includes("offer") && (
-                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                      <p className="text-tx-5 text-sm">Highest Offer</p>
-                      <span className=" text-lg font-bold">
-                        {nftDetail.highest_offer
-                          ? (+nftDetail?.highest_offer).toFixed(2)
-                          : (+nftDetail.min_price).toFixed(2)}
+                  {(nftDetail?.sell_type?.includes("offer") ||
+                    nftDetail?.sell_type?.includes("auction")) && (
+                      <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                        <p className="text-tx-5 text-sm">
+                          Highest{" "}
+                          {nftDetail?.sell_type?.includes("auction")
+                            ? "Bid"
+                            : "Offer"}
+                        </p>
+                        <span className=" text-lg font-bold">
+                          {nftDetail.highest_offer
+                            ? (+nftDetail?.highest_offer).toFixed(2)
+                            : (+nftDetail.min_price).toFixed(2)}
 
-                        <span className="ml-1 text-xs lowercase text-slate-500">
-                          MATIC
+                          <span className="ml-1 text-xs lowercase text-slate-500">
+                            MATIC
+                          </span>
                         </span>
-                      </span>
-                      <p className="text-xs lowercase text-slate-500">
-                        {`$ ${
-                          nftDetail?.highest_offer
-                            ? (
-                                +nftDetail?.highest_offer *
-                                (+maticToUsd as number)
-                              ).toFixed(2)
-                            : (
-                                +nftDetail?.min_price * (+maticToUsd as number)
-                              ).toFixed(2)
-                        }`}
-                      </p>
+                        <p className="text-xs lowercase text-slate-500">
+                          {`$ ${
+                            nftDetail?.highest_offer
+                              ? (
+                                  +nftDetail?.highest_offer *
+                                  (+maticToUsd as number)
+                                ).toFixed(2)
+                              : (
+                                  +nftDetail?.min_price *
+                                  (+maticToUsd as number)
+                                ).toFixed(2)
+                          }`}
+                        </p>
+                      </div>
+                    )}
+                </div>
+                {user == null ||
+                user?.id !== nftDetail?.store_customer_id?.$oid ? (
+                  <>
+                    <div className="mb-3 flex flex-col gap-2 md:flex-row">
+                      {nftDetail?.sell_type?.includes("fixed") && (
+                        <button
+                          type="button"
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            buyNFT();
+                          }}
+                        >
+                          BUY
+                        </button>
+                      )}
+                      {nftDetail?.sell_type?.includes("offer") && (
+                        <button
+                          type="button"
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            nftDetail?.is_offered
+                              ? offerNFT(updateOffer)
+                              : offerNFT();
+                          }}
+                        >
+                          {nftDetail.is_offered ? "Update Offer" : "Offer"}
+                        </button>
+                      )}
+                      {nftDetail?.sell_type?.includes("auction") &&
+                        remainingTime && (
+                          <button
+                            type="button"
+                            className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              nftDetail?.is_offered
+                                ? offerNFT(updateOffer)
+                                : offerNFT();
+                            }}
+                          >
+                            {nftDetail.is_offered ? "Update Bid" : "Bid Now"}
+                          </button>
+                        )}
+
+                      {showPop && nftDetail && (
+                        <Popup
+                          open={showPop}
+                          nft={nftDetail}
+                          setBuy={setShowPop}
+                          price={+nftDetail?.price}
+                          tax={+nftDetail?.tax}
+                          accountBalance={+accountBalance}
+                          setAccountBalance={setAccountBalance}
+                          refetch={refetch}
+                        />
+                      )}
+
+                      {showOfferPop && (
+                        <OfferPopUp
+                          nft={nftDetail}
+                          open={showOfferPop}
+                          setBuy={setShowOfferPop}
+                          price={+nftDetail?.price}
+                          tax={+nftDetail?.tax}
+                          accountBalance={+accountBalance}
+                          wmaticBalance={+wmaticBalance}
+                          id={updateOffer}
+                          is_updated={nftDetail?.is_offered ? true : false}
+                          is_offer={
+                            nftDetail?.sell_type?.includes("auction")
+                              ? false
+                              : true
+                          }
+                          refetch={AllRefetch}
+                        />
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="mb-3 flex flex-col gap-2 md:flex-row">
-                  {nftDetail?.sell_type?.includes("fixed") && (
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        buyNFT();
-                      }}
-                    >
-                      BUY
-                    </button>
-                  )}
-                  {nftDetail?.sell_type?.includes("offer") && (
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        nftDetail?.is_offered
-                          ? offerNFT(updateOffer)
-                          : offerNFT();
-                      }}
-                    >
-                      {nftDetail.is_offered ? "Update Offer" : "Offer"}
-                    </button>
-                  )}
-
-                  {showPop && nftDetail && (
-                    <Popup
-                      open={showPop}
-                      nft={nftDetail}
-                      setBuy={setShowPop}
-                      price={+nftDetail?.price}
-                      tax={+nftDetail?.tax}
-                      accountBalance={+accountBalance}
-                      setAccountBalance={setAccountBalance}
-                      refetch={refetch}
-                    />
-                  )}
-
-                  {showOfferPop && (
-                    <OfferPopUp
-                      nft={nftDetail}
-                      open={showOfferPop}
-                      setBuy={setShowOfferPop}
-                      price={+nftDetail?.price}
-                      tax={+nftDetail?.tax}
-                      accountBalance={+accountBalance}
-                      wmaticBalance={+wmaticBalance}
-                      id={updateOffer}
-                      is_updated={nftDetail?.is_offered ? true : false}
-                      refetch={AllRefetch}
-                    />
-                  )}
-                </div>
+                  </>
+                ) : user !== null ||
+                  user?.id === nftDetail?.store_customer_id?.$oid ? (
+                  <>
+                    <div className="mb-3 flex flex-col gap-2 md:flex-row">
+                      {nftDetail?.sell_type?.includes("fixed") && (
+                        <button
+                          type="button"
+                          disabled={true}
+                          className="w-full rounded-3xl bg-bg-3 p-4 text-white hover:bg-bg-3/75"
+                        >
+                          Already Owned
+                        </button>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
 
               {/* nft detail */}
@@ -398,7 +491,7 @@ const NFTDetail = ({}: any) => {
                   >
                     <h2>
                       <AccordionButton
-                        _expanded={{ bg: "gray", color: "white" }}
+                        _expanded={{ bg: "lightgray", color: "black" }}
                         className=" group rounded-t-xl"
                       >
                         {/* <Box as="span" flex="1" textAlign="left">
@@ -451,6 +544,17 @@ const NFTDetail = ({}: any) => {
                       id={id}
                       offer_id={updateOffer}
                       nftDetail={nftDetail}
+                      is_offer={true}
+                      {...modalParam}
+                    />
+                  )}
+                  {nftDetail?.sell_type.includes("auction") && (
+                    <OfferList
+                      id={id}
+                      offer_id={updateOffer}
+                      nftDetail={nftDetail}
+                      is_offer={false}
+                      remainingTime={remainingTime}
                       {...modalParam}
                     />
                   )}
@@ -460,11 +564,13 @@ const NFTDetail = ({}: any) => {
           </div>
 
           {/* collection */}
-          <CollectionList
-            id={nftDetail?._id.$oid}
-            contract_id={nftDetail?.contract_id.$oid}
-            NFTCollection={NFTCollection}
-          />
+          <div className="mt-10 w-full">
+            <CollectionList
+              id={nftDetail?._id.$oid}
+              contract_id={nftDetail?.contract_id.$oid}
+              NFTCollection={NFTCollection}
+            />
+          </div>
         </div>
       )}
       <LoadingeModal modalState={isLoading || nftLoading || offerLoading} />
@@ -520,7 +626,9 @@ const OfferList: any = ({
   addToast,
   nftDetail,
   offerNFT,
+  is_offer,
   refetch,
+  remainingTime,
   AllRefetch,
 }: any) => {
   const { user }: any = useSelector((state: RootState) => state.user);
@@ -576,7 +684,7 @@ const OfferList: any = ({
   const cancelOffer = async (data: any) => {
     try {
       setSelectedOffer(data);
-      setTitle("Offer");
+      setTitle(is_offer ? "Offer" : "Bid");
       setIsModal(true);
     } catch (e) {
       console.log(e);
@@ -586,9 +694,9 @@ const OfferList: any = ({
   return (
     <AccordionItem className="border-none">
       <h2>
-        <AccordionButton _expanded={{ bg: "gray", color: "white" }}>
+        <AccordionButton _expanded={{ bg: "lightgray", color: "black" }}>
           <summary className="flex-1 cursor-pointer list-none items-center justify-between p-3 text-left font-medium">
-            <span>NFT Offers</span>
+            <span>{is_offer ? "NFT Offer" : "NFT Bids"}</span>
           </summary>
           <AccordionIcon />
         </AccordionButton>
@@ -628,57 +736,131 @@ const OfferList: any = ({
                     <p className=" flex flex-row gap-2">
                       {displayDate(item?.created_at)}
                       {item?.store_customers?.id == user?.id && (
-                        <p>
-                          <Menu placement="bottom-end">
-                            <MenuButton
-                              transition="all 0.3s"
-                              className="mx-auto flex h-fit w-fit  items-center rounded-full  px-2"
-                            >
-                              <i className="text-md fas fa-ellipsis-v  text-slate-500 hover:text-gray-950" />
-                            </MenuButton>
-                            <Portal>
-                              <MenuList
-                                className="absolute -top-7 right-2 bg-bg-3  p-4  text-white hover:bg-bg-3/75"
-                                p={0}
-                                minW="0"
-                                w={"3rem"}
-                              >
-                                <MenuItem p={0}>
-                                  <Tooltip
-                                    label={"Update Offer"}
-                                    placement="left"
-                                    className="w-full  font-normal  "
+                        <>
+                          {is_offer ? (
+                            <p>
+                              <Menu placement="bottom-end">
+                                <MenuButton
+                                  transition="all 0.3s"
+                                  className="mx-auto flex h-fit w-fit  items-center rounded-full  px-2"
+                                >
+                                  <i className="text-md fas fa-ellipsis-v  text-slate-500 hover:text-gray-950" />
+                                </MenuButton>
+                                <Portal>
+                                  <MenuList
+                                    className="absolute -top-7 right-2 bg-bg-3  p-4  text-white hover:bg-bg-3/75"
+                                    p={0}
+                                    minW="0"
+                                    w={"3rem"}
                                   >
-                                    <div
-                                      className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      onClick={() => {
-                                        offerNFT(item?.id);
-                                      }}
-                                    >
-                                      <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
-                                    </div>
-                                  </Tooltip>
-                                </MenuItem>
-                                <MenuItem p={0}>
-                                  <Tooltip
-                                    label={"Cancel Offer"}
-                                    placement="left"
-                                    className="w-full  font-normal  "
+                                    <MenuItem p={0}>
+                                      <Tooltip
+                                        label={
+                                          is_offer
+                                            ? "Update Offer"
+                                            : "Update Bid"
+                                        }
+                                        placement="left"
+                                        className="w-full  font-normal  "
+                                      >
+                                        <div
+                                          className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                          onClick={() => {
+                                            offerNFT(item?.id);
+                                          }}
+                                        >
+                                          <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
+                                        </div>
+                                      </Tooltip>
+                                    </MenuItem>
+                                    <MenuItem p={0}>
+                                      <Tooltip
+                                        label={
+                                          is_offer
+                                            ? "Cancel Offer"
+                                            : "Cancel Bid"
+                                        }
+                                        placement="left"
+                                        className="w-full  font-normal  "
+                                      >
+                                        <div
+                                          className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                          onClick={() => {
+                                            cancelOffer(item);
+                                          }}
+                                        >
+                                          <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
+                                        </div>
+                                      </Tooltip>
+                                    </MenuItem>
+                                  </MenuList>
+                                </Portal>
+                              </Menu>
+                            </p>
+                          ) : remainingTime ? (
+                            <p>
+                              <Menu placement="bottom-end">
+                                <MenuButton
+                                  transition="all 0.3s"
+                                  className="mx-auto flex h-fit w-fit  items-center rounded-full  px-2"
+                                >
+                                  <i className="text-md fas fa-ellipsis-v  text-slate-500 hover:text-gray-950" />
+                                </MenuButton>
+                                <Portal>
+                                  <MenuList
+                                    className="absolute -top-7 right-2 bg-bg-3  p-4  text-white hover:bg-bg-3/75"
+                                    p={0}
+                                    minW="0"
+                                    w={"3rem"}
                                   >
-                                    <div
-                                      className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
-                                      onClick={() => {
-                                        cancelOffer(item);
-                                      }}
-                                    >
-                                      <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
-                                    </div>
-                                  </Tooltip>
-                                </MenuItem>
-                              </MenuList>
-                            </Portal>
-                          </Menu>
-                        </p>
+                                    <MenuItem p={0}>
+                                      <Tooltip
+                                        label={
+                                          is_offer
+                                            ? "Update Offer"
+                                            : "Update Bid"
+                                        }
+                                        placement="left"
+                                        className="w-full  font-normal  "
+                                      >
+                                        <div
+                                          className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                          onClick={() => {
+                                            offerNFT(item?.id);
+                                          }}
+                                        >
+                                          <i className="text-md fas fa-pen group-hover:text-boxdark cursor-pointer"></i>
+                                        </div>
+                                      </Tooltip>
+                                    </MenuItem>
+                                    <MenuItem p={0}>
+                                      <Tooltip
+                                        label={
+                                          is_offer
+                                            ? "Cancel Offer"
+                                            : "Cancel Bid"
+                                        }
+                                        placement="left"
+                                        className="w-full  font-normal  "
+                                      >
+                                        <div
+                                          className=" group mx-auto flex cursor-pointer items-center  rounded-md p-2 text-center hover:bg-gray-200"
+                                          onClick={() => {
+                                            cancelOffer(item);
+                                          }}
+                                        >
+                                          <i className="text-md fas fa-xmark group-hover:text-boxdark cursor-pointer"></i>
+                                        </div>
+                                      </Tooltip>
+                                    </MenuItem>
+                                  </MenuList>
+                                </Portal>
+                              </Menu>
+                            </p>
+                          ) : (
+                            ""
+                          )}
+                        </>
                       )}
                     </p>
                   </div>
@@ -689,7 +871,7 @@ const OfferList: any = ({
             })
           ) : (
             <div className=" flex items-center justify-center text-center text-lg">
-              No Offers Yet!
+              {is_offer ? "No Offers Yet!" : "No Bids Yet!"}
             </div>
           )}
           {NFTOffer && NFTOffer?.length > 0 && (

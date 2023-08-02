@@ -224,11 +224,11 @@ const NFTListing = ({ contract_id }: any) => {
                 )
               }
               className={
-                "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2  lg:grid-cols-3 2xl:grid-cols-5"
+                "grid w-full grid-cols-1 gap-5 xxs:grid-cols-2  lg:grid-cols-4 2xl:grid-cols-5"
               }
             >
               {nfts?.map((nft: any, i: number) => (
-                <NFTCard nft={nft} key={i} refetch={refetch} />
+                <NFTCard nft={nft} key={i} refetch={refetch} is_purchase ={false}/>
               ))}
             </InfiniteScroll>
           </div>

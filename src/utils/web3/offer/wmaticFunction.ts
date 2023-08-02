@@ -15,8 +15,7 @@ export async function maticDeposit(
   ); //Contract Address
   let transaction_id;
   try {
-    const price = +conversionPrice?.toFixed(4);
-    console.log("convert :: ", price);
+    const price = +conversionPrice?.toFixed(5);
     const result = await WMATICContract.methods
       .deposit()
       .send({ from: account, value: toWei(price) })
@@ -45,7 +44,7 @@ export async function approvalWMATIC(
   ); //Contract Address
   let transaction_id;
   try {
-    const price = +totalPrice?.toFixed(4);
+    const price = +totalPrice?.toFixed(5);
 
     const result = await WMATICContract.methods
       .approve(MarketPlaceAddress.address, toWei(price))

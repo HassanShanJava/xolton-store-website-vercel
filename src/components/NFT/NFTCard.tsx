@@ -10,7 +10,7 @@ import { web3Init } from "~/store/slices/web3Slice";
 import Web3 from "web3";
 import { initWeb3 } from "~/utils/web3/web3Init";
 import { RootState } from "~/store/store";
-import { Tooltip, useToast } from "@chakra-ui/react";
+import { Tag, TagLabel, Tooltip, useToast } from "@chakra-ui/react";
 
 import Link from "next/link";
 import { CustomToast } from "../globalToast";
@@ -18,7 +18,7 @@ import OfferPopUp from "../Ui/OfferPopUp";
 import { getBalance } from "~/utils/web3/offer/wmaticFunction";
 import { useQuery } from "@tanstack/react-query";
 
-const NFTCard = ({ nft, refetch }: any) => {
+const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
   const [showPop, setShowPop] = useState(false);
   const [showStripePop, setShowStripePop] = useState(false);
   const [showOfferPop, setShowOfferPop] = useState(false);
@@ -28,7 +28,7 @@ const NFTCard = ({ nft, refetch }: any) => {
 
   // const toast = useToast();
   const { addToast } = CustomToast();
-
+  const { user }: any = useSelector((state: RootState) => state.user);
   const { account } = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
@@ -70,8 +70,6 @@ const NFTCard = ({ nft, refetch }: any) => {
     }
   );
 
-  console.log({ offer });
-
   const buyNFT = async () => {
     account == ""
       ? addToast({
@@ -79,7 +77,10 @@ const NFTCard = ({ nft, refetch }: any) => {
           message: "Connect Wallet",
           type: "error",
         })
-      : account == nft.creator_id
+      : user !== null && user?.wallet_address !== nft?.owner_id
+      ? setShowPop(true)
+      : account == nft.creator_id ||
+        account == nft?.store_makerorder?.baseAccount
       ? addToast({
           id: "connect-wallet-buy",
           message: "Owner cannot buy there own NFT",
@@ -91,7 +92,6 @@ const NFTCard = ({ nft, refetch }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     setAccountBalance(accountBalance);
   };
-  console.log({ nft });
 
   const offerNFT = async (offerid?: any) => {
     if (account === null || account === "") {
@@ -100,7 +100,10 @@ const NFTCard = ({ nft, refetch }: any) => {
         message: "Connect Wallet",
         type: "error",
       });
-    } else if (account == nft?.creator_id) {
+    } else if (
+      account === nft?.owner_id ||
+      account === nft?.store_makerorder?.baseAccount
+    ) {
       addToast({
         id: "connect-wallet-buy",
         message: "Owner cannot buy there own NFT",
@@ -120,26 +123,56 @@ const NFTCard = ({ nft, refetch }: any) => {
       setAccountBalance(accountBalance);
     }
   };
+  const listNft = () => {
+    payload.setOpenListing(true);
+    payload.setSelectNftListing({
+      ...nft,
+      accountBalance,
+      wmaticBalance,
+    });
+  };
+  const updateNft = () => {
+    payload.setIsModal(true);
+    payload.setTitle("Unlist");
+    payload.setSelectNftListing({
+      ...nft,
+      accountBalance,
+      wmaticBalance,
+    });
+  };
 
-  console.log(nft._id.$oid);
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  const firstDate: any = nft?.end_date && new Date();
+  const secondDate: any = nft?.end_date && new Date(nft?.end_date?.$date);
 
+  const diffDays =
+    nft?.end_date &&
+    Math.ceil((secondDate - firstDate) / (1000 * 60 * 60 * 24));
   return (
     <>
-      <div className=" mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
+      <div className=" group mx-auto h-auto w-full  max-w-[350px]   rounded-[20px] bg-[#fafafa] p-3 hover:bg-white">
         <a
           href={`/nft-details/${nft._id.$oid}${
             process.env.NEXT_PUBLIC_ENV !== "DEV" ? ".html" : ""
           }`}
         >
-          <div className={" relative h-80 max-h-[290px]  w-full"}>
+          <div className={" relative h-80 max-h-[290px]  w-full "}>
             <Image
               src={renderNFTImage(nft)}
               alt="/nft"
               fill
               priority
               quality={100}
-              className="mx-auto rounded-xl  object-cover "
+              className="mx-auto rounded-xl  object-cover  object-center"
             />
+            {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
+              <div className="absolute bottom-2 w-full pl-2 pr-2 opacity-0 transition duration-75 ease-in-out  group-hover:opacity-100 ">
+                <div className=" z-50  flex w-fit flex-col items-center  justify-end rounded-md bg-white pb-1 pl-2 pr-2 pt-1    opacity-70">
+                  <span className="text-xs">Days Left</span>
+                  <span className="text-sm  font-bold">{diffDays}</span>
+                </div>
+              </div>
+            )}
           </div>
         </a>
 
@@ -156,46 +189,114 @@ const NFTCard = ({ nft, refetch }: any) => {
             )}
 
             <p>
+              {nft?.price > 0 ? (
+                <>
+                  {nft?.price} <span className="text-xs lowercase">MATIC</span>
+                </>
+              ) : (
+                <>
+                  <Tag size="sm" colorScheme="red" borderRadius="full">
+                    <TagLabel>Not Listed</TagLabel>
+                  </Tag>
+                </>
+              )}
               {/* {nft?.sell_type?.includes("offer") ? nft?.min_price : nft?.price}{" "} */}
-              {nft?.price} <span className="text-xs lowercase">MATIC</span>
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-2 px-2">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                buyNFT();
-              }}
-              className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-            >
-              Buy
-            </button>
+            {!is_purchase &&
+            (user == null || user?.id !== nft?.store_customer_id?.$oid) ? (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    buyNFT();
+                  }}
+                  className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                >
+                  Buy
+                </button>
 
-            {nft?.sell_type?.includes("-offer") && !nft?.is_offered && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  offerNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                Offer Now
-              </button>
-            )}
-            {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  offerNFT();
-                }}
-                className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
-              >
-                Update Offer
-              </button>
+                {nft?.sell_type?.includes("-offer") && !nft?.is_offered && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    Offer Now
+                  </button>
+                )}
+                {nft?.sell_type?.includes("-auction") && diffDays > 0 && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    {!nft?.is_offered ? "Bid Now" : "Update Bid"}
+                  </button>
+                )}
+                {nft?.sell_type?.includes("fixed-offer") && nft?.is_offered && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      offerNFT();
+                    }}
+                    className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                  >
+                    Update Offer
+                  </button>
+                )}
+              </>
+            ) : is_purchase &&
+              (user != null || user?.id === nft?.store_customer_id?.$oid) ? (
+              <>
+                {!nft?.is_listed ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        listNft();
+                      }}
+                      className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                    >
+                      List NFT
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        updateNft();
+                      }}
+                      className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                    >
+                      Un List NFT
+                    </button>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  disabled={true}
+                  className="w-full  rounded-[6px] bg-bg-3 py-3 text-center font-storeFont text-white hover:bg-bg-3/75 "
+                >
+                  Already Owned
+                </button>
+              </>
             )}
 
             {showPop && (
@@ -223,11 +324,11 @@ const NFTCard = ({ nft, refetch }: any) => {
                 wmaticBalance={+wmaticBalance}
                 id={updateOffer}
                 is_updated={nft?.is_offered ? true : false}
+                is_offer={nft?.sell_type?.includes("auction") ? false : true}
                 setAccountBalance={setAccountBalance}
                 refetch={refetch}
               />
             )}
-            
           </div>
         </div>
       </div>

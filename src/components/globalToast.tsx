@@ -12,7 +12,7 @@ export const CustomToast = () => {
         status: newRes.type,
         position: 'top-left',
         isClosable: true,
-        duration: 2000,
+        duration: 1000,
         variant: 'solid',
       });
     }

@@ -17,6 +17,7 @@ import { CustomToast } from "../globalToast";
 import { StripeModal } from "./StripeModal";
 import { customTruncateHandler, renderNFTImage } from "~/utils/helper";
 import Image from "next/image";
+import { DetailSection } from "./ModalDetail";
 interface PopUpType {
   open: boolean;
   setBuy: Function;
@@ -39,6 +40,8 @@ const Popup = ({
   refetch,
 }: PopUpType) => {
   const router = useRouter();
+  const { user }: any = useSelector((state: RootState) => state.user);
+
   const {
     data: Stripetoken,
     isLoading,
@@ -66,95 +69,128 @@ const Popup = ({
   const { account }: any = useSelector((state: RootState) => state.web3);
   const { web3 } = useSelector((state: any) => state.web3);
 
-  const total: any = Number(+price + +tax);
+  const royalty: any = Number(+((+nft.royalties / 100) * price));
+  // const total: any = nft?.is_purchase
+  //   ? price + tax + royalty
+  //   : Number(+price + +tax);
+
+  const total: any = +price + +tax;
 
   const nftUpdate = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
+    mutationFn: async (newTodo) => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
+        method: "POST",
+        body: JSON.stringify(newTodo),
       });
+
+      const result = await response.json();
+      return result;
     },
   });
 
   const nftOrder = useMutation({
-    mutationFn: (newTodo) => {
-      return fetch(`${process.env.NEXT_PUBLIC_API_URL}/order-nft`, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo), // body data type must match "Content-Type" header
-      });
+    mutationFn: async (newTodo) => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order-nft`,
+        {
+          method: "POST",
+          body: JSON.stringify(newTodo),
+        }
+      );
+
+      const result = await response.json();
+      return result;
     },
   });
 
   const purchaseNFT = async () => {
-    if (accountBalance < total) {
-      addToast({
-        id: "transaction-id",
-        message: "Not Enough Balance",
-        type: "error",
-      });
-      return;
-    } else {
-      setIsPurchase(false);
-
-      const buyData = await buyNFT(web3, account, total, nft?.store_makerorder);
-
-      console.log(nft?.store_makerorder, { nft }, "nft payload");
-      if (buyData?.success) {
-        // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
-
-        const payload: any = {
-          id: nft._id.$oid,
-          owner: buyData.owner,
-          transaction_id: buyData.transaction_id,
-          is_listed: false,
-          status: "Purchase",
-          store_id: process.env.NEXT_PUBLIC_STORE_ID,
-        };
-
-        const payloadOrder: any = {
-          store_id: nft.store_id.$oid,
-          nft_id: nft._id.$oid,
-          owner_address: buyData?.owner,
-          transaction_id: buyData?.transaction_id,
-          nft_name: nft.name,
-          total_amount: total, // 2.04
-          net_amount: total - 2 * +nft.tax, // 1.96
-          total_tax: 2 * +nft.tax, // 0.08
-          sell_type: "fixed",
-          previous_owner_address: buyData?.previous_owner,
-        };
-
-        const data = await nftUpdate.mutateAsync(payload);
-        const dataOrder = await nftOrder.mutateAsync(payloadOrder);
-
+    try {
+      if (accountBalance < total) {
         addToast({
           id: "transaction-id",
-          message: "Transaction Completed",
-          type: "success",
-        });
-
-        refetch();
-        setIsPurchase(true);
-        setBuy(false);
-      } else {
-        addToast({
-          id: "transaction-id",
-          message: buyData.msg as string,
+          message: "Not Enough Balance",
           type: "error",
         });
+        return;
+      } else {
+        setIsPurchase(false);
 
-        setBuy(false);
-        router.push("/");
+        const buyData = await buyNFT(
+          web3,
+          account,
+          total,
+          nft?.store_makerorder,
+          royalty
+        );
+
+        if (buyData?.success || true) {
+          // console.log("PAYLOAD :: ",{ buyData.owner,buyData.transaction_id, nft.id,  })
+
+          const payload: any = {
+            id: nft._id.$oid,
+            owner: buyData.owner,
+            transaction_id: buyData.transaction_id,
+            is_listed: false,
+            status: "Purchase",
+            store_customer_id: user?.id,
+            store_id: process.env.NEXT_PUBLIC_STORE_ID,
+          };
+
+          const payloadOrder: any = {
+            store_id: nft.store_id.$oid,
+            nft_id: nft._id.$oid,
+            owner_address: buyData?.owner,
+            transaction_id: buyData?.transaction_id,
+            nft_name: nft.name,
+            total_amount: total, // 2.04
+            net_amount: total - 2 * +nft.tax, // 1.96
+            total_tax: 2 * +nft.tax, // 0.08
+            sell_type: "fixed",
+            amount: +(+(total - tax).toFixed(4)),
+            previous_owner_address: buyData?.previous_owner,
+            total_royalty: royalty,
+            is_store_admin:
+              process.env.NEXT_PUBLIC_STORE_ID !== nft.store_customer_id?.$oid
+                ? false
+                : true,
+            store_customer_id: user?.id,
+            cancel:
+              nft?.sell_type?.includes("offer") ||
+              nft?.sell_type?.includes("auction")
+                ? true
+                : false,
+          };
+
+          const dataOrder: any = await nftOrder.mutateAsync(payloadOrder);
+          if (dataOrder.success) {
+            const data: any = await nftUpdate.mutateAsync(payload);
+            if (data.success) {
+              addToast({
+                id: "transaction-id",
+                message: "Transaction Completed",
+                type: "success",
+              });
+
+              refetch();
+              setIsPurchase(true);
+              setBuy(false);
+            }
+          } else {
+            throw new Error("NFT update failed");
+          }
+        } else {
+          throw new Error(buyData.msg as string);
+        }
       }
+    } catch (e: any) {
+      addToast({
+        id: "transaction-id",
+        message: e.message,
+        type: "error",
+      });
+
+      setBuy(false);
+      router.push("/");
     }
   };
   const featureModelParam: any = {
@@ -213,64 +249,59 @@ const Popup = ({
                 </div>
                 {/* nft detail */}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-start gap-3 rounded-xl border border-gray-700 p-2">
-                    <div className="relative h-20 w-16">
-                      <Image
-                        src={renderNFTImage(nft)}
-                        alt="/"
-                        fill
-                        priority
-                        quality={100}
-                        className="mx-auto rounded-xl "
-                      />
-                    </div>
-                    <div>
-                      <p className="font-bold">NFT Info</p>
-                      <p>{nft.name}</p>
-                      <p className="text-xs">
-                        {customTruncateHandler(nft.creator_id, 20)}
-                      </p>
-                    </div>
-                  </div>
+                  <DetailSection nft={nft} />
                 </div>
 
                 <div className="m-6 rounded-xl  border border-slate-500 p-3 ">
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between text-xs ">
+                    <p className="  leading-relaxed text-slate-500">
                       Your balance
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className=" leading-relaxed text-slate-500">
                       {(+accountBalance).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between text-xs ">
+                    <p className="  leading-relaxed text-slate-500">
                       NFT Price
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className="  leading-relaxed text-slate-500">
                       {(+price).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex  items-center justify-between text-xs ">
+                    <p className=" leading-relaxed text-slate-500">
                       Service fee 2%
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
+                    <p className="  leading-relaxed text-slate-500">
                       {(+tax).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>
+                  {nft?.is_purchase && (
+                    <div className="relative flex items-center justify-between ">
+                      <p className=" text-xs leading-relaxed text-slate-500">
+                        Royalty
+                      </p>
+                      <p className=" text-xs leading-relaxed text-slate-500">
+                        {(+royalty).toFixed(5)}{" "}
+                        <span className="text-xs lowercase">MATIC</span>
+                      </p>
+                    </div>
+                  )}
 
-                  <div className="relative flex items-center justify-between ">
-                    <p className=" text-md leading-relaxed text-slate-500">
+                  <div className="relative flex items-center justify-between font-semibold ">
+                    <p className=" text-xs leading-relaxed text-slate-500">
                       You will pay
                     </p>
-                    <p className=" text-md leading-relaxed text-slate-500">
-                      {total.toFixed(5)}{" "}
+                    <p className=" text-xs leading-relaxed text-slate-500">
+                      {nft?.is_purchase
+                        ? (+total + +royalty).toFixed(5)
+                        : (+total).toFixed(5)}{" "}
                       <span className="text-xs lowercase">MATIC</span>
                     </p>
                   </div>

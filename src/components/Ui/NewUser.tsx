@@ -46,7 +46,6 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
       };
 
       const res = await registerConnect.mutateAsync(payload);
-      console.log({ res }, "res register");
 
       if (res.store_customer !== null) {
         addToast({
@@ -62,7 +61,6 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
             chainId: data?.chainId,
           })
         );
-        console.log(res.store_customer)
         localStorage.setItem("store_customer", JSON.stringify(res.storeCustomer));
       dispatch(setUserProcess(res.storeCustomer));
 

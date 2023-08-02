@@ -5,13 +5,7 @@ import MarketPlaceAddress from "./contractData/NFTMarket-address.json";
 import Web3 from "web3";
 const toWei: any = (num: any) => Web3.utils.toWei(num.toString(), "ether");
 
-export async function buyNFT(
-  web3: any,
-  account: string,
-  totalPrice: Int16Array,
-  makerOrder: any,
-  royalty: Int16Array
-) {
+export async function offerAccept(web3: any, account: string, makerOrder: any) {
   const makeArr: any = [];
   const takeArr: any = [];
   // make contract Instance
@@ -22,31 +16,32 @@ export async function buyNFT(
 
   try {
     makeArr.push(
-      makerOrder?.isOrderAsk,
+      // makerOrder?.isOrderAsk,
+      false,
       makerOrder?.signer,
       makerOrder?.baseAccount,
       makerOrder?.nftContract,
-      makerOrder?.signer,
+      account,
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId,
       toWei(makerOrder?.tax).toString(),
-      toWei(royalty).toString(),
+      toWei(makerOrder?.royalty)?.toString(),
       makerOrder?.nonce,
       makerOrder?.signed_v,
       makerOrder?.signed_r,
       makerOrder?.signed_s
     );
     takeArr.push(
-      false,
+      true,
       account,
       toWei(makerOrder?.price).toString(),
       makerOrder?.tokenId
     );
 
-    let transaction_id;
+    let transaction_id: any;
     const result = await marketPlacecContract.methods
-      .matchAskWithTakerBid(takeArr, makeArr)
-      .send({ from: account, value: toWei(totalPrice) })
+      .matchBidWithTakerAsk(takeArr, makeArr)
+      .send({ from: account })
       .on("transactionHash", async (hash: string) => {
         transaction_id = hash;
         console.log("Hash... ", transaction_id);
@@ -54,13 +49,14 @@ export async function buyNFT(
     return {
       success: true,
       transaction_id: transaction_id,
-      previous_owner: makerOrder?.signer,
-      owner: account,
+      previous_owner_address: account,
+      owner_address: makerOrder?.signer,
+      // sell_type: 'offer',
     };
     // return { success: true, transaction_id: "123",previous_owner:"2124",owner:"121131213" };
   } catch (error: any) {
     console.log("ERROR :: ", error);
     console.log("error::", error);
-    return { success: false, msg: error?.message as string };
+    return { success: false, message: error?.message as string };
   }
 }

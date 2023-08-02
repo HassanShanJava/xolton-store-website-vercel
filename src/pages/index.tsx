@@ -39,7 +39,7 @@ export async function getStaticProps() {
 
   const navData = result?.data?.navbar || [];
   const webData = result?.data?.website || {};
-  const seoData = result?.data?.seo[0] || {};
+  const seoData = result?.data?.seo || {};
 
   return { props: { navData, webData, seoData } };
 }

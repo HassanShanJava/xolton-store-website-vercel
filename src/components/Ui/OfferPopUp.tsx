@@ -27,12 +27,14 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { StripeModal } from "./StripeModal";
 import Image from "next/image";
+import { DetailSection } from "./ModalDetail";
 
 interface OfferPopUpType {
   open: boolean;
   setBuy: Function;
   price: number;
   tax: number;
+  is_offer: boolean;
   nft: any;
   accountBalance: number;
   wmaticBalance: number;
@@ -47,6 +49,7 @@ const OfferPopUp = ({
   setBuy,
   nft,
   price,
+  is_offer,
   tax,
   accountBalance,
   setAccountBalance,
@@ -82,7 +85,11 @@ const OfferPopUp = ({
 
   const [isPurchase, setIsPurchase] = useState<any>(""); //for loader
   const [isModal, setIsModal] = useState(false); //for loader
-  const [inputOffer, setInputOffer] = useState("");
+  const [inputOffer, setInputOffer] = useState(
+    nft?.highest_offer
+      ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(3)
+      : nft?.min_price?.toFixed(3)
+  );
   const { addToast } = CustomToast();
   const offerUpload = useMutation({
     mutationFn: async (payload: any) => {
@@ -133,13 +140,14 @@ const OfferPopUp = ({
 
     {
       heading: "Signature",
-      text: "Sign the message to place your offer on this NFT.",
+      text: `Sign the message to place your ${
+        is_offer ? "offer" : "bid"
+      }  on this NFT.`,
     },
   ];
 
   // step 3
   const signature = async () => {
-    console.log("NFT :: ", nft);
 
     const sign_payload = {
       nftContract: nft.store_makerorder?.nftContract,
@@ -148,9 +156,9 @@ const OfferPopUp = ({
       baseAccount: nft.store_makerorder?.baseAccount,
       tokenId: nft.store_makerorder?.tokenId,
       sign_price: parseFloat(inputOffer).toFixed(5),
+      royalty: +((+nft.royalties / 100) * +inputOffer).toFixed(5),
     };
 
-    console.log({ sign_payload }, "sign_payload");
 
     const signature_result = await signSignature(sign_payload, web3);
     if (signature_result?.success) {
@@ -193,14 +201,14 @@ const OfferPopUp = ({
           nft_id: nft?._id.$oid,
           offer_amount: +inputOffer,
           store_customer_id: user?.id,
-          sell_type: "offer",
+          sell_type: is_offer ? "offer" : "auction",
           is_order_ask: true,
           nft_owner: nft.store_makerorder?.signer,
           base_account: nft.store_makerorder?.baseAccount,
           nft_contract: nft.store_makerorder?.nftContract,
           signer: account,
           tokenId: nft?.store_makerorder?.tokenId,
-          tax: +((2 / 100) * +inputOffer),
+          tax: +((2 / 100) * +inputOffer).toFixed(5),
           nonce: data?.nonce?.toString() || "",
           signed_v: parseInt(signature.substring(128, 130), 16).toString(),
           signed_r: "0x" + signature.substring(0, 64),
@@ -209,13 +217,11 @@ const OfferPopUp = ({
 
         let response;
         if (is_updated) {
-          console.log({ id, offer_id: id, ...payload }, "offer update");
           response = await offerUpdate.mutateAsync({
             // offer_id: id,
             ...payload,
           });
         } else {
-          console.log({ payload }, "offer create ");
           response = await offerUpload.mutateAsync(payload);
         }
 
@@ -228,8 +234,8 @@ const OfferPopUp = ({
           addToast({
             id: "offer-error",
             message: is_updated
-              ? "Your Offer Updated Successfully!"
-              : "Your Offer Uploaded Successfully!",
+              ? `Your ${is_offer ? "Offer" : "Bid"} Updated Successfully!`
+              : `Your ${is_offer ? "Offer" : "Bid"} Placed Successfully!`,
 
             type: "success",
           });
@@ -254,15 +260,17 @@ const OfferPopUp = ({
       setIsModal(true);
       dispatch(setNftOfferCreateProcess(1)); //false conver first
       const remainbalance: any = total_price - wmaticBalance;
-      console.log({ remainbalance }, "remainbalance");
 
-      const result = await maticDeposit(web3, account, remainbalance);
+      const result = await maticDeposit(
+        web3,
+        account,
+        +remainbalance.toFixed(5)
+      );
 
       if (result.success) {
         dispatch(setNftOfferCreateProcess(2)); //false conver first
         try {
           const data = await approval();
-          console.log(data, "offer");
           const signature = data?.sign.substring(2);
 
           const payload: any = {
@@ -270,7 +278,8 @@ const OfferPopUp = ({
             nft_id: nft?._id.$oid,
             offer_amount: +inputOffer,
             store_customer_id: user?.id,
-            sell_type: "offer",
+            sell_type: is_offer ? "offer" : "auction",
+
             // sell_type: "fixed-offer",
             is_order_ask: true,
             nft_owner: nft.store_makerorder?.signer,
@@ -287,13 +296,11 @@ const OfferPopUp = ({
 
           let response;
           if (is_updated) {
-            console.log({ id }, "update bro");
             response = await offerUpdate.mutateAsync({
               // offer_id: id,
               ...payload,
             });
           } else {
-            console.log({ payload }, "payload creareted");
             response = await offerUpload.mutateAsync(payload);
           }
 
@@ -306,8 +313,8 @@ const OfferPopUp = ({
             addToast({
               id: "offer-error",
               message: is_updated
-                ? "Your Offer Updated Successfully!"
-                : "Your Offer Uploaded Successfully!",
+                ? `Your ${is_offer ? "Offer" : "Bid"} Updated Successfully!`
+                : `Your ${is_offer ? "Offer" : "Bid"} Placed Successfully!`,
               type: "success",
             });
           } else {
@@ -347,7 +354,7 @@ const OfferPopUp = ({
 
   const offerdetails = [
     {
-      title: "Min Price:",
+      title: "Min Price",
       values: nft?.highest_offer
         ? (nft?.highest_offer + 0.1 * nft?.highest_offer)?.toFixed(5)
         : nft?.min_price?.toFixed(5),
@@ -367,6 +374,13 @@ const OfferPopUp = ({
       title: "Service fee 2%",
       values: inputOffer
         ? (0.02 * Number(inputOffer)).toFixed(5) //2% tax included
+        : (0).toFixed(5),
+      symbol: "matic",
+    },
+    {
+      title: "Royalty",
+      values: inputOffer
+        ? ((+nft?.royalties / 100) * Number(inputOffer)).toFixed(5) //2% tax included
         : (0).toFixed(5),
       symbol: "matic",
     },
@@ -400,7 +414,10 @@ const OfferPopUp = ({
               <div className="relative flex  w-full flex-col rounded-lg border-0 bg-white  shadow-lg outline-none focus:outline-none">
                 {/*header*/}
                 <div className="mb-3 flex w-full items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
-                  <h3 className="text-3xl ">Place an Offer</h3>
+                  <h3 className="text-3xl ">
+                    {is_updated ? "Update" : "Place"}{" "}
+                    {is_offer ? "an Offer" : "a Bid"}
+                  </h3>
                   <div
                     onClick={(e) => {
                       e.preventDefault();
@@ -434,25 +451,7 @@ const OfferPopUp = ({
 
                 {/* nft detail */}
                 <div className="mx-3 p-3">
-                  <div className="flex items-center justify-start gap-3 rounded-xl border border-gray-700 p-2">
-                    <div className="relative h-20 w-16">
-                      <Image
-                        src={renderNFTImage(nft)}
-                        alt="/"
-                        fill
-                        priority
-                        quality={100}
-                        className="mx-auto rounded-xl "
-                      />
-                    </div>
-                    <div className="w-fit">
-                      <p className="font-bold">NFT Info</p>
-                      <p>{nft.name}</p>
-                      <p className="text-xs">
-                        {customTruncateHandler(nft.creator_id, 20)}
-                      </p>
-                    </div>
-                  </div>
+                  <DetailSection nft={nft} />
                 </div>
 
                 <form
@@ -462,39 +461,56 @@ const OfferPopUp = ({
                 >
                   <div className="m-4">
                     <Input
-                      placeholder="Offer Price"
-                      defaultValue={
-                        nft.is_offered
-                          ? nft?.highest_offer + 0.1 * nft?.highest_offer //10% higher than previous highest bid
-                          : null
-                      }
+                      placeholder={`${is_offer ? "Offer" : "Bid"} Price`}
+                      defaultValue={inputOffer}
                       min={
                         nft.highest_offer
-                          ? nft?.highest_offer + 0.1 * nft?.highest_offer
-                          : nft?.min_price
+                          ? +(
+                              nft?.highest_offer +
+                              0.1 * nft?.highest_offer
+                            )?.toFixed(3)
+                          : +nft?.min_price?.toFixed(3)
                       }
                       type="number"
-                      step={"any"}
+                      step={0.001}
                       required
-                      maxLength={2}
+                      // max={2}
                       onChange={(e) => setInputOffer(e.target.value)}
                     />
                   </div>
-                  {offerdetails.map((item, i) => (
-                    <div key={i} className="mx-3   p-1 ">
-                      <div className="relative flex items-center justify-between ">
-                        <p className=" text-md leading-relaxed text-slate-500">
-                          {item.title}
-                        </p>
-                        <p className=" text-md leading-relaxed text-slate-500">
-                          {item.values}{" "}
-                          <span className="text-xs lowercase">
-                            {item.symbol}
-                          </span>
-                        </p>
+                  <div className="border-1 mx-3 mb-2    rounded-lg border p-2 ">
+                    {offerdetails.map((item, i) => (
+                      <div key={i} className="  mx-2  p-1 ">
+                        {item.values > 0 && item?.title !== "Royalty" ? (
+                          <div className="relative flex items-center justify-between ">
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.title}
+                            </p>
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.values}{" "}
+                              <span className="text-xs lowercase">
+                                {item.symbol}
+                              </span>
+                            </p>
+                          </div>
+                        ) : item.values > 0 && nft?.is_purchase ? (
+                          <div className="relative flex items-center justify-between ">
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.title}
+                            </p>
+                            <p className=" text-xs leading-relaxed text-slate-500">
+                              {item.values}{" "}
+                              <span className="text-xs lowercase">
+                                {item.symbol}
+                              </span>
+                            </p>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                   {/*footer*/}
                   <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 px-6 pt-2">
                     <button
@@ -503,7 +519,17 @@ const OfferPopUp = ({
                       disabled={isPurchase}
                     >
                       {isPurchase !== false ? (
-                        "OFFER NOW"
+                        is_offer ? (
+                          is_updated ? (
+                            "UPDATE OFFER"
+                          ) : (
+                            "OFFER NOW"
+                          )
+                        ) : is_updated ? (
+                          "UPDATE BID"
+                        ) : (
+                          "BID NOW"
+                        )
                       ) : (
                         <>
                           <div className="flex items-center justify-center py-1.5">
@@ -539,10 +565,10 @@ const OfferPopUp = ({
       )}
       <OfferSignModal
         modalState={isModal}
-        title={"Place Offer for NFT"}
+        title={`Place ${is_offer ? "Offer" : "Bid"}  for NFT`}
         setModalState={setIsModal}
         offerStepsData={offerStepsData}
-        type={"offerNft"}
+        type={is_offer ? "offerNft" : "bidNft"}
       />
     </>
   );

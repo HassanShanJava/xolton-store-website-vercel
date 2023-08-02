@@ -36,6 +36,11 @@ export function renderNFTImage(nft: any) {
     ? ""
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.thumb}`;
 }
+export function renderImage(nft: any) {
+  return  !nft && nft === ""
+    ? ""
+    : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft}`;
+}
 export function renderNFTIcon(nft: any) {
   return `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.logo_image}`;
 }
@@ -105,7 +110,6 @@ export async function loginConnectInfo(payload: any) {
       }
     ).then(res=>res.json());
 
-    console.log({response},"response login connect")
     return response;
 
   } catch (e) {
@@ -151,3 +155,10 @@ export async function getCustomerConnectInfo() {
 
   return response;
 } 
+
+export function customEmailTruncateHandler(str = "", n = 15) {
+  const myArray: any = str.split("@");
+  return myArray[0]?.length > n
+    ? myArray[0]?.slice(0, n) + "***@" + myArray[1]
+    : str;
+}
