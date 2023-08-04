@@ -67,7 +67,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
             let account = await window.ethereum.request({
               method: "eth_requestAccounts",
             });
-
+           
             if (
               account[0]?.toLowerCase() === store?.wallet_address?.toLowerCase()
             ) {
@@ -178,20 +178,27 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           );
           dispatch(setUserProcess(response.storeCustomer));
         } else {
-          if (
-            data?.message?.message === "Please install MetaMask" ||
-            data.message == "Please install MetaMask"
-          ) {
-            window.location.href = `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`;
-          } else {
-            addToast({
-              id: "connect-wallet",
-              message: data?.message,
-              type: "error",
-              position: "top-right",
-            });
-          }
+           if (
+             data?.message?.message === "Please install MetaMask" ||
+             data.message == "Please install MetaMask"
+           ) {
+             window.location.href = `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`;
+           } else {
+             addToast({
+               id: "connect-wallet",
+               message: data?.message,
+               type: "error",
+               position: "top-right",
+             });
+           }
         }
+        // dispatch(
+        //   web3Init({
+        //     web3: data?.web3,
+        //     account: data?.account,
+        //     chainId: data?.chainId,
+        //   })
+        // );
       }
     } catch (error) {
       console.log(error);
@@ -238,6 +245,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
     const accountBalance = web3?.utils.fromWei(balance, "ether");
     let wmaticBalance: any = await getBalance(web3, account);
     wmaticBalance = web3?.utils.fromWei(wmaticBalance?.amount, "ether");
+
 
     setUserInfo({
       ...user,

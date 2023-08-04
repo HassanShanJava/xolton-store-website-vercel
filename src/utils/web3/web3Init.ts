@@ -23,14 +23,34 @@ export async function initWeb3() {
             params: [{ chainId: maticChainId }],
           });
         } catch (switchError: any) {
-          console.log({ switchError });
-          if (switchError.code === 4902) {
-            // console.log(switchError)
+          // console.log({ switchError });
+          const params = [
+            {
+              chainId: "0x13881",
+              chainName: "Mumbai",
+              nativeCurrency: {
+                name: "MATIC",
+                symbol: "MATIC",
+                decimals: 18,
+              },
+              rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+              blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+            },
+          ];
+          await window?.ethereum
+            ?.request({ method: "wallet_addEthereumChain", params })
+            ?.then(() => console.log("Success"))
+            ?.catch((error: any) => {
+              console.log("Error", error?.message);
+              throw error?.message;
+            });
+          // if (switchError.code === 4902) {
+          //   // console.log(switchError)
 
-            throw "This network is not available in your metamask, please add it";
-          }
+          //   throw "This network is not available in your metamask, please add it";
+          // }
           // throw switchError?.message;
-          throw "This network is not available in your metamask, please add it";
+          // throw "This network is not available in your metamask, please add it";
         }
       }
       const account = accounts[0];
