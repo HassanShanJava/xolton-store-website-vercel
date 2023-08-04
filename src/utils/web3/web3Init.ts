@@ -50,7 +50,6 @@ export async function initWeb3() {
           //   throw "This network is not available in your metamask, please add it";
           // }
           // throw switchError?.message;
-          // throw "This network is not available in your metamask, please add it";
         }
       }
       const account = accounts[0];
