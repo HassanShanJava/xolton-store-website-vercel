@@ -23,18 +23,25 @@ export async function initWeb3() {
             params: [{ chainId: maticChainId }],
           });
         } catch (switchError: any) {
+          console.log({ switchError });
           if (switchError.code === 4902) {
             // console.log(switchError)
 
             throw "This network is not available in your metamask, please add it";
           }
-          throw switchError?.message;
+          // throw switchError?.message;
+          throw "This network is not available in your metamask, please add it";
         }
       }
       const account = accounts[0];
 
       // return { web3, account,chainId };
-      return { success: true, web3: web3, account: account, chainId: maticChainId };
+      return {
+        success: true,
+        web3: web3,
+        account: account,
+        chainId: maticChainId,
+      };
     }
   } catch (err) {
     console.log("ERR : ", err);
