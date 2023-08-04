@@ -199,13 +199,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
                 position: "top-right",
               });
         }
-        dispatch(
-          web3Init({
-            web3: data?.web3,
-            account: data?.account,
-            chainId: data?.chainId,
-          })
-        );
+        
       }
     } catch (error) {
       console.log(error);
