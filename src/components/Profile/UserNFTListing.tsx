@@ -46,7 +46,7 @@ const UserNFTListing = ({ is_purchase }: any) => {
     },
     {
       refetchOnWindowFocus: false,
-      enabled: is_purchase ? true : false,
+      // enabled: is_purchase ? true : false,
     }
   );
   const featureModelParam: any = {
@@ -89,21 +89,21 @@ const UserNFTListing = ({ is_purchase }: any) => {
         store_customer_id: user?.id,
       }));
     }
-  }, [user, is_purchase]);
+  }, [user]);
   useEffect(() => {
     refetch();
-  }, [sortFilter, is_purchase]);
-  useEffect(() => {
-    let timeout: any;
-    timeout = setTimeout(() => {
-      if (user?.id !== undefined) {
-        refetch();
-      }
-    }, 2000);
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [user, is_purchase]);
+  }, [sortFilter]);
+  // useEffect(() => {
+  //   let timeout: any;
+  //   timeout = setTimeout(() => {
+  //     if (user?.id !== undefined) {
+  //       refetch();
+  //     }
+  //   }, 2000);
+  //   return () => {
+  //     if (timeout) clearTimeout(timeout);
+  //   };
+  // }, [user]);
 
   useEffect(() => {
     if (storeNfts?.data.length > 0) {
