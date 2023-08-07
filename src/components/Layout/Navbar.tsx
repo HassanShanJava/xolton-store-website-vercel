@@ -178,24 +178,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
           );
           dispatch(setUserProcess(response.storeCustomer));
         } else {
-          if (
-            data?.message?.message === "Please install MetaMask" ||
-            data.message == "Please install MetaMask"
-          ) {
-            window.open(
-              `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`,
-              "_blank"
-            );
-
-            //  window.location.href = `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`;
-          } else {
-            addToast({
-              id: "connect-wallet",
-              message: data?.message,
-              type: "error",
-              position: "top-right",
-            });
-          }
+          throw new Error(data?.message);
         }
         // dispatch(
         //   web3Init({
@@ -205,7 +188,25 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         //   })
         // );
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error?.message?.message === "Please install MetaMask" ||
+        error?.message == "Please install MetaMask"
+      ) {
+        window.open(
+          `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`,
+          "_blank"
+        );
+
+        //  window.location.href = `https://metamask.app.link/dapp/${webprops?.domain_name}.xoltanmarketplace.com/`;
+      } else {
+        addToast({
+          id: "connect-wallet",
+          message: error?.message,
+          type: "error",
+          position: "top-right",
+        });
+      }
       console.log(error);
     }
   };
