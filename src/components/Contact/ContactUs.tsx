@@ -10,6 +10,7 @@ const ContactUs = ({}:any) => {
       return fetch(`${process.env.NEXT_PUBLIC_API_URL}/email`, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         mode: "no-cors",
+        cache:"force-cache",
         headers: {
           "Content-Type": "application/json",
           // 'Content-Type': 'application/x-www-form-urlencoded',

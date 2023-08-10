@@ -24,6 +24,7 @@ export default function UpdateNftModal(props: any) {
         {
           method: "PUT",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

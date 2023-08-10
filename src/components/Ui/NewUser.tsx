@@ -27,6 +27,7 @@ const NewUser = ({ open, setOpen }: { open: boolean; setOpen: Function }) => {
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

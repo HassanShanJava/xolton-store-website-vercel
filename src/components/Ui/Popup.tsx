@@ -51,7 +51,10 @@ const Popup = ({
     ["tokenApi"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,
+        {
+          cache: "force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -81,6 +84,7 @@ const Popup = ({
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/nft`, {
         method: "POST",
         body: JSON.stringify(newTodo),
+        cache: "force-cache",
       });
 
       const result = await response.json();
@@ -95,6 +99,7 @@ const Popup = ({
         {
           method: "POST",
           body: JSON.stringify(newTodo),
+          cache:"force-cache",
         }
       );
 

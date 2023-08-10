@@ -37,7 +37,7 @@ export function renderNFTImage(nft: any) {
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft?.thumb}`;
 }
 export function renderImage(nft: any) {
-  return  !nft && nft === ""
+  return !nft && nft === ""
     ? ""
     : `${process.env.NEXT_PUBLIC_CLOUD_FRONT_BASE_URL}/${nft}`;
 }
@@ -60,7 +60,9 @@ export const displayDate = (payload: any) => {
 export async function maticToUSD(price = 0 as number) {
   try {
     const data = await fetch(
-      "https://min-api.cryptocompare.com/data/histoday?fsym=MATIC&tsym=USD&limit=1&aggregate=1&e=Cexio"
+      "https://min-api.cryptocompare.com/data/histoday?fsym=MATIC&tsym=USD&limit=1&aggregate=1&e=Cexio", {
+      cache: "force-cache",
+    }
     );
 
     const response = await data.json();
@@ -84,6 +86,7 @@ export async function websiteInfo() {
           "Content-Type": "application/json",
           referer: "xoltanmarketplace.com",
         },
+        cache: "force-cache",
       }
     );
 
@@ -102,13 +105,14 @@ export async function loginConnectInfo(payload: any) {
       `${process.env.NEXT_PUBLIC_API_URL}/store-customer/login`,
       {
         method: "POST",
-        mode: "no-cors", 
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
+        cache: "force-cache",
         body: JSON.stringify(payload)
       }
-    ).then(res=>res.json());
+    ).then(res => res.json());
 
     return response;
 
@@ -128,8 +132,9 @@ export async function registerConnectInfo(payload: any) {
         "Content-Type": "application/json",
         // referer: "xoltanmarketplace.com",
       },
-      mode:"no-cors",
+      mode: "no-cors",
       method: "POST",
+      cache: "force-cache",
       body: newpayload
     }
   );
@@ -148,13 +153,14 @@ export async function getCustomerConnectInfo() {
         "Content-Type": "application/json",
         // referer: "xoltanmarketplace.com",
       },
-      mode:"no-cors",
+      mode: "no-cors",
+      cache: "force-cache",
       method: "GET",
     }
-  ).then(res=>res.json());
+  ).then(res => res.json());
 
   return response;
-} 
+}
 
 export function customEmailTruncateHandler(str = "", n = 15) {
   const myArray: any = str.split("@");

@@ -30,7 +30,9 @@ const NFTListing = ({ contract_id }: any) => {
           process.env.NEXT_PUBLIC_STORE_ID
         }&${new URLSearchParams(sortFilter).toString()}${
           user ? "&store_customer_id=" + user?.id : ""
-        }`
+        }`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -46,7 +48,9 @@ const NFTListing = ({ contract_id }: any) => {
     ["nftsCollectionDetail"],
     async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/collection?id=${contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+        `${process.env.NEXT_PUBLIC_API_URL}/collection?id=${contract_id}&store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

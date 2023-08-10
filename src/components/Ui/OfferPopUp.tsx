@@ -67,7 +67,9 @@ const OfferPopUp = ({
     ["tokenApi"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`
+        `${process.env.NEXT_PUBLIC_API_URL}/token/key?store_id=${process.env.NEXT_PUBLIC_STORE_ID}`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -98,6 +100,7 @@ const OfferPopUp = ({
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 
@@ -113,6 +116,7 @@ const OfferPopUp = ({
         {
           method: "PUT",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

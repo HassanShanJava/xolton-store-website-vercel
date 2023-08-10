@@ -14,6 +14,7 @@ const runAsync = async () => {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      cache:"force-cache",
     }
   );
   if (!response.ok) {
@@ -121,6 +122,7 @@ const runSiteAsync = async () => {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      cache:"force-cache",
     }
   );
   if (!response.ok) {
@@ -175,6 +177,7 @@ const runDocument = async () => {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      cache:"force-cache",
     }
   );
   if (!response.ok) {

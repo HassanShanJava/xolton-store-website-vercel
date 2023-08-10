@@ -82,6 +82,7 @@ const ListingPopup = ({ ...payload }: any) => {
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

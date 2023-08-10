@@ -90,7 +90,10 @@ const OfferTable = ({ bid_type }: any) => {
           process.env.NEXT_PUBLIC_API_URL
         }/offer-nft/bids?&${new URLSearchParams(orderFilters).toString()}${
           user?.id ? "&store_customer_id=" + user?.id : ""
-        }`
+        }`,
+        {
+          cache: "force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

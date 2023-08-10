@@ -80,7 +80,9 @@ const NFTDetail = ({}: any) => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/nft?id=${id}&store_id=${
           process.env.NEXT_PUBLIC_STORE_ID
-        }${user?.id ? "&store_customer_id=" + user?.id : ""}`
+        }${user?.id ? "&store_customer_id=" + user?.id : ""}`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -107,7 +109,10 @@ const NFTDetail = ({}: any) => {
           process.env.NEXT_PUBLIC_STORE_ID
         }&nft_id=${id}&sell_type=${
           nftDetail?.sell_type?.includes("offer") ? "offer" : "auction"
-        }&${new URLSearchParams(filter as any).toString()}`
+        }&${new URLSearchParams(filter as any).toString()}`,
+        {
+          cache: "force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -141,7 +146,9 @@ const NFTDetail = ({}: any) => {
           nftDetail?.contract_id?.$oid
             ? "&contract_id=" + nftDetail?.contract_id?.$oid
             : ""
-        }&rows=5&first=0`
+        }&rows=5&first=0`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -343,37 +350,36 @@ const NFTDetail = ({}: any) => {
                   )}
                   {(nftDetail?.sell_type?.includes("offer") ||
                     nftDetail?.sell_type?.includes("auction")) && (
-                      <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
-                        <p className="text-tx-5 text-sm">
-                          Highest{" "}
-                          {nftDetail?.sell_type?.includes("auction")
-                            ? "Bid"
-                            : "Offer"}
-                        </p>
-                        <span className=" text-lg font-bold">
-                          {nftDetail.highest_offer
-                            ? (+nftDetail?.highest_offer).toFixed(2)
-                            : (+nftDetail.min_price).toFixed(2)}
+                    <div className="w-full rounded-md bg-white bg-opacity-20 p-2 backdrop-blur-lg backdrop-filter">
+                      <p className="text-tx-5 text-sm">
+                        Highest{" "}
+                        {nftDetail?.sell_type?.includes("auction")
+                          ? "Bid"
+                          : "Offer"}
+                      </p>
+                      <span className=" text-lg font-bold">
+                        {nftDetail.highest_offer
+                          ? (+nftDetail?.highest_offer).toFixed(2)
+                          : (+nftDetail.min_price).toFixed(2)}
 
-                          <span className="ml-1 text-xs lowercase text-slate-500">
-                            MATIC
-                          </span>
+                        <span className="ml-1 text-xs lowercase text-slate-500">
+                          MATIC
                         </span>
-                        <p className="text-xs lowercase text-slate-500">
-                          {`$ ${
-                            nftDetail?.highest_offer
-                              ? (
-                                  +nftDetail?.highest_offer *
-                                  (+maticToUsd as number)
-                                ).toFixed(2)
-                              : (
-                                  +nftDetail?.min_price *
-                                  (+maticToUsd as number)
-                                ).toFixed(2)
-                          }`}
-                        </p>
-                      </div>
-                    )}
+                      </span>
+                      <p className="text-xs lowercase text-slate-500">
+                        {`$ ${
+                          nftDetail?.highest_offer
+                            ? (
+                                +nftDetail?.highest_offer *
+                                (+maticToUsd as number)
+                              ).toFixed(2)
+                            : (
+                                +nftDetail?.min_price * (+maticToUsd as number)
+                              ).toFixed(2)
+                        }`}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 {user == null ||
                 user?.id !== nftDetail?.store_customer_id?.$oid ? (
@@ -649,6 +655,7 @@ const OfferList: any = ({
         ).toString()}`,
         {
           method: "DELETE",
+          cache: "force-cache",
         }
       );
 

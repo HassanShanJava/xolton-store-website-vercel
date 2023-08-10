@@ -37,7 +37,10 @@ const UserNFTListing = ({ is_purchase }: any) => {
           process.env.NEXT_PUBLIC_STORE_ID
         }&${new URLSearchParams(
           sortFilter
-        ).toString()}&is_purchase=${is_purchase}`
+        ).toString()}&is_purchase=${is_purchase}`,
+        {
+          cache: "force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

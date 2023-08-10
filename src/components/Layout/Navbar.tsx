@@ -133,6 +133,7 @@ const Navbar = ({ navData: navprops, webData: webprops }: any) => {
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

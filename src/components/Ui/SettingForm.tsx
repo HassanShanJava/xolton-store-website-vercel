@@ -40,6 +40,7 @@ export default function SettingsForm({}: any) {
         {
           method: "PUT",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

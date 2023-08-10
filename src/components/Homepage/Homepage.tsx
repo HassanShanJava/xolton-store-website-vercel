@@ -30,7 +30,9 @@ const Banner = ({ collection_id ,webData}: any) => {
     ["nftCollectionBanner"],
     async () => {
       const response: any = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/collection?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&id=${collection_id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/collection?store_id=${process.env.NEXT_PUBLIC_STORE_ID}&id=${collection_id}`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

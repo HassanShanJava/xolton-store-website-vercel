@@ -24,6 +24,7 @@ export default function CancelOfferModal(props: any) {
         ).toString()}`,
         {
           method: "DELETE",
+          cache:"force-cache",
         }
       );
 

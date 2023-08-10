@@ -51,7 +51,9 @@ const NFTCard = ({ nft, refetch, is_purchase, ...payload }: any) => {
           process.env.NEXT_PUBLIC_STORE_ID
         }&nft_id=${nft._id.$oid}&sell_type=offer&${new URLSearchParams(
           filter as any
-        ).toString()}`
+        ).toString()}`,{
+          cache:"force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

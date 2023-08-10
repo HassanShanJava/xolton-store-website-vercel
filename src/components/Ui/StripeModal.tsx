@@ -102,6 +102,7 @@ export const StripeModal = (props: any) => {
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 
@@ -116,6 +117,7 @@ export const StripeModal = (props: any) => {
         {
           method: "POST",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 

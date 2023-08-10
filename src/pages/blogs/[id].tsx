@@ -12,6 +12,7 @@ export async function getStaticPaths() {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      cache:"force-cache",
     }
   );
   if (!response.ok) {
@@ -33,6 +34,7 @@ export async function getStaticProps({ params }: any) {
         "Content-Type": "application/json",
         referer: "xoltanmarketplace.com",
       },
+      cache:"force-cache",
     }
   );
 

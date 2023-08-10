@@ -69,7 +69,10 @@ const OrderTable = () => {
           orderFilters
         ).toString()}${user !== null ? "&store_customer_id=" + user?.id : ""}${
           user !== null ? "&wallet_address=" + user?.wallet_address : ""
-        }`
+        }`,
+        {
+          cache: "force-cache",
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

@@ -35,6 +35,7 @@ export default function UpdateModal(props: any) {
         {
           method: "PUT",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 
@@ -49,6 +50,7 @@ export default function UpdateModal(props: any) {
         {
           method: "PUT",
           body: JSON.stringify(payload),
+          cache:"force-cache",
         }
       );
 
